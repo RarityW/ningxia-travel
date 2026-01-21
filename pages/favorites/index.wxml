@@ -1,0 +1,47 @@
+<!-- 收藏页面 -->
+<view class="container">
+  <!-- 分类切换 -->
+  <view class="category-tabs">
+    <view
+      wx:for="{{categories}}"
+      wx:key="value"
+      class="tab-item {{activeCategory === item.value ? 'active' : ''}}"
+      bindtap="switchCategory"
+      data-category="{{item.value}}"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <!-- 收藏列表 -->
+  <view class="content-list">
+    <block wx:if="{{filteredFavorites.length > 0}}">
+      <view
+        wx:for="{{filteredFavorites}}"
+        wx:key="id"
+        class="item-card"
+        bindtap="goToDetail"
+        data-item="{{item}}"
+      >
+        <image class="item-image" src="{{item.coverImage}}" mode="aspectFill" />
+        <view class="item-info">
+          <text class="item-name">{{item.name}}</text>
+          <text class="item-type">{{item.typeLabel}}</text>
+          <view class="item-meta">
+            <text class="item-rating" wx:if="{{item.rating}}">⭐ {{item.rating}}</text>
+            <text class="item-region" wx:if="{{item.region}}">📍 {{item.region}}</text>
+          </view>
+        </view>
+        <view class="item-delete" bindtap="deleteFavorite" data-id="{{item.id}}" catchtap="deleteFavorite">
+          <text>🗑</text>
+        </view>
+      </view>
+    </block>
+
+    <view class="empty" wx:else>
+      <text class="empty-icon">❤️</text>
+      <text class="empty-text">暂无收藏内容</text>
+      <text class="empty-hint">去景点、美食、文化页面逛逛吧</text>
+    </view>
+  </view>
+</view>

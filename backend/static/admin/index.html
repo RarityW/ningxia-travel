@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>宁夏文旅 管理后台（演示）</title>
+    <link href="https://unpkg.com/element-plus@2.3.12/dist/index.css" rel="stylesheet">
+    <style>
+      body { padding: 20px; font-family: Arial, Helvetica, sans-serif; }
+      #app { max-width: 900px; margin: 0 auto; }
+      .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="header">
+        <h2>宁夏文旅 管理后台（演示）</h2>
+        <div v-if="admin">当前管理员：{{admin.username}}</div>
+      </div>
+
+      <el-card v-if="!admin" shadow="hover">
+        <h3>管理员登录</h3>
+        <el-form :model="loginForm" label-width="80px">
+          <el-form-item label="用户名">
+            <el-input v-model="loginForm.username"></el-input>
+          </el-form-item>
+          <el-form-item label="密码">
+            <el-input type="password" v-model="loginForm.password"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="login">登录</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+
+      <div v-if="admin">
+        <el-card>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>景点列表（演示）</h3>
+            <div>
+              <el-button type="danger" @click="logout">退出</el-button>
+            </div>
+          </div>
+
+          <el-table :data="attractions" style="width:100%" v-loading="loading">
+            <el-table-column prop="id" label="ID" width="80"></el-table-column>
+            <el-table-column prop="name" label="名称"></el-table-column>
+            <el-table-column prop="region" label="区域" width="140"></el-table-column>
+            <el-table-column prop="rating" label="评分" width="100"></el-table-column>
+            <el-table-column label="操作" width="160">
+              <template #default="{row}">
+                <el-button size="small" @click="view(row)">查看</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
+      </div>
+
+    </div>
+
+    <script src="https://unpkg.com/vue@3.2.47/dist/vue.global.prod.js"></script>
+    <script src="https://unpkg.com/axios@1.4.0/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/element-plus@2.3.12/dist/index.full.js"></script>
+    <script>
+      const { createApp, ref } = Vue;
+      createApp({
+        data() {
+          return {
+            loginForm: { username: 'admin', password: 'admin123' },
+            admin: null,
+            attractions: [],
+            loading: false,
+          }
+        },
+        methods: {
+          async login() {
+            try {
+              // 让浏览器在请求时携带 cookie，并由后端设置 HttpOnly cookie
+              axios.defaults.withCredentials = true;
+              const res = await axios.post('/api/v1/auth/admin/login', this.loginForm);
+              // 后端仍会返回管理员信息（不含敏感 token）
+              this.admin = { username: res.data.username, id: res.data.admin_id };
+              this.fetchAttractions();
+            } catch (e) {
+              ElMessage.error('登录失败：' + (e.response?.data?.message || e.message));
+            }
+          },
+          logout() {
+            this.admin = null;
+            this.attractions = [];
+          },
+          async fetchAttractions() {
+            this.loading = true;
+            try {
+              const res = await axios.get('/api/v1/admin/attractions');
+              this.attractions = res.data.data || res.data || [];
+            } catch (e) {
+              ElMessage.error('获取景点失败：' + (e.response?.data?.message || e.message));
+            } finally { this.loading = false }
+          },
+          view(row) {
+            ElMessage.info('景点：' + row.name);
+          }
+        }
+      }).use(ElementPlus).mount('#app')
+    </script>
+  </body>
+</html>

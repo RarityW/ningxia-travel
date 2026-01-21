@@ -1,0 +1,57 @@
+<!-- 购物车页面 -->
+<view class="container">
+  <block wx:if="{{cartItems.length > 0}}">
+    <!-- 购物车列表 -->
+    <view class="cart-list">
+      <view
+        wx:for="{{cartItems}}"
+        wx:key="id"
+        class="cart-item"
+      >
+        <view class="item-select" bindtap="toggleSelect" data-id="{{item.id}}">
+          <text class="select-icon {{item.selected ? 'selected' : ''}}">{{item.selected ? '☑' : '☐'}}</text>
+        </view>
+        <image class="item-image" src="{{item.coverImage}}" mode="aspectFill" />
+        <view class="item-info">
+          <text class="item-name">{{item.name}}</text>
+          <text class="item-category">{{item.category}}</text>
+          <view class="item-price-row">
+            <text class="item-price">¥{{item.price}}</text>
+            <view class="quantity-control">
+              <text class="quantity-btn" bindtap="updateQuantity" data-id="{{item.id}}" data-type="decrease">-</text>
+              <text class="quantity-num">{{item.quantity}}</text>
+              <text class="quantity-btn" bindtap="updateQuantity" data-id="{{item.id}}" data-type="increase">+</text>
+            </view>
+          </view>
+        </view>
+        <view class="item-delete" bindtap="deleteItem" data-id="{{item.id}}">
+          <text>🗑</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部结算栏 -->
+    <view class="bottom-bar">
+      <view class="select-all" bindtap="toggleSelectAll">
+        <text class="select-icon {{allSelected ? 'selected' : ''}}">{{allSelected ? '☑' : '☐'}}</text>
+        <text class="select-text">全选</text>
+      </view>
+      <view class="total-section">
+        <text class="total-text">合计：</text>
+        <text class="total-price">¥{{totalPrice}}</text>
+        <text class="total-count">({{selectedCount}}件)</text>
+      </view>
+      <view class="checkout-btn" bindtap="checkout">
+        <text>结算</text>
+      </view>
+    </view>
+  </block>
+
+  <view class="empty" wx:else>
+    <text class="empty-icon">🛒</text>
+    <text class="empty-text">购物车是空的</text>
+    <view class="empty-btn" bindtap="goToMarket">
+      <text>去选购</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,59 @@
+<!-- 美食列表页面 -->
+<view class="container">
+  <!-- 分类筛选 -->
+  <scroll-view class="category-scroll" scroll-x>
+    <view class="category-list">
+      <view
+        wx:for="{{categories}}"
+        wx:key="*this"
+        class="category-item {{currentCategory === item ? 'active' : ''}}"
+        bindtap="switchCategory"
+        data-category="{{item}}"
+      >
+        {{item}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 美食列表 -->
+  <view class="food-list">
+    <view
+      wx:for="{{foods}}"
+      wx:key="_id"
+      class="food-item"
+      bindtap="goToDetail"
+      data-id="{{item._id}}"
+    >
+      <image class="food-image" src="{{item.coverImage}}" mode="aspectFill"></image>
+      <view class="food-info">
+        <view class="food-header">
+          <text class="food-name">{{item.name}}</text>
+          <view class="category-tag">{{item.category}}</view>
+        </view>
+        <view class="food-meta">
+          <text class="region">{{item.region}}</text>
+          <view class="rating">
+            <text class="star">★</text>
+            <text class="score">{{item.rating}}</text>
+            <text class="views">({{item.views}}人浏览)</text>
+          </view>
+        </view>
+        <view class="food-description">{{item.description}}</view>
+        <view class="food-footer">
+          <text class="price">¥{{item.price}}</text>
+          <text class="shops">{{item.shops.length}}家店铺</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 暂无数据 -->
+  <view class="empty" wx:if="{{!loading && foods.length === 0}}">
+    <text>暂无美食数据</text>
+  </view>
+</view>

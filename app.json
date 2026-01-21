@@ -1,0 +1,60 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/attractions/list",
+    "pages/attractions/detail",
+    "pages/food/list",
+    "pages/food/detail",
+    "pages/culture/list",
+    "pages/culture/detail",
+    "pages/market/index",
+    "pages/market/detail",
+    "pages/profile/profile",
+    "pages/favorites/index",
+    "pages/cart/index"
+  ],
+  "window": {
+    "navigationStyle": "custom",
+    "backgroundColor": "#F5F7FA"
+  },
+  "tabBar": {
+    "color": "#6b7280",
+    "selectedColor": "#8B4513",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "position": "bottom",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tabbar/home.png",
+        "selectedIconPath": "images/tabbar/home.png"
+      },
+      {
+        "pagePath": "pages/market/index",
+        "text": "优惠",
+        "iconPath": "images/tabbar/coupon.png",
+        "selectedIconPath": "images/tabbar/coupon.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/tabbar/profile.png",
+        "selectedIconPath": "images/tabbar/profile.png"
+      }
+    ]
+  },
+
+  "permission": {
+    "scope.userLocation": {
+      "desc": "获取您的位置信息，用于推荐附近的景点和美食"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation"
+  ],
+
+  "cloud": true,
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

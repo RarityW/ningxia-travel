@@ -1,0 +1,267 @@
+<!-- 宁夏文旅 - 首页 -->
+<view class="container">
+
+  <!-- 【1】固定顶部Header（位置+天气+搜索） -->
+  <view class="fixed-header" style="padding-top: {{statusBarHeight}}px;">
+    <!-- 位置和天气信息 -->
+    <view class="header-top">
+      <view class="location-section">
+        <text class="location-text">{{currentLocation}}</text>
+        <text class="location-arrow">▼</text>
+        <view class="weather-info">
+          <text class="temperature">{{temperature}}</text>
+        </view>
+      </view>
+      <view class="header-right">
+        <text class="qr-icon">🔍</text>
+      </view>
+    </view>
+
+    <!-- 搜索框 -->
+    <view class="search-section">
+      <view class="search-box">
+        <text class="search-icon">🔍</text>
+        <input class="search-input" placeholder="景区 / 酒店 / 路线 / 美食" bindinput="onSearchInput" />
+        <text class="voice-icon">🎤</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 【2】首页 Banner 区 -->
+  <view class="banner-section">
+    <swiper class="banner-swiper" indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#FFFFFF" autoplay circular>
+      <swiper-item>
+        <view class="banner-slide">
+          <image class="banner-image" src="/images/banner-1.jpg" mode="aspectFill" />
+          <view class="banner-content">
+            <text class="banner-slogan">旅游来宁夏 给心放个假</text>
+          </view>
+        </view>
+      </swiper-item>
+      <swiper-item>
+        <view class="banner-slide">
+          <image class="banner-image" src="/images/banner-2.jpg" mode="aspectFill" />
+          <view class="banner-content">
+            <text class="banner-slogan">大漠黄河 西夏古韵</text>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 【3】功能入口宫格（10个功能） -->
+  <view class="function-section">
+    <view class="function-grid">
+      <!-- 第一行 -->
+      <view class="function-item" bindtap="onFunctionTap" data-page="attractions">
+        <view class="function-icon-bg bg-orange">
+          <text class="function-icon">🎫</text>
+        </view>
+        <text class="function-name">景区门票</text>
+      </view>
+
+      <view class="function-item" bindtap="onFunctionTap" data-page="hotels">
+        <view class="function-icon-bg bg-blue">
+          <text class="function-icon">🏨</text>
+        </view>
+        <text class="function-name">酒店民宿</text>
+      </view>
+
+      <view class="function-item" bindtap="onFunctionTap" data-page="routes">
+        <view class="function-icon-bg bg-green">
+          <text class="function-icon">🗺️</text>
+        </view>
+        <text class="function-name">线路定制</text>
+      </view>
+
+      <view class="function-item" bindtap="onFunctionTap" data-page="products">
+        <view class="function-icon-bg bg-purple">
+          <text class="function-icon">🎁</text>
+        </view>
+        <text class="function-name">宁夏特产</text>
+      </view>
+
+      <view class="function-item" bindtap="onFunctionTap" data-page="food">
+        <view class="function-icon-bg bg-red">
+          <text class="function-icon">🍽️</text>
+        </view>
+        <text class="function-name">地道美食</text>
+      </view>
+
+      <!-- 第二行 -->
+      <view class="function-item" bindtap="onFunctionTap" data-page="shows">
+        <view class="function-icon-bg bg-pink">
+          <text class="function-icon">🎭</text>
+        </view>
+        <text class="function-name">演艺活动</text>
+      </view>
+
+      <view class="function-item" bindtap="onFunctionTap" data-page="tours">
+        <view class="function-icon-bg bg-cyan">
+          <text class="function-icon">👥</text>
+        </view>
+        <text class="function-name">跟团游</text>
+      </view>
+
+      <view class="function-item" bindtap="onFunctionTap" data-page="bus">
+        <view class="function-icon-bg bg-yellow">
+          <text class="function-icon">🚌</text>
+        </view>
+        <text class="function-name">直通车</text>
+      </view>
+
+      <view class="function-item" bindtap="onFunctionTap" data-page="service">
+        <view class="function-icon-bg bg-indigo">
+          <text class="function-icon">💬</text>
+        </view>
+        <text class="function-name">出行服务</text>
+      </view>
+
+      <view class="function-item" bindtap="onFunctionTap" data-page="daytrip">
+        <view class="function-icon-bg bg-emerald">
+          <text class="function-icon">📅</text>
+        </view>
+        <text class="function-name">一日游</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 【4】公告条 -->
+  <view class="notice-section">
+    <view class="notice-box">
+      <view class="notice-left">
+        <text class="notice-icon">📢</text>
+        <text class="notice-label">Notice</text>
+      </view>
+      <view class="notice-divider"></view>
+      <text class="notice-text">宁夏旅游咨询投诉热线：12345 欢迎咨询</text>
+      <text class="notice-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 【5】Banner区域 - 景区门票优惠 -->
+  <view class="banner-section">
+    <view class="banner-card">
+      <view class="banner-header">
+        <view class="banner-content">
+          <text class="banner-title">宁夏景区门票\n优惠总入口</text>
+          <text class="banner-subtitle">一站式购票 享官方补贴</text>
+        </view>
+        <view class="banner-decoration">
+          <text class="decoration-icon">🏔️</text>
+        </view>
+      </view>
+
+      <view class="banner-features">
+        <view class="feature-item">
+          <view class="feature-icon bg-yellow">
+            <text class="feature-icon-text">🎫</text>
+          </view>
+          <view class="feature-content">
+            <text class="feature-title">票根优惠</text>
+            <text class="feature-desc">景区联动5折起</text>
+          </view>
+        </view>
+
+        <view class="feature-divider"></view>
+
+        <view class="feature-item">
+          <view class="feature-icon bg-blue">
+            <text class="feature-icon-text">🎓</text>
+          </view>
+          <view class="feature-content">
+            <text class="feature-title">免票人群</text>
+            <text class="feature-desc">军人、老师等免费</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 【6】当季热玩 - 横向滚动产品 -->
+  <view class="hot-section">
+    <view class="section-header">
+      <view class="header-left">
+        <text class="section-title">当季热玩</text>
+        <view class="new-badge">
+          <text class="new-text">NEW</text>
+        </view>
+      </view>
+
+      <scroll-view class="category-tabs" scroll-x="true" show-scrollbar="false">
+        <text class="tab-item active">热门精选</text>
+        <text class="tab-item">大漠度假</text>
+        <text class="tab-item">温泉养生</text>
+        <text class="tab-item">五折景区</text>
+        <text class="tab-item">全部</text>
+      </scroll-view>
+    </view>
+
+    <scroll-view class="products-scroll" scroll-x="true" show-scrollbar="false">
+      <view class="products-container">
+        <view class="product-card-large" bindtap="goToProductDetail" data-id="1">
+          <image class="product-image-large" src="/images/product-1.jpg" mode="aspectFill" />
+          <view class="product-badge">
+            <text class="badge-text">沙坡头</text>
+          </view>
+          <view class="product-info-large">
+            <text class="product-title">沙坡头·星星酒店大漠星空体验</text>
+            <view class="product-price-large">
+              <text class="price-symbol">¥</text>
+              <text class="price-amount">190.00</text>
+              <text class="price-unit">起</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="product-card-large" bindtap="goToProductDetail" data-id="2">
+          <image class="product-image-large" src="/images/product-2.jpg" mode="aspectFill" />
+          <view class="product-badge">
+            <text class="badge-text">贺兰山</text>
+          </view>
+          <view class="product-info-large">
+            <text class="product-title">贺兰山滑雪场全天无限次畅玩券</text>
+            <view class="product-price-large">
+              <text class="price-symbol">¥</text>
+              <text class="price-amount">88.00</text>
+              <text class="price-unit">起</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="product-card-large" bindtap="goToProductDetail" data-id="3">
+          <image class="product-image-large" src="/images/product-3.jpg" mode="aspectFill" />
+          <view class="product-badge">
+            <text class="badge-text">西部影城</text>
+          </view>
+          <view class="product-info-large">
+            <text class="product-title">镇北堡西部影城成人套票+讲解</text>
+            <view class="product-price-large">
+              <text class="price-symbol">¥</text>
+              <text class="price-amount">100.00</text>
+              <text class="price-unit">起</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 【7】榜单卡片 -->
+  <view class="ranking-section">
+    <view class="ranking-grid">
+      <view class="ranking-card bg-blue">
+        <text class="ranking-text">美食榜 →</text>
+      </view>
+      <view class="ranking-card bg-green">
+        <text class="ranking-text">景区榜 →</text>
+      </view>
+      <view class="ranking-card bg-purple">
+        <text class="ranking-text">住宿榜 →</text>
+      </view>
+    </view>
+  </view>
+
+
+
+</view>

@@ -1,0 +1,305 @@
+/* 宁夏文旅小程序 - 全局样式 - 大漠古韵风 */
+
+page {
+  background-color: #FDF8F3;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* 主色 - 深金色 */
+page,
+text,
+input,
+textarea {
+  color: #2A2218;
+}
+
+/* 颜色变量 - 大漠古韵配色 */
+:root {
+  /* 主色系 - 金沙色调 */
+  --primary-gold: #B8860B;        /* 深金色 */
+  --primary-gold-light: #DAA520;   /* 金黄色 */
+  --primary-sand: #D4A574;        /* 沙漠金 */
+  --primary-terracotta: #C1703D;  /* 陶土色 */
+
+  /* 辅助色 - 古韵色调 */
+  --secondary-olive: #556B2F;     /* 橄榄绿 */
+  --secondary-bronze: #8B7355;    /* 古铜色 */
+  --secondary-rust: #A0522D;      /* 铁锈红 */
+  --secondary-sage: #9CAF88;       /* 鼠尾草绿 */
+
+  /* 背景色 */
+  --bg-warm-cream: #FDF8F3;       /* 暖米白 */
+  --bg-sand-light: #F5EDE4;       /* 浅沙色 */
+  --bg-ivory: #FFFFF0;            /* 象牙白 */
+  --card-white: #FFFAF5;          /* 卡片白 */
+
+  /* 文字色 */
+  --text-deep: #1A1612;           /* 深褐 */
+  --text-warm: #4A3F35;           /* 暖褐 */
+  --text-muted: #8B7D6B;          /* 暗灰褐 */
+  --text-light: #A8998A;          /* 浅灰褐 */
+
+  /* 边框与分割线 */
+  --border-gold: #E6D5C8;         /* 金色边框 */
+  --border-sand: #D9C6B5;         /* 沙色边框 */
+  --divider: #E9E0D8;              /* 分割线 */
+
+  /* 渐变色 */
+  --gradient-gold: linear-gradient(135deg, var(--primary-gold), var(--primary-gold-light));
+  --gradient-sand: linear-gradient(135deg, var(--primary-sand), var(--secondary-bronze));
+  --gradient-terracotta: linear-gradient(135deg, var(--primary-terracotta), var(--secondary-rust));
+  --gradient-olive: linear-gradient(135deg, var(--secondary-olive), var(--secondary-sage));
+  --gradient-warm: linear-gradient(135deg, var(--primary-gold), var(--secondary-rust));
+}
+
+/* 通用容器 */
+.container {
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--bg-warm-cream);
+}
+
+/* 卡片基础样式 */
+.card {
+  background-color: var(--card-white);
+  border-radius: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 24rpx rgba(184, 134, 11, 0.08);
+  margin-bottom: 24rpx;
+}
+
+.card:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+  transition: all 0.3s;
+}
+
+/* 渐变背景 */
+.gradient-gold {
+  background: var(--gradient-gold);
+}
+
+.gradient-sand {
+  background: var(--gradient-sand);
+}
+
+.gradient-terracotta {
+  background: var(--gradient-terracotta);
+}
+
+.gradient-olive {
+  background: var(--gradient-olive);
+}
+
+.gradient-warm {
+  background: var(--gradient-warm);
+}
+
+/* 文字样式 */
+.text-primary {
+  color: var(--primary-gold);
+  font-weight: 600;
+}
+
+.text-sand {
+  color: var(--primary-sand);
+  font-weight: 600;
+}
+
+.text-terracotta {
+  color: var(--primary-terracotta);
+  font-weight: 600;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--text-deep);
+  margin-bottom: 16rpx;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: var(--text-muted);
+  margin-bottom: 12rpx;
+}
+
+.text-small {
+  font-size: 24rpx;
+  color: var(--text-muted);
+}
+
+/* 按钮样式 */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 48rpx;
+  border-radius: 50rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  transition: all 0.3s;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--gradient-gold);
+  color: #FFFFFF;
+}
+
+.btn-sand {
+  background: var(--gradient-sand);
+  color: #FFFFFF;
+}
+
+.btn-terracotta {
+  background: var(--gradient-terracotta);
+  color: #FFFFFF;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2rpx solid var(--primary-gold);
+  color: var(--primary-gold);
+}
+
+.btn:active {
+  transform: scale(0.95);
+  opacity: 0.9;
+}
+
+/* 标签样式 */
+.tag {
+  display: inline-block;
+  padding: 8rpx 20rpx;
+  border-radius: 40rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+.tag-gold {
+  background-color: rgba(184, 134, 11, 0.12);
+  color: var(--primary-gold);
+}
+
+.tag-sand {
+  background-color: rgba(212, 165, 116, 0.12);
+  color: var(--primary-sand);
+}
+
+.tag-terracotta {
+  background-color: rgba(193, 112, 61, 0.12);
+  color: var(--primary-terracotta);
+}
+
+.tag-olive {
+  background-color: rgba(85, 107, 47, 0.12);
+  color: var(--secondary-olive);
+}
+
+/* 价格样式 */
+.price {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--primary-terracotta);
+}
+
+.price-symbol {
+  font-size: 24rpx;
+  margin-right: 4rpx;
+}
+
+.price-small {
+  font-size: 24rpx;
+  color: var(--text-muted);
+  text-decoration: line-through;
+  margin-left: 8rpx;
+}
+
+/* 评分样式 */
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.star {
+  font-size: 32rpx;
+  color: var(--primary-gold-light);
+}
+
+.rating-num {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--text-deep);
+}
+
+/* 分割线 */
+.divider {
+  height: 1rpx;
+  background-color: var(--divider);
+  margin: 32rpx 0;
+}
+
+/* 徽章样式 */
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 4rpx 12rpx;
+  border-radius: 0 0 12rpx 12rpx;
+  font-size: 20rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.badge-new {
+  background: var(--gradient-terracotta);
+}
+
+.badge-hot {
+  background: linear-gradient(135deg, var(--secondary-rust), var(--primary-terracotta));
+}
+
+.badge-gold {
+  background: var(--gradient-gold);
+}
+
+/* 加载动画 */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 0;
+}
+
+.spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid var(--border-gold);
+  border-top-color: var(--primary-gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 空状态 */
+.empty {
+  text-align: center;
+  padding: 120rpx 40rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: var(--text-muted);
+}

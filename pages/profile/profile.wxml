@@ -1,0 +1,87 @@
+<!-- 个人中心页面 -->
+<view class="container">
+  <!-- 用户信息头部 -->
+  <view class="header-section" bindtap="handleHeaderTap">
+    <view class="user-info">
+      <view class="avatar-wrapper">
+        <image class="avatar" src="{{userInfo.avatarUrl || userInfo.avatar || 'https://via.placeholder.com/200x200/F5EDE4/8B7355?text=游客'}}" mode="aspectFill" />
+      </view>
+      <view class="user-detail">
+        <text class="nickname">{{userInfo.nickName || userInfo.nickname || '游客'}}</text>
+        <text class="user-id" wx:if="{{!hasLogin}}">点击登录</text>
+        <text class="user-id" wx:if="{{hasLogin}}">已登录</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 登录按钮（未登录时显示） -->
+  <view class="login-section" wx:if="{{!hasLogin}}">
+    <button class="login-btn" bindtap="login">微信一键登录</button>
+  </view>
+
+  <!-- 退出登录按钮（已登录时显示） -->
+  <view class="logout-section" wx:if="{{hasLogin}}">
+    <button class="logout-btn" bindtap="logout">退出登录</button>
+  </view>
+
+  <!-- 数据统计 -->
+  <view class="stats-section">
+    <view class="stat-item" bindtap="goToFavorites">
+      <text class="stat-num">{{favoriteCount}}</text>
+      <text class="stat-label">收藏</text>
+    </view>
+    <view class="stat-item" bindtap="goToCart">
+      <text class="stat-num">{{cartCount}}</text>
+      <text class="stat-label">购物车</text>
+    </view>
+    <view class="stat-item" bindtap="goToOrders">
+      <text class="stat-num">{{orderCount}}</text>
+      <text class="stat-label">订单</text>
+    </view>
+  </view>
+
+  <!-- 功能列表 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="goToFavorites">
+      <view class="menu-icon">❤️</view>
+      <text class="menu-text">我的收藏</text>
+      <text class="menu-count" wx:if="{{favoriteCount > 0}}">{{favoriteCount}}</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goToCart">
+      <view class="menu-icon">🛒</view>
+      <text class="menu-text">购物车</text>
+      <text class="menu-count" wx:if="{{cartCount > 0}}">{{cartCount}}</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goToOrders">
+      <view class="menu-icon">📋</view>
+      <text class="menu-text">我的订单</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goToCoupons">
+      <view class="menu-icon">🎫</view>
+      <text class="menu-text">优惠券</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 其他服务 -->
+  <view class="menu-section">
+    <view class="menu-item">
+      <view class="menu-icon">📞</view>
+      <text class="menu-text">联系客服</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" bindtap="goToAbout">
+      <view class="menu-icon">ℹ️</view>
+      <text class="menu-text">关于我们</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item">
+      <view class="menu-icon">📄</view>
+      <text class="menu-text">隐私政策</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+</view>

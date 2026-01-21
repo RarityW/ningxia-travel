@@ -1,0 +1,201 @@
+/* 美食详情页面样式 */
+.banner-swiper {
+  width: 100%;
+  height: 400rpx;
+  background-color: #E8E8E8;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+}
+
+.info-card {
+  padding: 32rpx;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.name {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333333;
+  flex: 1;
+}
+
+.category-tag {
+  padding: 8rpx 16rpx;
+  background: linear-gradient(135deg, #8B4513, #A0522D);
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: #FFFFFF;
+  font-weight: bold;
+  margin-left: 16rpx;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+}
+
+.rating-box {
+  display: flex;
+  align-items: center;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #EEEEEE;
+}
+
+.star {
+  font-size: 32rpx;
+  color: #FFA500;
+  margin-right: 8rpx;
+}
+
+.score {
+  font-size: 32rpx;
+  color: #FFA500;
+  font-weight: bold;
+  margin-right: 16rpx;
+}
+
+.views {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.price-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 32rpx;
+}
+
+.price-label {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.price-value {
+  font-size: 48rpx;
+  color: #E53935;
+  font-weight: bold;
+}
+
+.price-value-free {
+  font-size: 32rpx;
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.shops-card {
+  padding: 32rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 20rpx;
+}
+
+.shop-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.shop-item {
+  padding: 16rpx 20rpx;
+  background-color: #F5F5F5;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.desc-card {
+  padding: 32rpx;
+  margin-bottom: 120rpx;
+}
+
+.desc-text {
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 1.8;
+}
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  padding: 20rpx 32rpx;
+  background-color: #FFFFFF;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  gap: 20rpx;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80rpx;
+  border-radius: 8rpx;
+  background-color: #F5F5F5;
+  transition: all 0.3s;
+}
+
+.action-btn:active {
+  opacity: 0.8;
+}
+
+.action-btn.primary {
+  background-color: #8B4513;
+  flex: 2;
+}
+
+.btn-icon {
+  font-size: 32rpx;
+  margin-bottom: 4rpx;
+}
+
+.btn-text {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.primary .btn-text {
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #999999;
+  font-size: 28rpx;
+}

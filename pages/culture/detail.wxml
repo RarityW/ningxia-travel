@@ -1,0 +1,58 @@
+<!-- 文化详情页面 -->
+<view class="container" wx:if="{{culture}}">
+  <!-- 顶部轮播图 -->
+  <swiper class="banner-swiper" indicator-dots autoplay circular>
+    <swiper-item wx:for="{{culture.images.length > 0 ? culture.images : [culture.coverImage]}}" wx:key="*this">
+      <image class="banner-image" src="{{item}}" mode="aspectFill"></image>
+    </swiper-item>
+  </swiper>
+
+  <!-- 基本信息 -->
+  <view class="info-card card">
+    <view class="header">
+      <text class="name">{{culture.name}}</text>
+      <view class="category-tag">{{culture.category}}</view>
+    </view>
+    <view class="meta">
+      <view class="meta-item">
+        <text class="icon">📍</text>
+        <text>{{culture.region}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="icon">⭐</text>
+        <text>推荐度: {{culture.recommend ? '高' : '中'}}</text>
+      </view>
+    </view>
+    <view class="rating-box">
+      <text class="star">★</text>
+      <text class="score">{{culture.rating}}</text>
+      <text class="views">{{culture.views}}人浏览</text>
+    </view>
+  </view>
+
+  <!-- 价格信息 -->
+  <view class="price-card card">
+    <text class="price-label">参考价格</text>
+    <text class="price-value" wx:if="{{culture.price > 0}}">¥{{culture.price}}</text>
+    <text class="price-value-free" wx:else>免费参观</text>
+  </view>
+
+  <!-- 文化介绍 -->
+  <view class="desc-card card">
+    <view class="section-title">文化介绍</view>
+    <text class="desc-text">{{culture.description}}</text>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="action-btn" bindtap="toggleFavorite">
+      <text class="btn-icon">{{isFavorite ? '❤️' : '🤍'}}</text>
+      <text class="btn-text">{{isFavorite ? '已收藏' : '收藏'}}</text>
+    </view>
+  </view>
+</view>
+
+<!-- 加载中 -->
+<view class="loading" wx:if="{{!culture}}">
+  <text>加载中...</text>
+</view>

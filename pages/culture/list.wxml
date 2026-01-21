@@ -1,0 +1,60 @@
+<!-- 文化列表页面 -->
+<view class="container">
+  <!-- 分类筛选 -->
+  <scroll-view class="category-scroll" scroll-x>
+    <view class="category-list">
+      <view
+        wx:for="{{categories}}"
+        wx:key="*this"
+        class="category-item {{currentCategory === item ? 'active' : ''}}"
+        bindtap="switchCategory"
+        data-category="{{item}}"
+      >
+        {{item}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 文化列表 -->
+  <view class="culture-list">
+    <view
+      wx:for="{{cultures}}"
+      wx:key="_id"
+      class="culture-item"
+      bindtap="goToDetail"
+      data-id="{{item._id}}"
+    >
+      <image class="culture-image" src="{{item.coverImage}}" mode="aspectFill"></image>
+      <view class="culture-info">
+        <view class="culture-header">
+          <text class="culture-name">{{item.name}}</text>
+          <view class="category-tag">{{item.category}}</view>
+        </view>
+        <view class="culture-meta">
+          <text class="region">{{item.region}}</text>
+          <view class="rating">
+            <text class="star">★</text>
+            <text class="score">{{item.rating}}</text>
+            <text class="views">({{item.views}}人浏览)</text>
+          </view>
+        </view>
+        <view class="culture-description">{{item.description}}</view>
+        <view class="culture-footer">
+          <text class="price" wx:if="{{item.price > 0}}">¥{{item.price}}</text>
+          <text class="price-free" wx:else>免费</text>
+          <text class="recommend" wx:if="{{item.recommend}}">推荐</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 暂无数据 -->
+  <view class="empty" wx:if="{{!loading && cultures.length === 0}}">
+    <text>暂无文化数据</text>
+  </view>
+</view>

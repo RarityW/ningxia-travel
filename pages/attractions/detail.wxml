@@ -1,0 +1,83 @@
+<!-- 景点详情页面 -->
+<view class="container" wx:if="{{attraction}}">
+  <!-- 顶部轮播图 -->
+  <swiper class="banner-swiper" indicator-dots autoplay circular>
+    <swiper-item wx:for="{{attraction.images.length > 0 ? attraction.images : [attraction.coverImage]}}" wx:key="*this">
+      <image class="banner-image" src="{{item}}" mode="aspectFill"></image>
+    </swiper-item>
+  </swiper>
+
+  <!-- 基本信息 -->
+  <view class="info-card card">
+    <view class="header">
+      <text class="name">{{attraction.name}}</text>
+      <view class="grade-tag">{{attraction.grade}}</view>
+    </view>
+    <view class="subtitle">{{attraction.englishName}}</view>
+    <view class="meta">
+      <view class="meta-item">
+        <text class="icon">📍</text>
+        <text>{{attraction.address}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="icon">⏰</text>
+        <text>{{attraction.openTime}}</text>
+      </view>
+      <view class="meta-item">
+        <text class="icon">📞</text>
+        <text>{{attraction.phone}}</text>
+      </view>
+    </view>
+    <view class="rating-box">
+      <text class="star">★</text>
+      <text class="score">{{attraction.rating}}</text>
+      <text class="views">{{attraction.views}}人浏览</text>
+    </view>
+  </view>
+
+  <!-- 价格信息 -->
+  <view class="price-card card">
+    <text class="price-label">门票价格</text>
+    <text class="price-value">¥{{attraction.ticketPrice}}</text>
+  </view>
+
+  <!-- 特色标签 -->
+  <view class="features-card card">
+    <view class="section-title">特色体验</view>
+    <view class="feature-list">
+      <view wx:for="{{attraction.features}}" wx:key="*this" class="feature-item">
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 景点介绍 -->
+  <view class="desc-card card">
+    <view class="section-title">景点介绍</view>
+    <text class="desc-text">{{attraction.description}}</text>
+  </view>
+
+  <!-- 标签 -->
+  <view class="tags-card card">
+    <view class="section-title">标签</view>
+    <view class="tag-list">
+      <text wx:for="{{attraction.tags}}" wx:key="*this" wx:for-item="tag" class="tag">{{tag}}</text>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="action-btn" bindtap="toggleFavorite">
+      <text class="btn-icon">{{isFavorite ? '❤️' : '🤍'}}</text>
+      <text class="btn-text">{{isFavorite ? '已收藏' : '收藏'}}</text>
+    </view>
+    <view class="action-btn primary" bindtap="buyTicket">
+      <text class="btn-text">立即购票</text>
+    </view>
+  </view>
+</view>
+
+<!-- 加载中 -->
+<view class="loading" wx:if="{{!attraction}}">
+  <text>加载中...</text>
+</view>

@@ -1,0 +1,95 @@
+{
+  "note": "这是首页图片候选清单与默认下载链接（可商用候选）。我无法在当前环境直接下载外部图片，已提供可在本机运行的下载脚本 scripts/download_images.ps1。",
+  "banners": {
+    "images/banner-1.jpg": [
+      {"title":"沙丘景观（Pixabay）","url":"https://pixabay.com/photos/desert-sahara-sand-landscape-dry-4134918/","license":"Pixabay - 免费可商用，按站点许可"},
+      {"title":"沙坡头 气势（Pexels）","url":"https://www.pexels.com/photo/pexels-photo-17585514/","license":"Pexels - 免费可商用"},
+      {"title":"贺兰山 葡萄园（日落）","url":"https://www.pexels.com/search/vineyard/","license":"Pexels - 免费可商用"}
+    ],
+    "images/banner-2.jpg": [
+      {"title":"黄河河面 日落（Pexels）","url":"https://www.pexels.com/search/yellow%20river/","license":"Pexels - 免费可商用"},
+      {"title":"沙漠黄昏（Pixabay）","url":"https://pixabay.com/images/search/sand%20dunes/","license":"Pixabay - 免费可商用"},
+      {"title":"西夏古建筑（搜索）","url":"https://www.pexels.com/search/ancient%20architecture/","license":"Pexels - 免费可商用"}
+    ]
+  },
+  "products": {
+    "images/product-1.jpg": [
+      {"title":"枸杞 特写（Pexels）","url":"https://images.pexels.com/photos/6732733/pexels-photo-6732733.jpeg","license":"Pexels - 免费可商用"},
+      {"title":"枸杞 碗装（Pexels）","url":"https://images.pexels.com/photos/10323348/pexels-photo-10323348.jpeg","license":"Pexels - 免费可商用"},
+      {"title":"干果 集合（Pexels）","url":"https://images.pexels.com/photos/31896555/pexels-photo-31896555.jpeg","license":"Pexels - 免费可商用"}
+    ],
+    "images/product-2.jpg": [
+      {"title":"葡萄酒 酒瓶（Pexels）","url":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg","license":"Pexels - 免费可商用"},
+      {"title":"葡萄园（Pexels）","url":"https://images.pexels.com/photos/17585514/pexels-photo-17585514.jpeg","license":"Pexels - 免费可商用"},
+      {"title":"红酒 玻璃（Pexels）","url":"https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg","license":"Pexels - 免费可商用"}
+    ],
+    "images/product-3.jpg": [
+      {"title":"八宝茶 礼盒（Pexels）","url":"https://images.pexels.com/photos/3970368/pexels-photo-3970368.jpeg","license":"Pexels - 免费可商用"},
+      {"title":"茶叶 罐装（Pexels）","url":"https://images.pexels.com/photos/6126708/pexels-photo-6126708.jpeg","license":"Pexels - 免费可商用"},
+      {"title":"茶与礼盒（搜索）","url":"https://www.pexels.com/search/tea%20box/","license":"Pexels - 免费可商用"}
+    ],
+    "images/product-4.jpg": [
+      {"title":"砚 台（手工） 搜索","url":"https://www.pexels.com/search/inkstone/","license":"Pexels - 免费可商用"},
+      {"title":"石质 工艺品（搜索）","url":"https://pixabay.com/images/search/stone%20craft/","license":"Pixabay - 免费可商用"},
+      {"title":"工艺品 展示（Pexels）","url":"https://www.pexels.com/search/handmade%20crafts/","license":"Pexels - 免费可商用"}
+    ],
+    "images/product-5.jpg": [
+      {"title":"回族刺绣（搜索）","url":"https://www.pexels.com/search/embroidery/","license":"Pexels - 免费可商用"},
+      {"title":"刺绣 细节（Pixabay）","url":"https://pixabay.com/images/search/embroidery/","license":"Pixabay - 免费可商用"},
+      {"title":"民俗 手工（搜索）","url":"https://www.pexels.com/search/folk%20craft/","license":"Pexels - 免费可商用"}
+    ],
+    "images/product-6.jpg": [
+      {"title":"文创 周边（搜索）","url":"https://www.pexels.com/search/souvenir/","license":"Pexels - 免费可商用"},
+      {"title":"旅游 纪念品（Pixabay）","url":"https://pixabay.com/images/search/souvenir/","license":"Pixabay - 免费可商用"},
+      {"title":"创意 商品（搜索）","url":"https://www.pexels.com/search/creative%20product/","license":"Pexels - 免费可商用"}
+    ]
+  },
+  "function_icons": {
+    "note": "建议从 unDraw 或 Heroicons 下载 SVG。下面列出入口示例搜索页，请选择需要的样式后我可生成具体 SVG 下载脚本或将 SVG 转为 PNG。",
+    "candidates": [
+      {"name":"unDraw 插画库","url":"https://undraw.co/search","license":"unDraw - 可商用（请留意作者页面的许可声明）"},
+      {"name":"Heroicons（图标集）","url":"https://heroicons.com/","license":"MIT"},
+      {"name":"IconScout / IconPark 等（搜索）","url":"https://iconscout.com/","license":"按站点许可"}
+    ]
+    ,"svg_defaults":{
+      "images/function-feiyi.svg":"https://api.iconify.design/lucide:book-open.svg",
+      "images/function-wenchuang.svg":"https://api.iconify.design/lucide:palette.svg",
+      "images/function-jingqu.svg":"https://api.iconify.design/lucide:map-pin.svg",
+      "images/function-jiudian.svg":"https://api.iconify.design/lucide:building.svg",
+      "images/function-minsu.svg":"https://api.iconify.design/lucide:home.svg",
+      "images/function-meishi.svg":"https://api.iconify.design/lucide:coffee.svg"
+    }
+  },
+  "chosen_defaults_for_download_script": {
+    "images/banner-1.jpg":"https://images.pexels.com/photos/17585514/pexels-photo-17585514.jpeg",
+    "images/banner-2.jpg":"https://images.pexels.com/photos/3970368/pexels-photo-3970368.jpeg",
+    "images/product-1.jpg":"https://images.pexels.com/photos/6732733/pexels-photo-6732733.jpeg",
+    "images/product-2.jpg":"https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg",
+    "images/product-3.jpg":"https://images.pexels.com/photos/3970368/pexels-photo-3970368.jpeg",
+    "images/product-4.jpg":"https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg",
+    "images/product-5.jpg":"https://images.pexels.com/photos/10323348/pexels-photo-10323348.jpeg",
+    "images/product-6.jpg":"https://images.pexels.com/photos/31896555/pexels-photo-31896555.jpeg"
+  }
+  ,"optimized":{
+    "banners":{
+      "images/banner-1.jpg":{"size":"750x400","optimized":"true"},
+      "images/banner-2.jpg":{"size":"750x400","optimized":"true"}
+    },
+    "products":{
+      "images/product-1.jpg":{"size":"300x300","optimized":"true"},
+      "images/product-2.jpg":{"size":"300x300","optimized":"true"},
+      "images/product-3.jpg":{"size":"300x300","optimized":"true"},
+      "images/product-4.jpg":{"size":"300x300","optimized":"true"},
+      "images/product-5.jpg":{"size":"300x300","optimized":"true"},
+      "images/product-6.jpg":{"size":"300x300","optimized":"true"}
+    },
+    "icons_png_generated":{
+      "images/function-feiyi.png":"120x120",
+      "images/function-wenchuang.png":"120x120",
+      "images/function-jingqu.png":"120x120",
+      "images/function-jiudian.png":"120x120",
+      "images/function-minsu.png":"120x120",
+      "images/function-meishi.png":"120x120"
+    }
+  }
+}

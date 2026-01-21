@@ -1,0 +1,177 @@
+/* 文化列表页面样式 */
+page {
+  background-color: var(--bg-cream);
+}
+
+.category-scroll {
+  position: sticky;
+  top: 0;
+  background-color: var(--card-white);
+  white-space: nowrap;
+  padding: 20rpx 0;
+  z-index: 100;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.category-list {
+  display: inline-block;
+  padding: 0 20rpx;
+}
+
+.category-item {
+  display: inline-block;
+  padding: 12rpx 28rpx;
+  margin-right: 16rpx;
+  background-color: var(--bg-soft);
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: var(--text-dark);
+  transition: all 0.3s;
+}
+
+.category-item.active {
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-light));
+  color: var(--card-white);
+}
+
+.culture-list {
+  margin-top: 20rpx;
+}
+
+.culture-item {
+  display: flex;
+  background-color: var(--card-white);
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  padding: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+}
+
+.culture-item:active {
+  transform: scale(0.98);
+  opacity: 0.8;
+}
+
+.culture-image {
+  width: 240rpx;
+  height: 180rpx;
+  border-radius: 12rpx;
+  background-color: var(--bg-soft);
+  flex-shrink: 0;
+}
+
+.culture-info {
+  flex: 1;
+  margin-left: 20rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.culture-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.culture-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: var(--text-dark);
+  flex: 1;
+}
+
+.category-tag {
+  padding: 4rpx 12rpx;
+  background: linear-gradient(135deg, var(--primary-green), var(--primary-light));
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  color: var(--card-white);
+  margin-left: 16rpx;
+}
+
+.culture-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8rpx;
+}
+
+.region {
+  font-size: 24rpx;
+  color: var(--text-gray);
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+}
+
+.star {
+  font-size: 24rpx;
+  color: var(--sand-yellow);
+  margin-right: 4rpx;
+}
+
+.score {
+  font-size: 24rpx;
+  color: var(--primary-green);
+  font-weight: bold;
+  margin-right: 8rpx;
+}
+
+.views {
+  font-size: 22rpx;
+  color: var(--text-gray);
+}
+
+.culture-description {
+  font-size: 24rpx;
+  color: var(--text-dark);
+  margin-top: 8rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.culture-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8rpx;
+}
+
+.price {
+  font-size: 32rpx;
+  color: var(--primary-green);
+  font-weight: bold;
+}
+
+.price-free {
+  font-size: 26rpx;
+  color: var(--primary-light);
+  font-weight: bold;
+}
+
+.recommend {
+  padding: 4rpx 12rpx;
+  background-color: var(--bg-soft);
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  color: var(--primary-green);
+}
+
+.loading {
+  text-align: center;
+  padding: 40rpx;
+  color: var(--text-gray);
+}
+
+.empty {
+  text-align: center;
+  padding: 80rpx 40rpx;
+  color: var(--text-gray);
+}
