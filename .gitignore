@@ -1,0 +1,28 @@
+# 微信小程序
+miniprogram/.temp/
+miniprogram/.prod/
+
+# 编译产物
+backend/*.exe
+backend/*.log
+backend/logs/
+backend/main
+
+# 环境变量
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.tmp
+*.temp
+*~

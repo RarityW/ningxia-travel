@@ -1,8 +1,0 @@
-[
-{"name":"手抓羊肉","coverImage":"https://via.placeholder.com/500x350/FFA07A/FFFFFF?text=手抓羊肉","images":[],"category":"特色菜","region":"银川市","shops":["老毛手抓(解放东街店)","国强手抓(新华东街店)","德隆楼手抓(鼓楼店)"],"description":"宁夏手抓羊肉选用滩羊，肉质鲜嫩，肥而不腻，香而不膻。手抓羊肉是宁夏的传统名菜，蘸上蒜醋汁，味道更佳。","price":120,"recommend":true,"rating":4.9,"views":8000},
-{"name":"羊杂碎","coverImage":"https://via.placeholder.com/500x350/FF7F50/FFFFFF?text=羊杂碎","images":[],"category":"小吃","region":"吴忠市","shops":["杨记羊杂碎(胜利街店)","老字号羊杂碎(东塔市场)"],"description":"宁夏羊杂碎是用羊的头、蹄、心、肝、肺、肚等内脏熬制而成，汤色红亮，味道鲜美，是宁夏人的最爱。","price":35,"recommend":true,"rating":4.7,"views":6000},
-{"name":"沙湖大鱼头","coverImage":"https://via.placeholder.com/500x350/4682B4/FFFFFF?text=沙湖大鱼头","images":[],"category":"特色菜","region":"石嘴山市","shops":["沙湖景区餐厅","银川大鱼头(湖滨街店)"],"description":"沙湖大鱼头是宁夏沙湖的特色美食，选用沙湖鳙鱼，头大肉嫩，汤色乳白，味道鲜美。","price":168,"recommend":true,"rating":4.8,"views":5000},
-{"name":"油香","coverImage":"https://via.placeholder.com/500x350/DAA520/FFFFFF?text=油香","images":[],"category":"小吃","region":"银川市","shops":["回民街油香店","同心油香(南门广场)"],"description":"油香是宁夏回族的传统美食，炸制金黄，香脆可口，是节庆和宴请的必备食品。","price":5,"recommend":true,"rating":4.5,"views":4000},
-{"name":"羊肉臊子面","coverImage":"https://via.placeholder.com/500x350/F0E68C/FFFFFF?text=羊肉臊子面","images":[],"category":"主食","region":"固原市","shops":["固原老街面馆","六盘山羊肉面"],"description":"宁夏羊肉臊子面汤浓面筋，臊子鲜香，面条劲道，是宁夏人的日常主食。","price":25,"recommend":false,"rating":4.4,"views":3000},
-{"name":"八宝茶","coverImage":"https://via.placeholder.com/500x350/8FBC8F/FFFFFF?text=八宝茶","images":[],"category":"饮品","region":"银川市","shops":["吴忠八宝茶(步行街店)","宁夏八宝茶总店"],"description":"宁夏八宝茶由茶叶、红枣、桂圆、枸杞、葡萄干、核桃仁、芝麻、冰糖等八种原料冲泡而成，香甜可口，营养丰富。","price":15,"recommend":true,"rating":4.6,"views":5500},
-]

@@ -1,62 +1,14 @@
 {
-  "description": "宁夏文旅小程序",
+  "description": "宁夏文旅项目 - 前后端分离架构",
+  "miniprogramRoot": "miniprogram/",
   "cloudfunctionRoot": "cloudfunctions/",
-  "miniprogramRoot": "",
-  "cloudbaseRoot": "cloudbase/",
-  "packOptions": {
-    "ignore": [],
-    "include": []
-  },
   "setting": {
-    "bundle": false,
-    "userConfirmedBundleSwitch": false,
     "urlCheck": false,
-    "scopeDataCheck": false,
-    "coverView": true,
     "es6": true,
     "postcss": true,
-    "compileHotReLoad": false,
-    "lazyloadPlaceholderEnable": false,
-    "preloadBackgroundData": false,
     "minified": true,
     "autoAudits": false,
-    "newFeature": false,
-    "uglifyFileName": false,
-    "uploadWithSourceMap": true,
-    "useIsolateContext": true,
-    "nodeModules": false,
-    "enhance": true,
-    "useMultiFrameRuntime": true,
-    "useApiHook": true,
-    "useApiHostProcess": true,
-    "showShadowRootInWxmlPanel": true,
-    "packNpmManually": false,
-    "enableEngineNative": false,
-    "packNpmRelationList": [],
-    "minifyWXSS": true,
-    "showES6CompileOption": false,
-    "minifyWXML": true,
-    "babelSetting": {
-      "ignore": [],
-      "disablePlugins": [],
-      "outputPath": ""
-    },
-    "compileWorklet": false,
-    "localPlugins": false,
-    "disableUseStrict": false,
-    "useCompilerPlugins": false,
-    "condition": false,
-    "swc": false,
-    "disableSWC": true
+    "newFeature": false
   },
-  "compileType": "miniprogram",
-  "libVersion": "3.13.2",
-  "appid": "wxe8db933126040da4",
-  "projectname": "宁夏文旅小程序",
-  "condition": {},
-  "editorSetting": {
-    "tabIndent": "insertSpaces",
-    "tabSize": 2
-  },
-  "simulatorPluginLibVersion": {}
+  "compileType": "miniprogram"
 }
