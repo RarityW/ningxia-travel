@@ -1,0 +1,126 @@
+<!-- pages/shop/index.wxml -->
+<custom-nav title="宁选好礼" back="{{true}}"></custom-nav>
+
+<view class="container" style="padding-top: {{statusBarHeight}}px">
+  
+  <!-- 搜索栏 -->
+  <view class="shop-header">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="宁夏人的甄选好物" placeholder-class="placeholder-text" disabled />
+      <text class="search-voice-icon">🎤</text>
+    </view>
+  </view>
+
+  <scroll-view class="main-scroll" scroll-y enable-back-to-top>
+    
+    <view class="scroll-content">
+      <!-- Banner区域 -->
+      <view class="banner-section">
+        <image class="banner-img" src="{{banners[0]}}" mode="aspectFill" />
+        <view class="banner-text-overlay">
+          <text class="banner-title">塞上江南 甄选好礼</text>
+          <view class="banner-tags">
+            <text class="banner-tag">中宁枸杞</text>
+            <text class="banner-tag">贺兰红酒</text>
+            <text class="banner-tag">盐池滩羊</text>
+          </view>
+          <text class="banner-subtitle">—— 官方自营 源头直供 品质保证 ——</text>
+        </view>
+      </view>
+
+      <!-- 快捷入口卡片 -->
+      <view class="quick-entry-row">
+        <view class="quick-card" bindtap="switchTab" data-index="1">
+          <view class="quick-text">
+            <text class="quick-title">必买特产</text>
+            <text class="quick-sub">宁夏特色 > </text>
+          </view>
+          <image class="quick-icon" src="/images/function-meishi.svg" />
+        </view>
+        <view class="quick-card" bindtap="switchTab" data-index="5">
+          <view class="quick-text">
+            <text class="quick-title">伴手礼优选</text>
+            <text class="quick-sub">文创新品 > </text>
+          </view>
+          <image class="quick-icon" src="/images/function-wenchuang.svg" />
+        </view>
+      </view>
+
+      <!-- 广告/活动Banner -->
+      <view class="ad-banner">
+        <view class="ad-content">
+          <text class="ad-title">文创专区</text>
+          <text class="ad-sub">放大招</text>
+          <view class="ad-btn">点击购买</view>
+        </view>
+        <image class="ad-bg" src="/images/banner-1.jpg" mode="aspectFill" />
+      </view>
+
+      <!-- 服务标签 -->
+      <view class="service-tags">
+        <text class="service-tag">国企运营</text>
+        <text class="service-divider">|</text>
+        <text class="service-tag">源头直供</text>
+        <text class="service-divider">|</text>
+        <text class="service-tag">品质优选</text>
+        <text class="service-divider">|</text>
+        <text class="service-tag">传统工艺</text>
+        <text class="service-divider">|</text>
+        <text class="service-tag">直邮到家</text>
+      </view>
+
+      <!-- 分类Tabs -->
+      <view class="tab-header">
+        <view class="tab-item {{currentTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-index="0">明星产品</view>
+        <view class="tab-item {{currentTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-index="1">当季直销</view>
+        <view class="tab-item {{currentTab === 2 ? 'active' : ''}}" bindtap="switchTab" data-index="2">助农扶农</view>
+      </view>
+
+      <!-- 特色产品Banner -->
+      <view class="feature-product-banner">
+        <text class="feature-title">特色产品：枸杞、葡萄酒等</text>
+      </view>
+
+      <!-- 商品列表 -->
+      <view class="product-grid">
+        <block wx:for="{{products}}" wx:key="id">
+          <view class="product-card" bindtap="goToDetail" data-id="{{item.id}}">
+            <view class="image-wrapper">
+              <image class="product-img" src="{{item.image}}" mode="aspectFill" lazy-load />
+            </view>
+            <view class="product-info">
+              <text class="product-name">{{item.name}}</text>
+              <view class="product-bottom">
+                <view class="price-box">
+                  <text class="currency">¥</text>
+                  <text class="price">{{item.price}}</text>
+                </view>
+                <text class="sales-text">已售{{item.sales}}</text>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+      
+      <!-- 底部垫高 -->
+      <view style="height: 120rpx;"></view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部Tab栏 (模拟) -->
+  <view class="bottom-tab-bar">
+    <view class="tab-btn active">
+      <text class="tab-icon">🎁</text>
+      <text class="tab-text">宁选好礼</text>
+    </view>
+    <view class="tab-btn">
+      <text class="tab-icon">🏷️</text>
+      <text class="tab-text">品牌精品</text>
+    </view>
+    <view class="tab-btn">
+      <text class="tab-icon">🛒</text>
+      <text class="tab-text">购物车</text>
+    </view>
+  </view>
+</view>

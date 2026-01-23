@@ -97,7 +97,24 @@ Page({
         sales: 567
       }
     ],
-    filteredProducts: []
+    filteredProducts: [],
+
+    // 宁选好礼分类
+    shopCategories: [
+      { id: 1, name: '宁夏枸杞', icon: '🍒', color: 'rgba(255, 0, 0, 0.1)' }, // Red
+      { id: 2, name: '贺兰红酒', icon: '🍷', color: 'rgba(128, 0, 128, 0.1)' }, // Purple
+      { id: 3, name: '盐池滩羊', icon: '🐑', color: 'rgba(255, 165, 0, 0.1)' }, // Orange
+      { id: 4, name: '八宝茶', icon: '🍵', color: 'rgba(0, 128, 0, 0.1)' }, // Green
+      { id: 5, name: '非遗文创', icon: '🎨', color: 'rgba(0, 0, 255, 0.1)' }, // Blue
+      { id: 6, name: '特色美食', icon: '🥘', color: 'rgba(255, 192, 203, 0.1)' } // Pink
+    ]
+  },
+
+  goToShop(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: `/pages/shop/index?categoryId=${id}`
+    });
   },
 
   onLoad() {
@@ -129,92 +146,103 @@ Page({
 
   // 获取用户位置和天气信息
   getLocationAndWeather() {
-    wx.getLocation({
-      type: 'wgs84',
-      success: (res) => {
-        console.log('Location success:', res);
-        // 这里可以调用天气API获取实时天气
-        // 暂时模拟宁夏的天气数据
-        this.setData({
-          currentLocation: '宁夏',
-          temperature: '12.0~22.0°C'
-        });
-      },
-      fail: (err) => {
-        console.log('Location fail:', err);
-        // 定位失败时显示默认数据
-        this.setData({
-          currentLocation: '宁夏',
-          temperature: '12.0~22.0°C'
-        });
-      }
-    });
-  },
-
-  onShareAppMessage() {
-    return {
-      title: '宁夏文旅 - 发现宁夏之美',
-      path: '/pages/index/index'
-    };
-  },
-
-  // 搜索输入处理
-  onSearchInput(e) {
-    const keyword = e.detail.value;
-    // 这里可以添加搜索逻辑
-    console.log('Search input:', keyword);
-  },
-
-  // 加载天气数据（保留原有方法以防需要）
-  loadWeather() {
-    const AMAP_KEY = 'YOUR_AMAP_KEY';
-
-    wx.getLocation({
-      type: 'wgs84',
-      success: (res) => {
-        wx.request({
-          url: 'https://restapi.amap.com/v3/weather/weatherInfo',
-          data: {
-            key: AMAP_KEY,
-            city: '640000',
-            extensions: 'base'
-          },
-          success: (res) => {
-            if (res.data && res.data.lives && res.data.lives.length > 0) {
-              const lives = res.data.lives[0];
-              this.setData({
-                temperature: `${lives.temperature}°C`,
-                weatherIcon: this.getWeatherIcon(lives.weather)
+    const that = this;
+    // 1. 获取地理位置授权
+    wx.getSetting({
+      success(res) {
+        if (!res.authSetting['scope.userLocation']) {
+          wx.authorize({
+            scope: 'scope.userLocation',
+            success() {
+              that.doGetLocation();
+            },
+            fail() {
+              // 用户拒绝授权，显示默认
+              that.setData({
+                currentLocation: '宁夏',
+                temperature: '12°C'
+              });
+              wx.showToast({
+                title: '授权位置可获取实时天气',
+                icon: 'none'
               });
             }
-          },
-          fail: () => {
-            this.setMockWeather();
-          }
-        });
-      },
-      fail: () => {
-        this.setMockWeather();
+          });
+        } else {
+          that.doGetLocation();
+        }
       }
     });
   },
 
-  // 模拟天气数据
-  setMockWeather() {
-    const mockData = {
-      temperature: Math.floor(Math.random() * 20 + 5),
-      weather: this.getMockWeatherCondition()
-    };
-    this.setData({
-      temperature: `${mockData.temperature}°C`,
-      weatherIcon: this.getWeatherIcon(mockData.weather)
+  // 执行定位
+  doGetLocation() {
+    const that = this;
+    wx.getLocation({
+      type: 'wgs84',
+      success(res) {
+        const latitude = res.latitude;
+        const longitude = res.longitude;
+
+        // 2. 根据经纬度获取城市名 (逆地理编码)
+        // 注意：实际开发需要使用腾讯地图SDK或类似服务
+        // 这里模拟根据坐标大致判断，或者请求后端API
+        that.getCityName(latitude, longitude);
+
+        // 3. 获取天气
+        that.getWeather(latitude, longitude);
+      },
+      fail(err) {
+        console.error('Location fail:', err);
+        that.setData({
+          currentLocation: '宁夏',
+          temperature: '12°C'
+        });
+      }
     });
   },
 
-  // 获取模拟天气状况
-  getMockWeatherCondition() {
-    const conditions = ['晴', '多云', '阴', '小雨', '雪'];
-    return conditions[Math.floor(Math.random() * conditions.length)];
+  // 【模拟】逆地理编码 - 实际需接入地图API
+  getCityName(lat, lng) {
+    // 实际代码示例：
+    /*
+    qqmapsdk.reverseGeocoder({
+      location: { latitude: lat, longitude: lng },
+      success: function(res) {
+        const city = res.result.address_component.city;
+        that.setData({ currentLocation: city.replace('市', '') });
+      }
+    });
+    */
+
+    // 简易模拟：这里直接显示“银川”作为演示，或者保留“宁夏”
+    // 为了演示效果，延迟一下
+    setTimeout(() => {
+      this.setData({
+        currentLocation: '银川' // 示例：定位成功后更新为具体城市
+      });
+    }, 500);
+  },
+
+  // 【模拟】获取天气 - 实际需接入天气API
+  getWeather(lat, lng) {
+    // 实际代码示例：
+    /*
+    wx.request({
+      url: `https://api.weather.com/v3/weather/now?location=${lng},${lat}&key=YOUR_KEY`,
+      success: (res) => {
+        this.setData({ temperature: res.data.now.text + ' ' + res.data.now.temp + '°C' });
+      }
+    });
+    */
+
+    // 简易模拟：生成一个随机真实感温度
+    const temp = Math.floor(Math.random() * (25 - 15) + 15); // 15-25度
+    setTimeout(() => {
+      this.setData({
+        temperature: `${temp}°C`
+      });
+    }, 500);
   },
 
   // 根据天气描述返回图标

@@ -40,6 +40,7 @@ func Connect() error {
 		&models.Cart{},
 		&models.Coupon{},
 		&models.Admin{},
+		&models.Merchant{},
 	)
 
 	if err != nil {

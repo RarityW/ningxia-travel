@@ -1,0 +1,9 @@
+{
+    "navigationBarTitleText": "宁选好礼",
+    "enablePullDownRefresh": true,
+    "navigationBarBackgroundColor": "#FDF8F3",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+        "custom-nav": "/components/custom-nav/index"
+    }
+}

@@ -3,11 +3,12 @@ package main
 import (
 	"log"
 
-	"github.com/gin-gonic/gin"
-	"ningxia-wenlv-backend/api/v1"
+	v1 "ningxia-wenlv-backend/api/v1"
 	"ningxia-wenlv-backend/config"
 	"ningxia-wenlv-backend/db"
 	"ningxia-wenlv-backend/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -36,55 +37,68 @@ func main() {
 		// 认证路由（不需要 JWT）
 		auth := apiV1.Group("/auth")
 		{
-			auth.POST("/login", v1.Login)          // 小程序登录
-			auth.POST("/admin/login", v1.AdminLogin) // 管理员登录
+			auth.POST("/login", v1.Login)                // 小程序登录 (WeChat)
+			auth.POST("/user/register", v1.UserRegister) // 用户注册 (Phone/Pwd)
+			auth.POST("/user/login", v1.UserLogin)       // 用户登录 (Phone/Pwd)
+			auth.POST("/admin/login", v1.AdminLogin)     // 管理员登录
 		}
 
 		// 景点路由
 		attractions := apiV1.Group("/attractions")
 		{
 			attractions.GET("", v1.GetAttractions)    // 获取景点列表（分页）
-			attractions.GET("/:id", v1.GetAttraction)  // 获取景点详情
+			attractions.GET("/:id", v1.GetAttraction) // 获取景点详情
 		}
 
 		// 美食路由
 		food := apiV1.Group("/food")
 		{
-			food.GET("", v1.GetFoods)         // 获取美食列表
-			food.GET("/:id", v1.GetFood)       // 获取美食详情
+			food.GET("", v1.GetFoods)    // 获取美食列表
+			food.GET("/:id", v1.GetFood) // 获取美食详情
 		}
 
 		// 文化路由
 		culture := apiV1.Group("/culture")
 		{
-			culture.GET("", v1.GetCultures)      // 获取文化列表
-			culture.GET("/:id", v1.GetCulture)     // 获取文化详情
+			culture.GET("", v1.GetCultures)    // 获取文化列表
+			culture.GET("/:id", v1.GetCulture) // 获取文化详情
 		}
 
 		// 商品路由
 		market := apiV1.Group("/market")
 		{
-			market.GET("", v1.GetProducts)          // 获取商品列表
-			market.GET("/:id", v1.GetProduct)        // 获取商品详情
+			market.GET("", v1.GetProducts)    // 获取商品列表
+			market.GET("/:id", v1.GetProduct) // 获取商品详情
+		}
+
+		// 商家无需登录即可注册
+		apiV1.POST("/merchant/register", v1.RegisterMerchant)
+
+		// 商家路由组 (需要管理员Auth)
+		merchant := apiV1.Group("/merchant")
+		merchant.Use(middleware.AdminAuthMiddleware())
+		{
+			merchant.GET("/profile", v1.GetMerchantProfile)
+			merchant.PUT("/profile", v1.UpdateMerchantProfile)
 		}
 
 		// 用户路由（需要 JWT）
 		user := apiV1.Group("/user")
 		user.Use(middleware.AuthMiddleware())
 		{
-			user.GET("/profile", v1.GetUserProfile)  // 获取用户信息
-			user.PUT("/profile", v1.UpdateProfile) // 更新用户信息
-			user.GET("/favorites", v1.GetFavorites) // 获取收藏列表
-			user.POST("/favorites", v1.AddFavorite)  // 添加收藏
+			user.GET("/profile", v1.GetUserProfile)          // 获取用户信息
+			user.PUT("/profile", v1.UpdateProfile)           // 更新用户信息
+			user.GET("/favorites", v1.GetFavorites)          // 获取收藏列表
+			user.POST("/favorites", v1.AddFavorite)          // 添加收藏
 			user.DELETE("/favorites/:id", v1.DeleteFavorite) // 删除收藏
-			user.GET("/cart", v1.GetCart)          // 获取购物车
-			user.POST("/cart", v1.AddToCart)        // 添加到购物车
-			user.PUT("/cart/:id", v1.UpdateCart)    // 更新购物车
-			user.DELETE("/cart/:id", v1.DeleteFromCart) // 从购物车删除
-			user.GET("/orders", v1.GetOrders)       // 获取订单列表
-			user.POST("/orders", v1.CreateOrder)    // 创建订单
-			user.GET("/orders/:id", v1.GetOrder)    // 获取订单详情
-			user.GET("/coupons", v1.GetCoupons)      // 获取优惠券列表
+			user.GET("/cart", v1.GetCart)                    // 获取购物车
+			user.POST("/cart", v1.AddToCart)                 // 添加到购物车
+			user.PUT("/cart/:id", v1.UpdateCart)             // 更新购物车
+			user.DELETE("/cart/:id", v1.DeleteFromCart)      // 从购物车删除
+			user.GET("/orders", v1.GetOrders)                // 获取订单列表
+			user.POST("/orders", v1.CreateOrder)             // 创建订单
+			user.GET("/orders/:id", v1.GetOrder)             // 获取订单详情
+			user.GET("/coupons", v1.GetCoupons)              // 获取优惠券列表
 		}
 
 		// 管理员路由（需要管理员 JWT）

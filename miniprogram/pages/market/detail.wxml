@@ -1,113 +1,90 @@
 <!-- 宁夏旅游门票优惠 - 景点详情页 -->
 <view class="container" wx:if="{{scenic}}">
-  <!-- 轮播图 -->
-  <swiper class="banner-swiper" indicator-dots indicator-color="rgba(255,255,255,0.4)" indicator-active-color="#FFD700" autoplay circular>
+  <!-- 导航栏 -->
+  <custom-nav title="商品详情" background="#ffffff" color="#000000"></custom-nav>
+
+  <!-- 1. 商品图轮播 (1:1比例) -->
+  <swiper class="product-swiper" indicator-dots indicator-color="rgba(0,0,0,0.3)" indicator-active-color="#000000" autoplay circular>
     <swiper-item wx:for="{{scenic.images.length > 0 ? scenic.images : [scenic.image]}}" wx:key="*this">
-      <image class="banner-image" src="{{item}}" mode="aspectFill" />
+      <image class="product-image" src="{{item}}" mode="aspectFill" />
     </swiper-item>
   </swiper>
 
-  <!-- 返回按钮 -->
-  <view class="back-btn" bindtap="goBack">
-    <text class="back-icon">←</text>
-  </view>
-
-  <!-- 优惠标签 -->
-  <view class="discount-tag" wx:if="{{scenic.discountPrice}}">
-    <text class="tag-text">5折优惠</text>
-  </view>
-
-  <!-- 景点信息 -->
-  <view class="info-card">
-    <view class="scenic-header">
-      <text class="scenic-name">{{scenic.name}}</text>
-      <view class="scenic-badges">
-        <text class="badge badge-hot" wx:if="{{scenic.hot}}">热门</text>
-        <text class="badge badge-new" wx:if="{{scenic.new}}">新品</text>
-      </view>
+  <!-- 2. 价格与标题区域 -->
+  <view class="product-header">
+    <view class="price-row">
+      <text class="currency">¥</text>
+      <text class="price">{{scenic.discountPrice}}</text>
+      <text class="original-price" wx:if="{{scenic.price > scenic.discountPrice}}">¥{{scenic.price}}</text>
+    </view>
+    
+    <view class="title-row">
+      <text class="product-title">{{scenic.name}}</text>
     </view>
 
-    <view class="scenic-location">
-      <text class="location-icon">📍</text>
-      <text class="location-text">{{scenic.location}}</text>
-    </view>
-
-    <!-- 价格区域 -->
-    <view class="price-section">
-      <view class="price-row">
-        <view class="discount-price">
-          <text class="price-symbol">¥</text>
-          <text class="price-value">{{scenic.discountPrice}}</text>
-          <text class="price-unit">起</text>
-        </view>
-        <view class="original-price" wx:if="{{scenic.price > scenic.discountPrice}}">
-          <text class="original-label">原价</text>
-          <text class="original-value">¥{{scenic.price}}</text>
-        </view>
+    <!-- 优惠券Banner -->
+    <view class="coupon-banner" wx:if="{{scenic.coupons && scenic.coupons.length > 0}}">
+      <view class="coupon-left">
+        <text class="coupon-label">优惠券</text>
+        <text class="coupon-text" wx:for="{{scenic.coupons}}" wx:key="index">{{item.title}}</text>
       </view>
-      <view class="discount-badge">
-        <text class="discount-text">享5折优惠</text>
+      <view class="coupon-right">
+        <text>去领券 ›</text>
       </view>
     </view>
   </view>
 
-  <!-- 优惠说明 -->
-  <view class="privilege-card">
-    <view class="card-title">
-      <text class="title-icon">🎁</text>
-      <text class="title-text">优惠权益</text>
-    </view>
-    <view class="privilege-list">
-      <view class="privilege-item">
-        <text class="check-icon">✓</text>
-        <text class="privilege-text">购票核销后享全区A级景区5折</text>
-      </view>
-      <view class="privilege-item">
-        <text class="check-icon">✓</text>
-        <text class="privilege-text">免费携带1.2米以下儿童</text>
-      </view>
-      <view class="privilege-item">
-        <text class="check-icon">✓</text>
-        <text class="privilege-text">60岁以上老人免票</text>
-      </view>
-    </view>
+  <!-- 3. 规格选择 -->
+  <view class="spec-cell" wx:if="{{scenic.specs}}">
+    <text class="cell-label">选择</text>
+    <text class="cell-value">{{scenic.specs[0]}}</text>
+    <text class="cell-arrow">›</text>
   </view>
 
-  <!-- 景点介绍 -->
-  <view class="intro-card">
-    <view class="card-title">
-      <text class="title-icon">📖</text>
-      <text class="title-text">景点介绍</text>
+  <!-- 4. 权益/服务 (原有) -->
+  <view class="service-cell">
+    <view class="service-item">
+      <text class="check-icon">✓</text>
+      <text>包邮</text>
     </view>
+    <view class="service-item">
+      <text class="check-icon">✓</text>
+      <text>正品保证</text>
+    </view>
+    <view class="service-item">
+      <text class="check-icon">✓</text>
+      <text>7天无理由退货</text>
+    </view>
+    <text class="cell-arrow">›</text>
+  </view>
+
+  <!-- 5. 详情内容 -->
+  <view class="detail-content">
+    <view class="section-title">—— 商品详情 ——</view>
     <text class="intro-text">{{scenic.description}}</text>
-  </view>
-
-  <!-- 营业时间 -->
-  <view class="hours-card">
-    <view class="card-title">
-      <text class="title-icon">🕐</text>
-      <text class="title-text">营业时间</text>
-    </view>
-    <view class="hours-info">
-      <text class="hours-text">周一至周日 08:30 - 17:30</text>
-      <text class="hours-notice">最晚入园时间 16:30</text>
-    </view>
+    <!-- 模拟详情图 -->
+    <block wx:for="{{scenic.images}}" wx:key="*this">
+      <image class="detail-image" src="{{item}}" mode="widthFix" />
+    </block>
   </view>
 
   <!-- 底部操作栏 -->
   <view class="bottom-bar">
-    <view class="service-btn" bindtap="contactService">
-      <text class="service-icon">💬</text>
-      <text class="service-text">客服</text>
+    <view class="icon-btn" bindtap="goToShop">
+      <text class="icon">🏠</text>
+      <text class="text">店铺</text>
     </view>
-    
-    <view class="price-display">
-      <text class="display-label">优惠价</text>
-      <text class="display-price">¥{{scenic.discountPrice}}</text>
+    <view class="icon-btn" bindtap="goToCart">
+      <text class="icon">🛒</text>
+      <text class="text">购物车</text>
     </view>
-    
-    <view class="buy-btn" bindtap="buyTicket">
-      <text class="btn-text">立即购票</text>
+    <view class="action-btn-group">
+      <view class="action-btn add-cart" bindtap="addToCart">
+        <text>加入购物车</text>
+      </view>
+      <view class="action-btn buy-now" bindtap="buyTicket">
+        <text>立即购买</text>
+      </view>
     </view>
   </view>
 </view>
@@ -116,10 +93,4 @@
 <view class="loading" wx:if="{{!scenic}}">
   <view class="spinner"></view>
   <text>加载中...</text>
-</view>
-
-<!-- 空状态 -->
-<view class="empty" wx:if="{{!loading && !scenic}}">
-  <text class="empty-icon">😕</text>
-  <text class="empty-text">景点不存在</text>
 </view>

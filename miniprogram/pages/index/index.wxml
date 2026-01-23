@@ -12,9 +12,7 @@
           <text class="temperature">{{temperature}}</text>
         </view>
       </view>
-      <view class="header-right">
-        <text class="qr-icon">🔍</text>
-      </view>
+
     </view>
 
     <!-- 搜索框 -->
@@ -137,6 +135,36 @@
       <text class="notice-text">宁夏旅游咨询投诉热线：12345 欢迎咨询</text>
       <text class="notice-arrow">›</text>
     </view>
+  </view>
+
+  <!-- 【新增】宁选好礼 - 特产分类入口 -->
+  <view class="shop-entry-section">
+    <view class="section-header">
+      <view class="header-left">
+        <text class="section-title">宁选好礼</text>
+        <view class="new-badge">
+          <text class="new-text">OFFICIAL</text>
+        </view>
+      </view>
+      <view class="header-right" bindtap="goToShop" data-id="0">
+        <text class="more-text">更多好物</text>
+        <text class="more-arrow">→</text>
+      </view>
+    </view>
+    
+    <scroll-view class="shop-categories" scroll-x="true" show-scrollbar="false">
+      <view class="category-list">
+        <!-- 动态生成分类卡片 -->
+        <block wx:for="{{shopCategories}}" wx:key="id">
+          <view class="category-card" bindtap="goToShop" data-id="{{index}}">
+            <view class="category-icon-bg" style="background: {{item.color}}">
+              <text class="category-icon">{{item.icon}}</text>
+            </view>
+            <text class="category-name">{{item.name}}</text>
+          </view>
+        </block>
+      </view>
+    </scroll-view>
   </view>
 
   <!-- 【5】Banner区域 - 景区门票优惠 -->

@@ -1,6 +1,5 @@
-// API配置
 const config = {
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://127.0.0.1:8080',
   apiVersion: '/api/v1'
 }
 

@@ -1,0 +1,54 @@
+/* components/custom-nav/index.wxss */
+.custom-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  transition: background 0.3s;
+}
+
+.nav-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16rpx;
+  position: relative;
+}
+
+.nav-left, .nav-right {
+  width: 80rpx; /* 约等于胶囊按钮宽度的一半 */
+  display: flex;
+  align-items: center;
+}
+
+.back-btn {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: 1rpx solid rgba(0,0,0,0.1); */ /* Optional: circle border */
+}
+
+.back-icon {
+  font-size: 48rpx;
+  line-height: 1;
+  font-weight: 300;
+  position: relative;
+  top: -2rpx;
+  left: -2rpx;
+}
+
+.nav-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 32rpx;
+  font-weight: 600;
+  max-width: 400rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,4 +1,5 @@
 <!-- 文化列表页面 -->
+<custom-nav title="宁夏文化" back="{{true}}"></custom-nav>
 <view class="container">
   <!-- 分类筛选 -->
   <scroll-view class="category-scroll" scroll-x>

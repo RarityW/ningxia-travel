@@ -1,4 +1,5 @@
 <!-- 美食详情页面 -->
+<custom-nav title="美食详情" back="{{true}}"></custom-nav>
 <view class="container" wx:if="{{food}}">
   <!-- 顶部轮播图 -->
   <swiper class="banner-swiper" indicator-dots autoplay circular>

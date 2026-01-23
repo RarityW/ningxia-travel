@@ -1,87 +1,137 @@
 <!-- 个人中心页面 -->
-<view class="container">
-  <!-- 用户信息头部 -->
-  <view class="header-section" bindtap="handleHeaderTap">
-    <view class="user-info">
-      <view class="avatar-wrapper">
-        <image class="avatar" src="{{userInfo.avatarUrl || userInfo.avatar || 'https://via.placeholder.com/200x200/F5EDE4/8B7355?text=游客'}}" mode="aspectFill" />
+<custom-nav title="个人中心" back="{{false}}" background="#FDF8F3"></custom-nav>
+
+<view class="container" style="padding-top: {{statusBarHeight}}px">
+  
+  <!-- 未登录状态：登录/注册面板 -->
+  <view class="auth-container" wx:if="{{!hasLogin}}">
+    <!-- 顶部欢迎语 -->
+    <view class="auth-header">
+      <image class="auth-logo" src="https://via.placeholder.com/160x160/F5EDE4/B8860B?text=宁夏" mode="aspectFit" />
+      <text class="auth-title">欢迎来到宁夏文旅</text>
+      <text class="auth-subtitle">登录后享受更多权益 (Mode: {{authMode}})</text>
+    </view>
+
+    <!-- 登录表单 -->
+    <view class="auth-form" wx:if="{{authMode == 'login'}}">
+      <view class="input-group">
+        <text class="input-icon">📱</text>
+        <input class="auth-input" type="number" placeholder="请输入手机号" model:value="{{phone}}" />
       </view>
-      <view class="user-detail">
-        <text class="nickname">{{userInfo.nickName || userInfo.nickname || '游客'}}</text>
-        <text class="user-id" wx:if="{{!hasLogin}}">点击登录</text>
-        <text class="user-id" wx:if="{{hasLogin}}">已登录</text>
+      <view class="input-group">
+        <text class="input-icon">🔒</text>
+        <input class="auth-input" type="password" placeholder="请输入密码" model:value="{{password}}" />
+      </view>
+      <button class="primary-btn" bindtap="executeLogin" loading="{{loading}}">立即登录</button>
+      <view class="auth-switch">
+        <text>还没有账号？</text>
+        <text class="link-text" bindtap="switchMode" data-mode="register">去注册</text>
+      </view>
+    </view>
+
+    <!-- 注册表单 -->
+    <view class="auth-form" wx:if="{{authMode == 'register'}}">
+      <view class="input-group">
+        <text class="input-icon">👤</text>
+        <input class="auth-input" placeholder="设置昵称" model:value="{{nickname}}" />
+      </view>
+      <view class="input-group">
+        <text class="input-icon">📱</text>
+        <input class="auth-input" type="number" placeholder="您的手机号" model:value="{{phone}}" />
+      </view>
+      <view class="input-group">
+        <text class="input-icon">🔒</text>
+        <input class="auth-input" type="password" placeholder="设置密码" model:value="{{password}}" />
+      </view>
+      <button class="primary-btn" bindtap="executeRegister" loading="{{loading}}">注册账号</button>
+      <view class="auth-switch">
+        <text>已有账号？</text>
+        <text class="link-text" bindtap="switchMode" data-mode="login">去登录</text>
       </view>
     </view>
   </view>
 
-  <!-- 登录按钮（未登录时显示） -->
-  <view class="login-section" wx:if="{{!hasLogin}}">
-    <button class="login-btn" bindtap="login">微信一键登录</button>
-  </view>
+  <!-- 已登录状态：个人中心内容 -->
+  <block wx:else>
+    <!-- 用户信息头部 -->
+    <view class="header-section">
+      <view class="user-info">
+        <view class="avatar-wrapper">
+          <image class="avatar" src="{{userInfo.avatar || 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwBHJrRn51rTpBeqAd2hJO95pHlQd6F8X41hZ1nF7f3k8k4n3n3n3n3n3n3n3n3n3/0'}}" mode="aspectFill" />
+        </view>
+        <view class="user-detail">
+          <text class="nickname">{{userInfo.nickName || userInfo.nickname || '用户'}}</text>
+          <text class="user-desc">发现宁夏之美</text>
+        </view>
+        <view class="logout-btn-small" bindtap="logout">退出</view>
+      </view>
+    </view>
 
-  <!-- 退出登录按钮（已登录时显示） -->
-  <view class="logout-section" wx:if="{{hasLogin}}">
-    <button class="logout-btn" bindtap="logout">退出登录</button>
-  </view>
+    <!-- 数据统计 -->
+    <view class="stats-card">
+      <view class="stat-item" bindtap="goToFavorites">
+        <text class="stat-num">{{favoriteCount}}</text>
+        <text class="stat-label">收藏</text>
+      </view>
+      <view class="stat-item" bindtap="goToCart">
+        <text class="stat-num">{{cartCount}}</text>
+        <text class="stat-label">购物车</text>
+      </view>
+      <view class="stat-item" bindtap="goToOrders">
+        <text class="stat-num">{{orderCount}}</text>
+        <text class="stat-label">订单</text>
+      </view>
+    </view>
 
-  <!-- 数据统计 -->
-  <view class="stats-section">
-    <view class="stat-item" bindtap="goToFavorites">
-      <text class="stat-num">{{favoriteCount}}</text>
-      <text class="stat-label">收藏</text>
+    <!-- 功能列表 -->
+    <view class="menu-list">
+      <view class="menu-item" bindtap="goToFavorites">
+        <view class="menu-left">
+          <text class="menu-icon">❤️</text>
+          <text class="menu-text">我的收藏</text>
+        </view>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goToCart">
+        <view class="menu-left">
+          <text class="menu-icon">🛒</text>
+          <text class="menu-text">购物车</text>
+        </view>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goToOrders">
+        <view class="menu-left">
+          <text class="menu-icon">📋</text>
+          <text class="menu-text">我的订单</text>
+        </view>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goToCoupons">
+        <view class="menu-left">
+          <text class="menu-icon">🎫</text>
+          <text class="menu-text">优惠券</text>
+        </view>
+        <text class="menu-arrow">›</text>
+      </view>
     </view>
-    <view class="stat-item" bindtap="goToCart">
-      <text class="stat-num">{{cartCount}}</text>
-      <text class="stat-label">购物车</text>
-    </view>
-    <view class="stat-item" bindtap="goToOrders">
-      <text class="stat-num">{{orderCount}}</text>
-      <text class="stat-label">订单</text>
-    </view>
-  </view>
 
-  <!-- 功能列表 -->
-  <view class="menu-section">
-    <view class="menu-item" bindtap="goToFavorites">
-      <view class="menu-icon">❤️</view>
-      <text class="menu-text">我的收藏</text>
-      <text class="menu-count" wx:if="{{favoriteCount > 0}}">{{favoriteCount}}</text>
-      <text class="menu-arrow">›</text>
+    <!-- 服务列表 -->
+    <view class="menu-list">
+      <view class="menu-item">
+        <view class="menu-left">
+          <text class="menu-icon">📞</text>
+          <text class="menu-text">联系客服</text>
+        </view>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="goToAbout">
+        <view class="menu-left">
+          <text class="menu-icon">ℹ️</text>
+          <text class="menu-text">关于我们</text>
+        </view>
+        <text class="menu-arrow">›</text>
+      </view>
     </view>
-    <view class="menu-item" bindtap="goToCart">
-      <view class="menu-icon">🛒</view>
-      <text class="menu-text">购物车</text>
-      <text class="menu-count" wx:if="{{cartCount > 0}}">{{cartCount}}</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goToOrders">
-      <view class="menu-icon">📋</view>
-      <text class="menu-text">我的订单</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goToCoupons">
-      <view class="menu-icon">🎫</view>
-      <text class="menu-text">优惠券</text>
-      <text class="menu-arrow">›</text>
-    </view>
-  </view>
+  </block>
 
-  <!-- 其他服务 -->
-  <view class="menu-section">
-    <view class="menu-item">
-      <view class="menu-icon">📞</view>
-      <text class="menu-text">联系客服</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goToAbout">
-      <view class="menu-icon">ℹ️</view>
-      <text class="menu-text">关于我们</text>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item">
-      <view class="menu-icon">📄</view>
-      <text class="menu-text">隐私政策</text>
-      <text class="menu-arrow">›</text>
-    </view>
-  </view>
 </view>

@@ -67,11 +67,57 @@ Page({
         images: ['/images/product-3.jpg', '/images/product-4.jpg'],
         description: '水洞沟是中国最早发掘的旧石器时代遗址之一，被誉为"中国史前考古的发祥地"。这里不仅有丰富的古人类文化遗存，还有独特的雅丹地貌和明代长城遗迹。',
         discount: true
+      },
+      5: {
+        id: 5,
+        type: 'product',
+        name: '铜仁梵净山夜光系列冰箱贴',
+        price: 38.00,
+        discountPrice: 38.00,
+        image: '/images/product-5.jpg',
+        images: ['/images/product-5.jpg', '/images/product-1.jpg'],
+        sales: 5000,
+        coupons: [
+          { title: '满30减3', type: '减' }
+        ],
+        specs: ['文创冰箱贴:文创冰箱贴'],
+        description: '精美文创冰箱贴，夜光效果，非常有纪念意义。',
+        shopName: '宁夏文旅自营旗舰店'
+      },
+      101: {
+        id: 101, type: 'product', name: '宁夏中宁枸杞特级红枸杞 礼盒装', price: 98.00, discountPrice: 68.00,
+        image: '/images/product-1.jpg', images: ['/images/product-1.jpg'], sales: 5000,
+        specs: ['500g礼盒装'], description: '正宗宁夏中宁枸杞，颗粒饱满，色泽红润，营养丰富。', shopName: '宁夏特产官方店'
+      },
+      102: {
+        id: 102, type: 'product', name: '贺兰山东麓赤霞珠干红葡萄酒', price: 298.00, discountPrice: 198.00,
+        image: '/images/product-2.jpg', images: ['/images/product-2.jpg'], sales: 1200,
+        specs: ['750ml单支'], description: '来自贺兰山东麓黄金产区，口感醇厚，果香浓郁。', shopName: '贺兰美酒汇'
+      },
+      103: {
+        id: 103, type: 'product', name: '正宗盐池滩羊肉卷 500g', price: 128.00, discountPrice: 89.00,
+        image: '/images/product-3.jpg', images: ['/images/product-3.jpg'], sales: 3400,
+        specs: ['500g/盒'], description: '盐池滩羊，肉质鲜嫩，不膻不腥，火锅必备。', shopName: '盐池滩羊直营'
+      },
+      104: {
+        id: 104, type: 'product', name: '刘三朵八宝茶礼盒装', price: 88.00, discountPrice: 58.00,
+        image: '/images/product-4.jpg', images: ['/images/product-4.jpg'], sales: 800,
+        specs: ['10包/盒'], description: '非遗传承八宝茶，配料讲究，回味甘甜。', shopName: '宁夏非遗优选'
+      },
+      105: {
+        id: 105, type: 'product', name: '铜仁梵净山夜光系列冰箱贴', price: 38.00, discountPrice: 38.00,
+        image: '/images/product-5.jpg', images: ['/images/product-5.jpg'], sales: 200,
+        specs: ['夜光款'], description: '精美文创冰箱贴，夜光效果，非常有纪念意义。', shopName: '宁夏文旅自营旗舰店'
+      },
+      106: {
+        id: 106, type: 'product', name: '宁夏特产甘草杏 5袋装', price: 39.90, discountPrice: 29.90,
+        image: '/images/product-1.jpg', images: ['/images/product-1.jpg'], sales: 10000,
+        specs: ['180g*5袋'], description: '酸甜开胃，休闲零食首选，老少皆宜。', shopName: '宁夏特产官方店'
       }
     }
 
     const data = scenicData[id] || scenicData[1]
-    
+
     this.setData({
       scenic: data,
       loading: false
@@ -96,12 +142,40 @@ Page({
     })
   },
 
+  // 跳转店铺首页
+  goToShop() {
+    wx.navigateTo({
+      url: '/pages/shop/index'
+    })
+  },
+
+  // 跳转购物车
+  goToCart() {
+    wx.navigateTo({
+      url: '/pages/cart/index'
+    })
+  },
+
+  // 加入购物车
+  addToCart() {
+    const app = getApp();
+    app.globalData.cartTotal = (app.globalData.cartTotal || 0) + 1;
+
+    wx.showToast({
+      title: '已加入 (共' + app.globalData.cartTotal + '件)',
+      icon: 'success',
+      duration: 1500
+    })
+    // 这里可以添加更新后端购物车的逻辑
+  },
+
+  // 立即购买 / 确认购票
   buyTicket() {
     const app = getApp()
     if (!app.globalData.token) {
       wx.showModal({
         title: '提示',
-        content: '请先登录后购票',
+        content: '请先登录后操作',
         success: (res) => {
           if (res.confirm) {
             wx.switchTab({
@@ -114,16 +188,17 @@ Page({
     }
 
     wx.showModal({
-      title: '确认购票',
-      content: '确定购买【' + this.data.scenic.name + '】门票吗？\n\n优惠价：¥' + this.data.scenic.discountPrice + '\n原价：¥' + this.data.scenic.price,
-      confirmText: '确认购买',
-      confirmColor: '#8B4513',
+      title: '确认购买',
+      content: '确定购买 1 件【' + this.data.scenic.name + '】吗？\n\n总价：¥' + this.data.scenic.discountPrice,
+      confirmText: '立即支付',
+      confirmColor: '#FF4400',
       success: (res) => {
         if (res.confirm) {
           wx.showToast({
-            title: '购票成功',
+            title: '支付成功',
             icon: 'success'
           })
+          // 可以在这里跳转到订单页
         }
       }
     })
@@ -132,7 +207,7 @@ Page({
   onShareAppMessage() {
     const { scenic } = this.data
     return {
-      title: scenic ? scenic.name + ' - 宁夏旅游门票优惠' : '宁夏旅游门票优惠',
+      title: scenic ? scenic.name + ' - 宁夏文旅' : '宁夏好物',
       path: '/pages/market/detail?id=' + this.data.id
     }
   }

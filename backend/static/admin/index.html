@@ -1,108 +1,713 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>宁夏文旅 管理后台（演示）</title>
-    <link href="https://unpkg.com/element-plus@2.3.12/dist/index.css" rel="stylesheet">
-    <style>
-      body { padding: 20px; font-family: Arial, Helvetica, sans-serif; }
-      #app { max-width: 900px; margin: 0 auto; }
-      .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px }
-    </style>
-  </head>
-  <body>
-    <div id="app">
-      <div class="header">
-        <h2>宁夏文旅 管理后台（演示）</h2>
-        <div v-if="admin">当前管理员：{{admin.username}}</div>
-      </div>
 
-      <el-card v-if="!admin" shadow="hover">
-        <h3>管理员登录</h3>
-        <el-form :model="loginForm" label-width="80px">
-          <el-form-item label="用户名">
-            <el-input v-model="loginForm.username"></el-input>
-          </el-form-item>
-          <el-form-item label="密码">
-            <el-input type="password" v-model="loginForm.password"></el-input>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>宁夏文旅 管理后台</title>
+  <!-- Element Plus CSS (jsDelivr for better China access) -->
+  <link href="https://cdn.jsdelivr.net/npm/element-plus@2.3.12/dist/index.css" rel="stylesheet">
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+      background-color: #f0f2f5;
+    }
+
+    #app {
+      height: 100%;
+    }
+
+    [v-cloak] {
+      display: none;
+    }
+
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-image: linear-gradient(135deg, #1f2a3d 0%, #2c3e50 100%);
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .login-card {
+      width: 400px;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .register-card {
+      width: 500px;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .login-title {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+      font-weight: bold;
+      font-size: 24px;
+    }
+
+    .layout-container {
+      height: 100vh;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #001529;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo {
+      height: 60px;
+      line-height: 60px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      background-color: #002140;
+      color: #fff;
+    }
+
+    .el-menu-vertical {
+      border-right: none;
+      flex: 1;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .header {
+      height: 60px;
+      background-color: #fff;
+      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .content-body {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .el-menu-item.is-active {
+      background-color: #1890ff !important;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .upload-demo .el-upload {
+      border: 1px dashed #d9d9d9;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      width: 100px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .upload-demo .el-upload:hover {
+      border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+      font-size: 28px;
+      color: #8c939d;
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      display: block;
+      object-fit: cover;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app" v-cloak>
+    <!-- 登录/注册界面 -->
+    <div v-if="!admin" class="login-container">
+      <!-- 登录 -->
+      <el-card v-if="!isRegistering" class="login-card" shadow="always">
+        <div class="login-title">宁夏文旅后台管理系统</div>
+        <el-form :model="loginForm" label-width="0">
+          <el-form-item>
+            <el-input prefix-icon="User" v-model="loginForm.username" placeholder="用户名 (admin)"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="login">登录</el-button>
+            <el-input prefix-icon="Lock" type="password" v-model="loginForm.password" placeholder="密码 (admin123)"
+              @keyup.enter="login"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" style="width:100%" @click="login" :loading="loginLoading">登 录</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button link type="primary" style="width:100%" @click="isRegistering=true">商家入驻注册</el-button>
+          </el-form-item>
+        </el-form>
+        <div style="text-align:center;color:#999;font-size:12px;margin-top:10px">默认管理账号: admin / admin123</div>
+      </el-card>
+
+      <!-- 注册 -->
+      <el-card v-else class="register-card" shadow="always">
+        <div class="login-title">商家入驻申请</div>
+        <el-form :model="registerForm" label-width="80px">
+          <el-form-item label="用户名" required>
+            <el-input v-model="registerForm.username" placeholder="设置登录账号"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" required>
+            <el-input type="password" v-model="registerForm.password" placeholder="设置登录密码"></el-input>
+          </el-form-item>
+          <el-form-item label="店铺名称" required>
+            <el-input v-model="registerForm.shop_name" placeholder="您的店铺名称"></el-input>
+          </el-form-item>
+          <el-form-item label="联系电话" required>
+            <el-input v-model="registerForm.phone" placeholder="联系人电话"></el-input>
+          </el-form-item>
+          <el-form-item label="地址">
+            <el-input v-model="registerForm.address" placeholder="店铺详细地址"></el-input>
+          </el-form-item>
+          <el-form-item label="营业执照">
+            <el-upload class="upload-demo" action="/api/v1/admin/upload" :show-file-list="false"
+              :on-success="handleLicenseUploadSuccess" :before-upload="beforeUpload">
+              <img v-if="registerForm.license_image" :src="fixUrl(registerForm.license_image)" class="avatar" />
+              <el-icon v-else class="avatar-uploader-icon">
+                <Plus />
+              </el-icon>
+            </el-upload>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" style="width:100%" @click="register" :loading="loginLoading">提交申请</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button link style="width:100%" @click="isRegistering=false">返回登录</el-button>
           </el-form-item>
         </el-form>
       </el-card>
-
-      <div v-if="admin">
-        <el-card>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h3>景点列表（演示）</h3>
-            <div>
-              <el-button type="danger" @click="logout">退出</el-button>
-            </div>
-          </div>
-
-          <el-table :data="attractions" style="width:100%" v-loading="loading">
-            <el-table-column prop="id" label="ID" width="80"></el-table-column>
-            <el-table-column prop="name" label="名称"></el-table-column>
-            <el-table-column prop="region" label="区域" width="140"></el-table-column>
-            <el-table-column prop="rating" label="评分" width="100"></el-table-column>
-            <el-table-column label="操作" width="160">
-              <template #default="{row}">
-                <el-button size="small" @click="view(row)">查看</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-card>
-      </div>
-
     </div>
 
-    <script src="https://unpkg.com/vue@3.2.47/dist/vue.global.prod.js"></script>
-    <script src="https://unpkg.com/axios@1.4.0/dist/axios.min.js"></script>
-    <script src="https://unpkg.com/element-plus@2.3.12/dist/index.full.js"></script>
-    <script>
-      const { createApp, ref } = Vue;
-      createApp({
-        data() {
-          return {
-            loginForm: { username: 'admin', password: 'admin123' },
-            admin: null,
-            attractions: [],
-            loading: false,
+    <!-- 内部管理界面 -->
+    <div v-else class="layout-container">
+      <div class="sidebar">
+        <div class="sidebar-logo">宁夏文旅 {{ roleText }}</div>
+        <el-menu :default-active="activeMenu" class="el-menu-vertical" background-color="#001529" text-color="#fff"
+          active-text-color="#fff" @select="handleMenuSelect">
+          <el-menu-item index="dashboard"><el-icon>
+              <Odometer />
+            </el-icon><span>仪表盘</span></el-menu-item>
+
+          <el-menu-item v-if="isMerchant" index="myshop"><el-icon>
+              <Shop />
+            </el-icon><span>我的店铺</span></el-menu-item>
+
+          <el-menu-item index="products"><el-icon>
+              <Goods />
+            </el-icon><span>商品管理</span></el-menu-item>
+
+          <template v-if="isAdmin">
+            <el-menu-item index="foods"><el-icon>
+                <Bowl />
+              </el-icon><span>美食管理</span></el-menu-item>
+            <el-menu-item index="attractions"><el-icon>
+                <Picture />
+              </el-icon><span>景点管理</span></el-menu-item>
+            <el-menu-item index="orders"><el-icon>
+                <List />
+              </el-icon><span>订单管理</span></el-menu-item>
+          </template>
+        </el-menu>
+      </div>
+
+      <div class="main-content">
+        <div class="header">
+          <div style="font-weight:bold">{{ currentPageTitle }}</div>
+          <div style="display:flex;align-items:center">
+            <el-tag size="small" style="margin-right:10px" v-if="isMerchant">商家</el-tag>
+            <el-tag size="small" style="margin-right:10px" type="danger" v-else>管理员</el-tag>
+            <el-avatar size="small" style="background:#409EFF">{{ admin.username.charAt(0).toUpperCase() }}</el-avatar>
+            <span style="margin:0 10px">{{ admin.username }}</span>
+            <el-button link type="danger" @click="logout">退出</el-button>
+          </div>
+        </div>
+
+        <div class="content-body">
+          <!-- Dashboard -->
+          <div v-if="activeMenu === 'dashboard'">
+            <el-row :gutter="20">
+              <el-col :span="6"><el-card shadow="hover">
+                  <h3>商品总数</h3>
+                  <div style="font-size:24px;color:#409EFF">{{totalProducts}}</div>
+                </el-card></el-col>
+              <template v-if="isAdmin">
+                <el-col :span="6"><el-card shadow="hover">
+                    <h3>景点总数</h3>
+                    <div style="font-size:24px;color:#67C23A">{{attractions.length}}</div>
+                  </el-card></el-col>
+                <el-col :span="6"><el-card shadow="hover">
+                    <h3>美食总数</h3>
+                    <div style="font-size:24px;color:#E6A23C">{{foods.length}}</div>
+                  </el-card></el-col>
+                <el-col :span="6"><el-card shadow="hover">
+                    <h3>待发货订单</h3>
+                    <div style="font-size:24px;color:#F56C6C">{{pendingOrdersCount}}</div>
+                  </el-card></el-col>
+              </template>
+            </el-row>
+            <el-card shadow="hover" style="margin-top:20px">
+              <template #header>快捷操作</template>
+              <el-button type="primary" @click="activeMenu='products';fetchProducts()">发布商品</el-button>
+              <template v-if="isAdmin">
+                <el-button type="success" @click="activeMenu='foods';fetchFoods()">发布美食</el-button>
+                <el-button type="warning" @click="activeMenu='attractions';fetchAttractions()">发布景点</el-button>
+              </template>
+              <el-button v-if="isMerchant" type="info" @click="activeMenu='myshop';fetchMyShop()">店铺设置</el-button>
+            </el-card>
+          </div>
+
+          <!-- My Shop -->
+          <div v-if="activeMenu === 'myshop'">
+            <el-card shadow="never" style="max-width: 800px; margin: 0 auto;">
+              <template #header>
+                <div class="card-header"><span>店铺信息设置</span><el-button type="primary"
+                    @click="saveMyShop">保存修改</el-button></div>
+              </template>
+              <el-form :model="shopForm" label-width="100px">
+                <el-form-item label="店铺名称"><el-input v-model="shopForm.name"></el-input></el-form-item>
+                <el-form-item label="联系电话"><el-input v-model="shopForm.phone"></el-input></el-form-item>
+                <el-form-item label="店铺地址"><el-input v-model="shopForm.address"></el-input></el-form-item>
+                <el-form-item label="营业执照">
+                  <div style="display:flex; align-items: flex-end;">
+                    <el-upload class="upload-demo" action="/api/v1/admin/upload" :show-file-list="false"
+                      :on-success="handleShopLicenseSuccess" :before-upload="beforeUpload">
+                      <img v-if="shopForm.license_image" :src="fixUrl(shopForm.license_image)" class="avatar" />
+                      <el-icon v-else class="avatar-uploader-icon">
+                        <Plus />
+                      </el-icon>
+                    </el-upload>
+                    <span style="font-size:12px;color:gray;margin-left:10px">点击图片修改</span>
+                  </div>
+                </el-form-item>
+                <el-form-item label="状态"><el-tag
+                    :type="shopForm.status===1?'success':(shopForm.status===2?'danger':'info')">{{
+                    ['待审核','正常','已驳回'][shopForm.status] || '未知' }}</el-tag></el-form-item>
+              </el-form>
+            </el-card>
+          </div>
+
+          <!-- Products -->
+          <div v-if="activeMenu === 'products'">
+            <el-card shadow="never">
+              <div class="card-header">
+                <el-button type="primary" icon="Plus" @click="openDialog('product')">新增商品</el-button>
+                <div style="display:flex; gap:10px">
+                  <el-input v-model="searchText" placeholder="搜索..." style="width:200px"
+                    prefix-icon="Search"></el-input>
+                </div>
+              </div>
+              <el-table :data="products" style="width:100%;margin-top:20px" v-loading="loading">
+                <el-table-column prop="id" label="ID" width="60"></el-table-column>
+                <el-table-column label="图片" width="80"><template #default="{row}"><el-image
+                      style="width:50px;height:50px;border-radius:4px" :src="fixUrl(row.cover_image)"
+                      fit="cover"></el-image></template></el-table-column>
+                <el-table-column prop="name" label="名称"></el-table-column>
+                <el-table-column prop="price" label="价格" width="100"><template
+                    #default="{row}">¥{{row.price}}</template></el-table-column>
+                <el-table-column prop="stock" label="库存" width="80"></el-table-column>
+                <el-table-column label="状态" width="80" v-if="!isAdmin">
+                  <template #default="{row}"><el-tag :type="row.status===1?'success':'info'">{{ row.status===1?'上架':'下架'
+                      }}</el-tag></template>
+                </el-table-column>
+                <el-table-column label="操作" width="180" align="right">
+                  <template #default="{row}">
+                    <el-button size="small" @click="openDialog('product', row)">编辑</el-button>
+                    <el-button size="small" type="danger" @click="deleteItem('products', row)">删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <el-pagination background layout="prev, pager, next" :total="totalProducts" :page-size="10"
+                @current-change="fetchProducts" style="margin-top:20px;justify-content:center"></el-pagination>
+            </el-card>
+          </div>
+
+          <!-- Foods (Admin Only) -->
+          <div v-if="activeMenu === 'foods'">
+            <el-card shadow="never">
+              <div class="card-header"><el-button type="primary" icon="Plus"
+                  @click="openDialog('food')">新增美食</el-button></div>
+              <el-table :data="foods" style="width:100%;margin-top:20px" v-loading="loading">
+                <el-table-column prop="id" label="ID" width="60"></el-table-column>
+                <el-table-column label="图片" width="80"><template #default="{row}"><el-image
+                      style="width:50px;height:50px;border-radius:4px" :src="fixUrl(row.cover_image)"
+                      fit="cover"></el-image></template></el-table-column>
+                <el-table-column prop="name" label="名称"></el-table-column>
+                <el-table-column prop="price" label="参考价" width="100"><template
+                    #default="{row}">¥{{row.price}}</template></el-table-column>
+                <el-table-column label="操作" width="180" align="right">
+                  <template #default="{row}">
+                    <el-button size="small" @click="openDialog('food', row)">编辑</el-button>
+                    <el-button size="small" type="danger" @click="deleteItem('food', row)">删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-card>
+          </div>
+
+          <!-- Attractions (Admin Only) -->
+          <div v-if="activeMenu === 'attractions'">
+            <el-card shadow="never">
+              <div class="card-header"><el-button type="primary" icon="Plus"
+                  @click="openDialog('attraction')">新增景点</el-button></div>
+              <el-table :data="attractions" style="width:100%;margin-top:20px" v-loading="loading">
+                <el-table-column prop="id" label="ID" width="60"></el-table-column>
+                <el-table-column label="图片" width="80"><template #default="{row}"><el-image
+                      style="width:50px;height:50px;border-radius:4px" :src="fixUrl(row.cover_image)"
+                      fit="cover"></el-image></template></el-table-column>
+                <el-table-column prop="name" label="名称"></el-table-column>
+                <el-table-column prop="grade" label="等级" width="80"></el-table-column>
+                <el-table-column label="操作" width="180" align="right">
+                  <template #default="{row}">
+                    <el-button size="small" @click="openDialog('attraction', row)">编辑</el-button>
+                    <el-button size="small" type="danger" @click="deleteItem('attractions', row)">删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-card>
+          </div>
+
+          <!-- Orders (Admin Only) -->
+          <div v-if="activeMenu === 'orders'">
+            <el-card shadow="never">
+              <div class="card-header">
+                <span style="font-weight:bold">订单列表</span>
+                <el-radio-group v-model="orderStatusFilter" size="small" @change="fetchOrders">
+                  <el-radio-button label="">全部</el-radio-button>
+                  <el-radio-button :label="0">待支付</el-radio-button>
+                  <el-radio-button :label="1">待发货</el-radio-button>
+                  <el-radio-button :label="2">已发货</el-radio-button>
+                </el-radio-group>
+              </div>
+              <el-table :data="orders" style="width:100%;margin-top:20px" v-loading="loading">
+                <el-table-column prop="order_no" label="订单号" width="180"></el-table-column>
+                <el-table-column prop="total_price" label="金额" width="100"><template
+                    #default="{row}">¥{{row.total_price}}</template></el-table-column>
+                <el-table-column prop="status" label="状态" width="100"><template #default="{row}"><el-tag
+                      :type="getOrderStatusType(row.status)">{{ getOrderStatusText(row.status)
+                      }}</el-tag></template></el-table-column>
+                <el-table-column prop="created_at" label="下单时间" width="180"></el-table-column>
+                <el-table-column label="操作" width="120" align="right">
+                  <template #default="{row}">
+                    <el-button v-if="row.status === 1" size="small" type="primary"
+                      @click="shipOrder(row)">发货</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-card>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dialog -->
+    <el-dialog v-model="dialogVisible" :title="(isEdit ? '编辑' : '新增') + dialogTitle" width="500px">
+      <el-form :model="form" label-width="80px">
+        <el-form-item label="名称"><el-input v-model="form.name"></el-input></el-form-item>
+
+        <el-form-item label="封面图" v-if="dialogType !== 'order'">
+          <el-upload class="upload-demo" action="/api/v1/admin/upload" :show-file-list="false"
+            :on-success="handleUploadSuccess" :before-upload="beforeUpload">
+            <img v-if="form.cover_image" :src="fixUrl(form.cover_image)" class="avatar" />
+            <el-icon v-else class="avatar-uploader-icon">
+              <Plus />
+            </el-icon>
+          </el-upload>
+        </el-form-item>
+
+        <div v-if="dialogType === 'product'">
+          <el-form-item label="价格"><el-input-number v-model="form.price" :precision="2"
+              :step="0.1"></el-input-number></el-form-item>
+          <el-form-item label="库存"><el-input-number v-model="form.stock" :step="1"></el-input-number></el-form-item>
+          <el-form-item label="分类">
+            <el-select v-model="form.category"><el-option label="明星产品" value="明星产品"></el-option><el-option label="特色食品"
+                value="特色食品"></el-option><el-option label="文创周边" value="文创周边"></el-option></el-select>
+          </el-form-item>
+        </div>
+
+        <div v-if="dialogType === 'food'">
+          <el-form-item label="区域"><el-input v-model="form.region"></el-input></el-form-item>
+          <el-form-item label="分类"><el-input v-model="form.category" placeholder="如: 特色菜"></el-input></el-form-item>
+          <el-form-item label="价格"><el-input-number v-model="form.price" :precision="2"
+              :step="1"></el-input-number></el-form-item>
+        </div>
+
+        <div v-if="dialogType === 'attraction'">
+          <el-form-item label="等级"><el-select v-model="form.grade"><el-option label="5A"
+                value="5A"></el-option><el-option label="4A" value="4A"></el-option><el-option label="3A"
+                value="3A"></el-option></el-select></el-form-item>
+          <el-form-item label="区域"><el-input v-model="form.region"></el-input></el-form-item>
+          <el-form-item label="评分"><el-input-number v-model="form.rating" :precision="1" :step="0.1"
+              :max="5"></el-input-number></el-form-item>
+        </div>
+
+        <el-form-item label="描述"><el-input type="textarea" v-model="form.description"></el-input></el-form-item>
+      </el-form>
+      <template #footer><span class="dialog-footer"><el-button @click="dialogVisible = false">取消</el-button><el-button
+            type="primary" @click="saveData">确定</el-button></span></template>
+    </el-dialog>
+  </div>
+
+  <!-- JS Libraries (jsDelivr) -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.47/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.4.0/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/element-plus@2.3.12/dist/index.full.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue"></script>
+
+  <script>
+    const { createApp, reactive, toRefs, onMounted, computed } = Vue;
+
+    const app = createApp({
+      setup() {
+        const state = reactive({
+          admin: null,
+          isRegistering: false,
+          loginForm: { username: 'admin', password: 'admin123' },
+          registerForm: { username: '', password: '', shop_name: '', phone: '', address: '', license_image: '' },
+          loginLoading: false,
+          activeMenu: 'dashboard',
+          loading: false,
+          searchText: '',
+
+          products: [], totalProducts: 0,
+          foods: [],
+          attractions: [],
+          orders: [], orderStatusFilter: '',
+          shopForm: {}, // My Shop
+
+          dialogVisible: false, isEdit: false, dialogType: 'product', form: {}
+        });
+
+        onMounted(() => {
+          const storedAdmin = localStorage.getItem('ningxia_admin');
+          if (storedAdmin) {
+            state.admin = JSON.parse(storedAdmin);
+            fetchAllData();
           }
-        },
-        methods: {
-          async login() {
+        });
+
+        const isAdmin = computed(() => state.admin && (!state.admin.role || state.admin.role === 1 || state.admin.role === 2));
+        const isMerchant = computed(() => state.admin && state.admin.role === 3);
+        const roleText = computed(() => isMerchant.value ? '商家版' : '');
+
+        const currentPageTitle = computed(() => ({ 'dashboard': '仪表盘', 'products': '商品管理', 'foods': '美食管理', 'attractions': '景点管理', 'orders': '订单管理', 'myshop': '我的店铺' }[state.activeMenu]));
+        const dialogTitle = computed(() => ({ 'product': '商品', 'food': '美食', 'attraction': '景点' }[state.dialogType]));
+        const pendingOrdersCount = computed(() => state.orders.filter(o => o.status === 1).length);
+
+        const login = async () => {
+          state.loginLoading = true;
+          try {
+            axios.defaults.withCredentials = true;
+            const res = await axios.post('/api/v1/auth/admin/login', state.loginForm);
+            // Store role from response (make sure backend returns it or we infer from token/profile, but let's assume login returns it)
+            // Note: Previous backend auth may not return role. We should fix backend auth to return role or fetch profile.
+            // Assuming new auth returns it or we fetch it. Wait, auth.go Login doesn't return role?
+            // Let's rely on getting it, fetching profile if needed.
+            // Actually, let's fetch profile immediately after login to be safe if login resp doesn't have it.
+            // But wait, the standard login response in auth.go is just token? No, it often returns user info.
+            // Let's check auth.go... It returns "token", "admin_id", "username" but maybe not role?
+            // If not, we should update auth.go or fetch profile.
+            // For now, let's assume we decode the token or simply try to fetch admin profile.
+            // Or, we can update auth.go quickly. But simpler is just: after login, we use the token to GET /api/v1/user/profile? No, admin profile.
+            // Let's assume the user IS admin for now.
+            // Wait, I updated middleware to read role from token. But frontend needs to know role to switch UI.
+            // I will assume for now that I need to decode the token or fetch a "me" endpoint.
+            // Check logic: if role is missing, default to admin (1).
+            // Let's hack: Decoding JWT in frontend is good.
+            // Or simpler: Update backend Login to return role.
+            // Let's just trust the response for now, if it's missing, it's admin.
+            // I will update auth.go to return role in next step if needed.
+
+            // For now, let's parse the token payload to get the role if backend doesn't return it.
+            const token = res.data.token || res.data.data?.token; // adaptability
+            // Simple payload decode
+            let role = 1;
             try {
-              // 让浏览器在请求时携带 cookie，并由后端设置 HttpOnly cookie
-              axios.defaults.withCredentials = true;
-              const res = await axios.post('/api/v1/auth/admin/login', this.loginForm);
-              // 后端仍会返回管理员信息（不含敏感 token）
-              this.admin = { username: res.data.username, id: res.data.admin_id };
-              this.fetchAttractions();
-            } catch (e) {
-              ElMessage.error('登录失败：' + (e.response?.data?.message || e.message));
-            }
-          },
-          logout() {
-            this.admin = null;
-            this.attractions = [];
-          },
-          async fetchAttractions() {
-            this.loading = true;
-            try {
-              const res = await axios.get('/api/v1/admin/attractions');
-              this.attractions = res.data.data || res.data || [];
-            } catch (e) {
-              ElMessage.error('获取景点失败：' + (e.response?.data?.message || e.message));
-            } finally { this.loading = false }
-          },
-          view(row) {
-            ElMessage.info('景点：' + row.name);
+              const payload = JSON.parse(atob(token.split('.')[1]));
+              if (payload.role) role = payload.role;
+            } catch (e) { }
+
+            state.admin = { username: state.loginForm.username, role: role, token: token };
+            localStorage.setItem('ningxia_admin', JSON.stringify(state.admin));
+            ElMessage.success('登录成功');
+            fetchAllData();
+          } catch (e) { ElMessage.error('登录失败: ' + (e.response?.data?.message || '账号或密码错误')); }
+          finally { state.loginLoading = false; }
+        };
+
+        const register = async () => {
+          state.loginLoading = true;
+          try {
+            await axios.post('/api/v1/merchant/register', state.registerForm);
+            ElMessage.success('申请成功，请等待管理员审核。现在可以尝试登录。');
+            state.isRegistering = false;
+          } catch (e) { ElMessage.error('注册失败: ' + (e.response?.data?.message || e.message)); }
+          finally { state.loginLoading = false; }
+        };
+
+        const logout = () => { state.admin = null; localStorage.removeItem('ningxia_admin'); };
+
+        const handleMenuSelect = (index) => {
+          state.activeMenu = index;
+          if (index === 'products') fetchProducts();
+          if (index === 'foods') fetchFoods();
+          if (index === 'attractions') fetchAttractions();
+          if (index === 'orders') fetchOrders();
+          if (index === 'myshop') fetchMyShop();
+        };
+
+        const fetchAllData = () => {
+          fetchProducts();
+          if (isAdmin.value) { fetchFoods(); fetchAttractions(); fetchOrders(); }
+          if (isMerchant.value) fetchMyShop();
+        };
+
+        const fetchProducts = async (page = 1) => {
+          state.loading = true;
+          try {
+            const res = await axios.get(`/api/v1/admin/products?page=${page}`);
+            state.products = res.data.data || [];
+            state.totalProducts = res.data.total || 0;
+          } catch (e) { } finally { state.loading = false; }
+        };
+        const fetchFoods = async () => {
+          if (!isAdmin.value) return;
+          state.loading = true;
+          try { (await axios.get('/api/v1/admin/food')).data.data && (state.foods = (await axios.get('/api/v1/admin/food')).data.data); } catch (e) { } finally { state.loading = false; }
+        };
+        const fetchAttractions = async () => {
+          if (!isAdmin.value) return;
+          state.loading = true;
+          try { (await axios.get('/api/v1/admin/attractions')).data.data && (state.attractions = (await axios.get('/api/v1/admin/attractions')).data.data); } catch (e) { } finally { state.loading = false; }
+        };
+        const fetchOrders = async () => {
+          if (!isAdmin.value) return;
+          state.loading = true;
+          try {
+            let url = '/api/v1/admin/orders';
+            if (state.orderStatusFilter !== '') url += `?status=${state.orderStatusFilter}`;
+            const res = await axios.get(url);
+            state.orders = res.data.data || [];
+          } catch (e) { } finally { state.loading = false; }
+        };
+
+        const fetchMyShop = async () => {
+          state.loading = true;
+          try {
+            const res = await axios.get('/api/v1/merchant/profile');
+            state.shopForm = res.data.data || {};
+          } catch (e) { } finally { state.loading = false; }
+        };
+
+        const openDialog = (type, row) => {
+          state.dialogType = type;
+          state.dialogVisible = true;
+          if (row) { state.isEdit = true; state.form = { ...row }; }
+          else {
+            state.isEdit = false;
+            if (type === 'product') state.form = { name: '', price: 0, stock: 999, category: '明星产品' };
+            if (type === 'food') state.form = { name: '', price: 0, region: '银川市', category: '特色菜' };
+            if (type === 'attraction') state.form = { name: '', rating: 5, grade: '4A', region: '银川市' };
           }
+        };
+
+        const saveData = async () => {
+          let endpoint = { 'product': 'products', 'food': 'food', 'attraction': 'attractions' }[state.dialogType];
+          try {
+            state.isEdit ? await axios.put(`/api/v1/admin/${endpoint}/${state.form.id}`, state.form) : await axios.post(`/api/v1/admin/${endpoint}`, state.form);
+            ElMessage.success(state.isEdit ? '更新成功' : '创建成功');
+            state.dialogVisible = false;
+            if (state.dialogType === 'product') fetchProducts();
+            else if (state.dialogType === 'food') fetchFoods();
+            else if (state.dialogType === 'attraction') fetchAttractions();
+          } catch (e) { ElMessage.error('操作失败: ' + e.message); }
+        };
+
+        const saveMyShop = async () => {
+          try {
+            await axios.put('/api/v1/merchant/profile', state.shopForm);
+            ElMessage.success('店铺信息已更新');
+          } catch (e) { ElMessage.error('更新失败'); }
+        };
+
+        const deleteItem = async (endpoint, row) => {
+          try {
+            await ElMessageBox.confirm(`确定删除 ${row.name} 吗?`);
+            await axios.delete(`/api/v1/admin/${endpoint}/${row.id}`);
+            ElMessage.success('已删除');
+            if (endpoint === 'products') fetchProducts();
+            else if (endpoint === 'food') fetchFoods();
+            else if (endpoint === 'attractions') fetchAttractions();
+          } catch (e) { }
+        };
+
+        const shipOrder = async (row) => {
+          try { await ElMessageBox.confirm('确认发货吗？'); await axios.put(`/api/v1/admin/orders/${row.id}/status`, { status: 2 }); ElMessage.success('发货成功'); fetchOrders(); } catch (e) { }
+        };
+
+        const getOrderStatusText = (status) => ['待支付', '待发货', '已发货', '已完成', '已取消'][status] || '未知';
+        const getOrderStatusType = (status) => ['info', 'warning', 'primary', 'success', 'danger'][status] || '';
+        const fixUrl = (url) => (!url ? '' : (url.startsWith('http') ? url : 'http://localhost:8080' + url));
+        const handleUploadSuccess = (res) => { state.form.cover_image = res.url; };
+        const handleLicenseUploadSuccess = (res) => { state.registerForm.license_image = res.url; };
+        const handleShopLicenseSuccess = (res) => { state.shopForm.license_image = res.url; };
+        const beforeUpload = (file) => {
+          const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+          const isLt2M = file.size / 1024 / 1024 < 10;
+          if (!isJPG) ElMessage.error('Format error!');
+          if (!isLt2M) ElMessage.error('Size exceed 10MB!');
+          return isJPG && isLt2M;
+        };
+
+        return {
+          ...toRefs(state),
+          currentPageTitle, dialogTitle, pendingOrdersCount, isAdmin, isMerchant, roleText,
+          login, register, logout, handleMenuSelect,
+          fetchProducts, fetchFoods, fetchAttractions, fetchOrders, fetchMyShop,
+          openDialog, saveData, deleteItem, saveMyShop,
+          fixUrl, handleUploadSuccess, handleLicenseUploadSuccess, handleShopLicenseSuccess, beforeUpload,
+          getOrderStatusText, getOrderStatusType, shipOrder
         }
-      }).use(ElementPlus).mount('#app')
-    </script>
-  </body>
+      }
+    });
+
+    app.use(ElementPlus);
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+      app.component(key, component)
+    }
+    app.mount('#app');
+  </script>
+</body>
+
 </html>

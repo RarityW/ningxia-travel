@@ -3,6 +3,9 @@ const API = require('./utils/request')
 
 App({
   onLaunch() {
+    // 获取系统信息，用于自定义导航栏
+    const sysInfo = wx.getSystemInfoSync()
+    this.globalData.statusBarHeight = sysInfo.statusBarHeight
     this.checkLogin()
   },
 
@@ -13,7 +16,7 @@ App({
   checkLogin() {
     const token = wx.getStorageSync('token')
     const userInfo = wx.getStorageSync('userInfo')
-    
+
     this.globalData.token = token
     this.globalData.userInfo = userInfo
   },
@@ -28,10 +31,10 @@ App({
             }).then(data => {
               wx.setStorageSync('token', data.token)
               wx.setStorageSync('userInfo', data)
-              
+
               this.globalData.token = data.token
               this.globalData.userInfo = data
-              
+
               resolve(data)
             }).catch(err => {
               reject(err)
@@ -67,6 +70,7 @@ App({
   globalData: {
     token: null,
     userInfo: null,
-    baseURL: 'http://localhost:8080'
+    baseURL: 'http://localhost:8080',
+    cartTotal: 0
   }
 });

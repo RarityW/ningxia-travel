@@ -149,15 +149,134 @@
   padding: 24rpx 0;
 }
 
-.logout-section {
-  margin: 24rpx;
+/* Init logout btn */
+.logout-btn-small {
+  font-size: 24rpx;
+  color: var(--text-muted);
+  border: 1rpx solid var(--divider);
+  padding: 8rpx 24rpx;
+  border-radius: 30rpx;
 }
 
-.logout-btn {
-  background: transparent;
-  color: var(--text-muted);
-  border: 2rpx solid var(--divider);
-  border-radius: 50rpx;
-  font-size: 28rpx;
-  padding: 20rpx 0;
+/* Auth Container */
+.auth-container {
+  padding: 40rpx 60rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 70vh; /* Reduce min-height slightly to fit smaller screens */
+  margin-top: 40rpx; /* Add margin to separate from nav */
+  position: relative;
+  z-index: 100; /* Ensure it's above other elements */
 }
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 80rpx;
+}
+
+.auth-logo {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 40rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(184, 134, 11, 0.2);
+}
+
+.auth-title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--primary-gold);
+  margin-bottom: 16rpx;
+}
+
+.auth-subtitle {
+  font-size: 28rpx;
+  color: var(--text-muted);
+}
+
+.auth-form {
+  display: block; /* Change from flex to block to avoid flex issues */
+  width: 100%;
+}
+
+.input-group {
+  background-color: var(--card-white);
+  border-radius: 50rpx;
+  padding: 24rpx 40rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 32rpx; /* Establish spacing via margin */
+  height: 100rpx; /* Explicit height */
+  box-sizing: border-box;
+}
+
+.input-icon {
+  font-size: 36rpx;
+  margin-right: 20rpx;
+  line-height: 1; /* Reset line-height */
+}
+
+.auth-input {
+  flex: 1;
+  font-size: 30rpx;
+  color: var(--text-deep);
+  height: 100%; /* Ensure input takes full height of container */
+  line-height: normal; /* Typical reset for inputs */
+}
+
+.primary-btn {
+  background: var(--gradient-gold);
+  color: #FFF;
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  padding: 0; /* Clear padding if using line-height centered */
+  height: 90rpx;
+  line-height: 90rpx;
+  margin-top: 40rpx;
+  box-shadow: 0 8rpx 20rpx rgba(184, 134, 11, 0.3);
+  width: 100%; /* Ensure button takes full width */
+  text-align: center;
+}
+
+.auth-switch {
+  text-align: center;
+  font-size: 26rpx;
+  color: var(--text-muted);
+  margin-top: 32rpx;
+}
+
+.link-text {
+  color: var(--primary-gold);
+  font-weight: 600;
+  margin-left: 10rpx;
+}
+
+.stats-card {
+  display: flex;
+  justify-content: space-around;
+  background-color: var(--card-white);
+  margin: -60rpx 24rpx 24rpx;
+  border-radius: 24rpx;
+  padding: 40rpx 0;
+  box-shadow: 0 8rpx 24rpx rgba(184, 134, 11, 0.12);
+  position: relative;
+  z-index: 10;
+}
+
+.menu-list {
+  background-color: var(--card-white);
+  margin: 0 24rpx 24rpx;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.menu-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+

@@ -1,14 +1,16 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // 用户模型
 type User struct {
 	ID        uint           `gorm:"primarykey" json:"id"`
-	OpenID    string         `gorm:"column:open_id;type:varchar(191);uniqueIndex;not null" json:"openid"`
+	OpenID    string         `gorm:"column:open_id;type:varchar(191);uniqueIndex" json:"openid"` //允许为空，兼容仅手机号注册
+	Password  string         `gorm:"column:password" json:"-"`                                   // 新增密码字段
 	NickName  string         `gorm:"column:nick_name" json:"nickname"`
 	Avatar    string         `gorm:"column:avatar" json:"avatar"`
 	Gender    int            `gorm:"column:gender" json:"gender"`
@@ -88,9 +90,23 @@ type Culture struct {
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
 }
 
+// 商家模型
+type Merchant struct {
+	ID           uint      `gorm:"primarykey" json:"id"`
+	AdminID      uint      `json:"admin_id"` // 关联的管理员账号ID
+	Name         string    `json:"name"`     // 店铺名称
+	LicenseImage string    `json:"license_image"`
+	Phone        string    `json:"phone"`
+	Address      string    `json:"address"`
+	Status       int       `json:"status"` // 0:待审核 1:正常 2:驳回
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+}
+
 // 商品模型
 type Product struct {
 	ID             uint           `gorm:"primarykey" json:"id"`
+	MerchantID     uint           `gorm:"default:0;index" json:"merchant_id"` // 0表示平台自营，其他为商家ID
 	Name           string         `gorm:"not null" json:"name"`
 	CoverImage     string         `json:"cover_image"`
 	Images         string         `gorm:"type:text" json:"images"`

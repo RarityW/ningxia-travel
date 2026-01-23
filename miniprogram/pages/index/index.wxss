@@ -1,6 +1,6 @@
-/* 宁夏文旅 - 首页样式 - 现代化设计 */
+/* 宁夏文旅 - 首页样式 - 大漠古韵风 */
 page {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: var(--bg-warm-cream);
   min-height: 100vh;
 }
 
@@ -13,7 +13,7 @@ page {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-gold);
   position: relative;
   overflow: hidden;
 }
@@ -146,10 +146,10 @@ page {
 }
 
 .banner-card {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: var(--gradient-sand);
   border-radius: 24rpx;
   overflow: hidden;
-  box-shadow: 0 8rpx 32rpx rgba(16,185,129,0.3);
+  box-shadow: 0 8rpx 32rpx rgba(184, 134, 11, 0.2);
 }
 
 .banner-header {
@@ -251,8 +251,8 @@ page {
 }
 
 /* 功能图标背景色 */
-.bg-yellow { background: linear-gradient(135deg, #fef3c7, #fde68a); }
-.bg-blue { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+.bg-yellow { background: rgba(255,255,255,0.2); }
+.bg-blue { background: rgba(255,255,255,0.2); }
 
 /* 【3】功能入口宫格 */
 .function-section {
@@ -260,7 +260,7 @@ page {
   background: #FFFFFF;
   border-radius: 24rpx;
   padding: 32rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.08);
+  box-shadow: 0 4rpx 20rpx rgba(139, 115, 85, 0.08);
 }
 
 .function-grid {
@@ -305,21 +305,21 @@ page {
   z-index: 1;
 }
 
-/* 功能图标背景色 - 统一宁夏文旅主色系 */
-.bg-orange { background: linear-gradient(135deg, #764ba2, #667eea); }
-.bg-blue { background: linear-gradient(135deg, #059669, #10b981); }
-.bg-green { background: linear-gradient(135deg, #10b981, #059669); }
-.bg-purple { background: linear-gradient(135deg, #667eea, #764ba2); }
-.bg-red { background: linear-gradient(135deg, #059669, #10b981); }
-.bg-pink { background: linear-gradient(135deg, #764ba2, #667eea); }
-.bg-cyan { background: linear-gradient(135deg, #10b981, #059669); }
-.bg-yellow { background: linear-gradient(135deg, #667eea, #764ba2); }
-.bg-indigo { background: linear-gradient(135deg, #059669, #10b981); }
-.bg-emerald { background: linear-gradient(135deg, #10b981, #059669); }
+/* 功能图标背景色 - 大漠古韵色系 */
+.bg-orange { background: rgba(184, 134, 11, 0.1); color: var(--primary-gold); }
+.bg-blue { background: rgba(139, 115, 85, 0.1); color: var(--secondary-bronze); }
+.bg-green { background: rgba(85, 107, 47, 0.1); color: var(--secondary-olive); }
+.bg-purple { background: rgba(193, 112, 61, 0.1); color: var(--primary-terracotta); }
+.bg-red { background: rgba(160, 82, 45, 0.1); color: var(--secondary-rust); }
+.bg-pink { background: rgba(184, 134, 11, 0.1); color: var(--primary-gold-light); }
+.bg-cyan { background: rgba(139, 115, 85, 0.1); color: var(--secondary-bronze); }
+.bg-yellow { background: rgba(218, 165, 32, 0.1); color: var(--primary-gold); }
+.bg-indigo { background: rgba(85, 107, 47, 0.1); color: var(--secondary-sage); }
+.bg-emerald { background: rgba(193, 112, 61, 0.1); color: var(--primary-terracotta); }
 
 .function-name {
-  font-size: 22rpx;
-  color: #374151;
+  font-size: 24rpx;
+  color: var(--text-warm);
   font-weight: 500;
   text-align: center;
   line-height: 1.2;
@@ -346,7 +346,7 @@ page {
   display: flex;
   align-items: center;
   gap: 8rpx;
-  color: #0891b2;
+  color: var(--primary-terracotta);
   font-weight: bold;
   font-size: 24rpx;
   text-transform: uppercase;
@@ -371,13 +371,76 @@ page {
 .notice-text {
   flex: 1;
   font-size: 26rpx;
-  color: #6b7280;
+  color: var(--text-warm);
   font-weight: 500;
 }
 
 .notice-arrow {
   font-size: 32rpx;
   color: #d1d5db;
+}
+
+/* 【新增】宁选好礼区域 */
+.shop-entry-section {
+  margin: 0 32rpx 24rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 20rpx rgba(139, 115, 85, 0.08);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.more-text {
+  font-size: 24rpx;
+  color: var(--text-muted);
+}
+
+.more-arrow {
+  font-size: 24rpx;
+  color: var(--text-muted);
+  margin-left: 4rpx;
+}
+
+.shop-categories {
+  white-space: nowrap;
+  margin-top: 24rpx;
+}
+
+.category-list {
+  display: inline-flex;
+  gap: 24rpx;
+}
+
+.category-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: 140rpx;
+}
+
+.category-icon-bg {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05);
+}
+
+.category-icon {
+  font-size: 44rpx;
+}
+
+.category-name {
+  font-size: 24rpx;
+  color: var(--text-deep);
+  font-weight: 500;
 }
 
 /* 【6】当季热玩区域 */
@@ -401,11 +464,11 @@ page {
 .section-title {
   font-size: 36rpx;
   font-weight: bold;
-  color: #1f2937;
+  color: var(--text-deep);
 }
 
 .new-badge {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--gradient-terracotta);
   padding: 4rpx 12rpx;
   border-radius: 12rpx;
 }
@@ -432,7 +495,7 @@ page {
 }
 
 .tab-item.active {
-  color: #667eea;
+  color: var(--primary-gold);
   font-weight: 600;
 }
 
@@ -443,7 +506,7 @@ page {
   left: 0;
   right: 0;
   height: 4rpx;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--primary-gold);
   border-radius: 2rpx;
 }
 
@@ -459,7 +522,7 @@ page {
 
 .product-card-large {
   width: 360rpx;
-  background: #FFFFFF;
+  background: var(--card-white);
   border-radius: 20rpx;
   overflow: hidden;
   box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.12);
@@ -511,13 +574,13 @@ page {
 
 .price-symbol {
   font-size: 24rpx;
-  color: #ef4444;
+  color: var(--primary-terracotta);
   font-weight: bold;
 }
 
 .price-amount {
   font-size: 36rpx;
-  color: #ef4444;
+  color: var(--primary-terracotta);
   font-weight: bold;
 }
 
@@ -554,17 +617,17 @@ page {
 
 /* 榜单卡片背景色 - 统一主色系 */
 .bg-blue {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--gradient-gold);
   color: #ffffff;
 }
 
 .bg-green {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: var(--gradient-olive);
   color: #ffffff;
 }
 
 .bg-purple {
-  background: linear-gradient(135deg, #764ba2, #667eea);
+  background: var(--gradient-terracotta);
   color: #ffffff;
 }
 

@@ -1,4 +1,5 @@
 <!-- 景点列表页面 -->
+  <custom-nav title="商品详情" background="#ffffff" color="#000000" back="{{true}}"></custom-nav>
 <view class="container">
   <!-- 分类筛选 -->
   <scroll-view class="category-scroll" scroll-x>

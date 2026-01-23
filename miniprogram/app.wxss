@@ -14,7 +14,7 @@ textarea {
 }
 
 /* 颜色变量 - 大漠古韵配色 */
-:root {
+page {
   /* 主色系 - 金沙色调 */
   --primary-gold: #B8860B;        /* 深金色 */
   --primary-gold-light: #DAA520;   /* 金黄色 */

@@ -5,10 +5,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"ningxia-wenlv-backend/db"
 	"ningxia-wenlv-backend/models"
 	"ningxia-wenlv-backend/utils"
+
+	"github.com/gin-gonic/gin"
 )
 
 // AuthMiddleware JWT 认证中间件
@@ -132,6 +133,7 @@ func AdminAuthMiddleware() gin.HandlerFunc {
 
 		c.Set("admin_id", admin.ID)
 		c.Set("admin_username", admin.Username)
+		c.Set("admin_role", admin.Role)
 		c.Next()
 	}
 }

@@ -1,11 +1,17 @@
 package v1
 
 import (
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
+	"fmt"
+	"math/rand"
+	"path/filepath"
+	"time"
+
 	"ningxia-wenlv-backend/db"
 	"ningxia-wenlv-backend/models"
 	"ningxia-wenlv-backend/utils"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // GetAttractions 获取景点列表
@@ -393,13 +399,29 @@ func AdminGetProducts(c *gin.Context) {
 	page := c.DefaultQuery("page", "1")
 	pageSize := c.DefaultQuery("page_size", "10")
 
+	// 获取当前登录管理员角色
+	role, _ := c.Get("admin_role")
+	adminID, _ := c.Get("admin_id")
+
 	var products []models.Product
 	var total int64
 
-	db.DB.Model(&models.Product{}).Count(&total)
+	query := db.DB.Model(&models.Product{})
+
+	// 如果是商家 (Role=3)，只显示自己的商品
+	if role.(int) == 3 {
+		var merchant models.Merchant
+		if err := db.DB.Where("admin_id = ?", adminID).First(&merchant).Error; err != nil {
+			utils.Error(c, utils.CodePermissionDenied, "找不到商家信息")
+			return
+		}
+		query = query.Where("merchant_id = ?", merchant.ID)
+	}
+
+	query.Count(&total)
 
 	offset := (parseInt(page) - 1) * parseInt(pageSize)
-	if err := db.DB.Offset(offset).Limit(parseInt(pageSize)).Order("created_at DESC").Find(&products).Error; err != nil {
+	if err := query.Offset(offset).Limit(parseInt(pageSize)).Order("created_at DESC").Find(&products).Error; err != nil {
 		utils.ServerError(c, "获取商品列表失败")
 		return
 	}
@@ -415,6 +437,22 @@ func AdminCreateProduct(c *gin.Context) {
 		return
 	}
 
+	// 获取角色以设置商家ID
+	role, _ := c.Get("admin_role")
+	adminID, _ := c.Get("admin_id")
+
+	if role.(int) == 3 {
+		var merchant models.Merchant
+		if err := db.DB.Where("admin_id = ?", adminID).First(&merchant).Error; err != nil {
+			utils.Error(c, utils.CodePermissionDenied, "找不到商家信息")
+			return
+		}
+		product.MerchantID = merchant.ID
+	} else {
+		// 平台管理员创建默认为 0 (自营)
+		product.MerchantID = 0
+	}
+
 	if err := db.DB.Create(&product).Error; err != nil {
 		utils.ServerError(c, "创建失败")
 		return
@@ -426,6 +464,8 @@ func AdminCreateProduct(c *gin.Context) {
 // AdminUpdateProduct 管理员更新商品
 func AdminUpdateProduct(c *gin.Context) {
 	id := c.Param("id")
+	role, _ := c.Get("admin_role")
+	adminID, _ := c.Get("admin_id")
 
 	var product models.Product
 	if err := c.ShouldBindJSON(&product); err != nil {
@@ -433,7 +473,19 @@ func AdminUpdateProduct(c *gin.Context) {
 		return
 	}
 
-	if err := db.DB.Model(&models.Product{}).Where("id = ?", id).Updates(&product).Error; err != nil {
+	query := db.DB.Model(&models.Product{}).Where("id = ?", id)
+
+	// 商家只能更新自己的商品
+	if role.(int) == 3 {
+		var merchant models.Merchant
+		if err := db.DB.Where("admin_id = ?", adminID).First(&merchant).Error; err != nil {
+			utils.Error(c, utils.CodePermissionDenied, "找不到商家信息")
+			return
+		}
+		query = query.Where("merchant_id = ?", merchant.ID)
+	}
+
+	if err := query.Updates(&product).Error; err != nil {
 		utils.ServerError(c, "更新失败")
 		return
 	}
@@ -444,8 +496,22 @@ func AdminUpdateProduct(c *gin.Context) {
 // AdminDeleteProduct 管理员删除商品
 func AdminDeleteProduct(c *gin.Context) {
 	id := c.Param("id")
+	role, _ := c.Get("admin_role")
+	adminID, _ := c.Get("admin_id")
 
-	if err := db.DB.Delete(&models.Product{}, id).Error; err != nil {
+	query := db.DB.Where("id = ?", id)
+
+	// 商家只能删除自己的商品
+	if role.(int) == 3 {
+		var merchant models.Merchant
+		if err := db.DB.Where("admin_id = ?", adminID).First(&merchant).Error; err != nil {
+			utils.Error(c, utils.CodePermissionDenied, "找不到商家信息")
+			return
+		}
+		query = query.Where("merchant_id = ?", merchant.ID)
+	}
+
+	if err := query.Delete(&models.Product{}).Error; err != nil {
 		utils.ServerError(c, "删除失败")
 		return
 	}
@@ -590,5 +656,16 @@ func UploadFile(c *gin.Context) {
 // parseInt 已移至 parse.go 供包内复用
 
 func generateFileName(original string) string {
-	return original // 简单处理，实际应该加时间戳和UUID
+	ext := filepath.Ext(original)
+
+	// 简单随机字符串逻辑
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, 6)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))]
+	}
+	randomStr := string(b)
+
+	// 使用纳秒级时间戳 + 6位随机字符串
+	return fmt.Sprintf("%d_%s%s", time.Now().UnixNano(), randomStr, ext)
 }

@@ -1,4 +1,6 @@
 {
-  "usingComponents": {},
+  "usingComponents": {
+    "custom-nav": "/components/custom-nav/index"
+  },
   "navigationBarTitleText": "文化详情"
 }

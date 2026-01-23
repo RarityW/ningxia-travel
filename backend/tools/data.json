@@ -1,0 +1,35 @@
+{
+    "products": [
+        {
+            "name": "示例商品：宁夏枸杞",
+            "category": "明星产品",
+            "price": 98.00,
+            "original_price": 128.00,
+            "stock": 1000,
+            "description": "这是商品描述...",
+            "cover_image": "/images/product-1.jpg",
+            "images": [
+                "/images/product-1.jpg",
+                "/images/detail-1.jpg"
+            ],
+            "specifications": [
+                "250g",
+                "500g"
+            ]
+        }
+    ],
+    "foods": [
+        {
+            "name": "示例美食：手抓羊肉",
+            "category": "特色菜",
+            "region": "银川市",
+            "price": 120.00,
+            "description": "这是美食描述...",
+            "cover_image": "/images/food-1.jpg",
+            "shops": [
+                "店铺A",
+                "店铺B"
+            ]
+        }
+    ]
+}

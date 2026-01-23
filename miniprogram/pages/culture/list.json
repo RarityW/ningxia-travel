@@ -1,5 +1,7 @@
 {
-  "usingComponents": {},
+  "usingComponents": {
+    "custom-nav": "/components/custom-nav/index"
+  },
   "navigationBarTitleText": "宁夏文化",
   "enablePullDownRefresh": true,
   "backgroundTextStyle": "dark"

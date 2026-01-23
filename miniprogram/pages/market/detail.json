@@ -1,5 +1,7 @@
 {
-  "usingComponents": {},
+  "usingComponents": {
+    "custom-nav": "/components/custom-nav/index"
+  },
   "navigationBarTitleText": "景点详情",
   "enablePullDownRefresh": false,
   "backgroundTextStyle": "dark"

@@ -3,11 +3,16 @@ const api = require('./api')
 
 const API = {
   // 登录
+  // 登录 (WeChat)
   login: (data) => api.post('/auth/login', data),
-  
+  // 用户注册 (Phone/Pwd)
+  userRegister: (data) => api.post('/auth/user/register', data),
+  // 用户登录 (Phone/Pwd)
+  userLogin: (data) => api.post('/auth/user/login', data),
+
   // 获取用户信息
   getUserProfile: () => api.get('/user/profile'),
-  
+
   // 更新用户信息
   updateProfile: (data) => api.put('/user/profile', data),
 

@@ -2,14 +2,17 @@ package v1
 
 import (
 	"fmt"
+	"math/rand"
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 	"ningxia-wenlv-backend/db"
 	"ningxia-wenlv-backend/models"
 	"ningxia-wenlv-backend/utils"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 // Login 小程序登录
@@ -27,36 +30,35 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// 查找或创建用户 - 使用原生SQL更可靠
+	// 查找或创建用户 - 使用 GORM
 	var user models.User
 
-	// 先查询用户
-	if err := db.DB.Where("open_id = ?", req.OpenID).First(&user).Error; err != nil {
-		// 用户不存在，创建新用户
-		user = models.User{
-			OpenID:   req.OpenID,
-			NickName: req.NickName,
-			Avatar:   req.Avatar,
-			Gender:   req.Gender,
-			IsActive: true,
-		}
-
-		// 使用原始SQL插入
-		sql := `INSERT INTO users (open_id, nick_name, avatar, gender, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())`
-		if err := db.DB.Exec(sql, user.OpenID, user.NickName, user.Avatar, user.Gender, user.IsActive).Error; err != nil {
-			fmt.Printf("创建用户失败: %v, open_id=%s\n", err, req.OpenID)
-			utils.ServerError(c, "注册失败")
+	// 查询是否存在
+	err := db.DB.Where("open_id = ?", req.OpenID).First(&user).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			// 用户不存在，创建新用户
+			user = models.User{
+				OpenID:   req.OpenID,
+				NickName: req.NickName,
+				Avatar:   req.Avatar,
+				Gender:   req.Gender,
+				IsActive: true,
+			}
+			if err := db.DB.Create(&user).Error; err != nil {
+				fmt.Printf("创建用户失败: %v, open_id=%s\n", err, req.OpenID)
+				utils.ServerError(c, "注册失败")
+				return
+			}
+			fmt.Printf("新用户注册成功: id=%d, open_id=%s\n", user.ID, user.OpenID)
+		} else {
+			// 数据库错误
+			fmt.Printf("查询用户失败: %v\n", err)
+			utils.ServerError(c, "登录失败")
 			return
 		}
-
-		// 重新加载用户
-		if err := db.DB.Where("open_id = ?", req.OpenID).First(&user).Error; err != nil {
-			fmt.Printf("重新加载用户失败: %v, open_id=%s\n", err, req.OpenID)
-			utils.ServerError(c, "注册失败")
-			return
-		}
-		fmt.Printf("新用户注册成功: id=%d, open_id=%s\n", user.ID, user.OpenID)
 	} else {
+		// 用户已存在，可选更新信息
 		fmt.Printf("用户已存在: id=%d, open_id=%s\n", user.ID, user.OpenID)
 	}
 
@@ -71,6 +73,103 @@ func Login(c *gin.Context) {
 		"token":    token,
 		"user_id":  user.ID,
 		"openid":   user.OpenID,
+		"nickname": user.NickName,
+		"avatar":   user.Avatar,
+	})
+
+}
+
+// UserRegister 用户手机号注册
+func UserRegister(c *gin.Context) {
+	type RegisterRequest struct {
+		Phone    string `json:"phone" binding:"required"`
+		Password string `json:"password" binding:"required"`
+		NickName string `json:"nickname"`
+	}
+
+	var req RegisterRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ParamError(c, "参数错误")
+		return
+	}
+
+	// 检查手机号是否已存在
+	var count int64
+	db.DB.Model(&models.User{}).Where("phone = ?", req.Phone).Count(&count)
+	if count > 0 {
+		utils.Error(c, utils.CodeParamError, "手机号已注册")
+		return
+	}
+
+	// 加密密码
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		utils.ServerError(c, "系统错误")
+		return
+	}
+
+	user := models.User{
+		Phone:    req.Phone,
+		Password: string(hashedPassword),
+		NickName: req.NickName,
+		IsActive: true,
+		// OpenID 为空，因为是手机号注册
+	}
+
+	if err := db.DB.Create(&user).Error; err != nil {
+		utils.ServerError(c, "注册失败")
+		return
+	}
+
+	// 自动登录，生成 token
+	token, _ := utils.GenerateToken(user.ID, user.Phone) // Use Phone as "openid" or unique key for token
+
+	utils.Success(c, gin.H{
+		"token":    token,
+		"user_id":  user.ID,
+		"nickname": user.NickName,
+		"avatar":   user.Avatar,
+	})
+}
+
+// UserLogin 用户手机号登录
+func UserLogin(c *gin.Context) {
+	type LoginRequest struct {
+		Phone    string `json:"phone" binding:"required"`
+		Password string `json:"password" binding:"required"`
+	}
+
+	var req LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ParamError(c, "参数错误")
+		return
+	}
+
+	var user models.User
+	if err := db.DB.Where("phone = ?", req.Phone).First(&user).Error; err != nil {
+		utils.Error(c, utils.CodeLoginFailed, "账号不存在")
+		return
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+		utils.Error(c, utils.CodeLoginFailed, "密码错误")
+		return
+	}
+
+	if !user.IsActive {
+		utils.Error(c, utils.CodeLoginFailed, "账号已被禁用")
+		return
+	}
+
+	token, err := utils.GenerateToken(user.ID, user.Phone)
+	if err != nil {
+		utils.ServerError(c, "生成令牌失败")
+		return
+	}
+
+	utils.Success(c, gin.H{
+		"token":    token,
+		"user_id":  user.ID,
 		"nickname": user.NickName,
 		"avatar":   user.Avatar,
 	})
@@ -409,66 +508,109 @@ func CreateOrder(c *gin.Context) {
 		return
 	}
 
-	// 获取购物车商品
-	var carts []models.Cart
-	if err := db.DB.Where("user_id = ?", userID).Find(&carts).Error; err != nil {
-		utils.ServerError(c, "获取购物车失败")
-		return
-	}
-
-	if len(carts) == 0 {
-		utils.Error(c, utils.CodeCartEmpty, "购物车为空")
-		return
-	}
-
-	// 计算总价
-	var totalPrice float64
-	for _, cart := range carts {
-		var product models.Product
-		if err := db.DB.First(&product, cart.ProductID).Error; err != nil {
-			continue
+	// 开启事务
+	err := db.DB.Transaction(func(tx *gorm.DB) error {
+		// 1. 获取购物车商品
+		var carts []models.Cart
+		if err := tx.Where("user_id = ?", userID).Find(&carts).Error; err != nil {
+			return err
 		}
-		totalPrice += product.Price * float64(cart.Quantity)
-	}
 
-	// 生成订单号
-	orderNo := generateOrderNo()
+		if len(carts) == 0 {
+			return fmt.Errorf("cart is empty")
+		}
 
-	// 创建订单
-	order := models.Order{
-		OrderNo:    orderNo,
-		UserID:     userID.(uint),
-		TotalPrice: totalPrice,
-		Status:     0, // 待支付
-		Address:    req.Address,
-		Remark:     req.Remark,
-	}
+		var totalPrice float64
+		var orderItems []models.OrderItem
 
-	if err := db.DB.Create(&order).Error; err != nil {
-		utils.ServerError(c, "创建订单失败")
+		// 2. 遍历购物车，检查库存并扣减，计算总价
+		for _, cart := range carts {
+			var product models.Product
+			// 加锁查询商品信息，虽然下面用了乐观锁扣减，但这能先拿到价格
+			if err := tx.First(&product, cart.ProductID).Error; err != nil {
+				return fmt.Errorf("product not found: %d", cart.ProductID)
+			}
+
+			// 扣减库存 (乐观锁：确保 stcok >= quantity)
+			// gorm.Expr("stock - ?", cart.Quantity)
+			result := tx.Model(&models.Product{}).
+				Where("id = ? AND stock >= ?", cart.ProductID, cart.Quantity).
+				Update("stock", gorm.Expr("stock - ?", cart.Quantity))
+
+			if result.Error != nil {
+				return result.Error
+			}
+			if result.RowsAffected == 0 {
+				return fmt.Errorf("insufficient stock for product: %s", product.Name)
+			}
+
+			// 累加总价
+			totalPrice += product.Price * float64(cart.Quantity)
+
+			// 准备订单明细
+			orderItems = append(orderItems, models.OrderItem{
+				ProductID: cart.ProductID,
+				Quantity:  cart.Quantity,
+				Price:     product.Price,
+			})
+		}
+
+		// 生成订单号
+		orderNo := generateOrderNo()
+
+		// 3. 创建订单
+		order := models.Order{
+			OrderNo:    orderNo,
+			UserID:     userID.(uint),
+			TotalPrice: totalPrice,
+			Status:     0, // 待支付
+			Address:    req.Address,
+			Remark:     req.Remark,
+		}
+
+		if err := tx.Create(&order).Error; err != nil {
+			return err
+		}
+
+		// 4. 创建订单明细 (关联 OrderID)
+		for i := range orderItems {
+			orderItems[i].OrderID = order.ID
+			if err := tx.Create(&orderItems[i]).Error; err != nil {
+				return err
+			}
+		}
+
+		// 5. 清空购物车
+		if err := tx.Where("user_id = ?", userID).Delete(&models.Cart{}).Error; err != nil {
+			return err
+		}
+
+		// 成功，将 order 传出去以便返回
+		// 这里通过闭包外的变量传递 orderNo 也可以，但 order 对象是在内部创建的
+		// 我们可以简单的重新赋值给外面的变量，或者只返回 orderNo
+		c.Set("created_order_no", orderNo)
+		c.Set("created_order_id", order.ID)
+
+		return nil
+	})
+
+	if err != nil {
+		if err.Error() == "cart is empty" {
+			utils.Error(c, utils.CodeCartEmpty, "购物车为空")
+		} else if msg := err.Error(); len(msg) > 18 && msg[:18] == "insufficient stock" {
+			utils.Error(c, utils.CodeProductOutOfStock, err.Error()) // 返回具体库存不足信息
+		} else {
+			utils.ServerError(c, "创建订单失败: "+err.Error())
+		}
 		return
 	}
 
-	// 创建订单明细
-	for _, cart := range carts {
-		var product models.Product
-		db.DB.First(&product, cart.ProductID)
-
-		orderItem := models.OrderItem{
-			OrderID:   order.ID,
-			ProductID: cart.ProductID,
-			Quantity:  cart.Quantity,
-			Price:     product.Price,
-		}
-		db.DB.Create(&orderItem)
-	}
-
-	// 清空购物车
-	db.DB.Where("user_id = ?", userID).Delete(&models.Cart{})
+	orderNo, _ := c.Get("created_order_no")
+	orderID, _ := c.Get("created_order_id")
 
 	utils.Success(c, gin.H{
 		"order_no": orderNo,
-		"order_id": order.ID,
+		"order_id": orderID,
 	})
 }
 
@@ -506,5 +648,6 @@ func GetCoupons(c *gin.Context) {
 
 // 辅助函数
 func generateOrderNo() string {
-	return fmt.Sprintf("%d%d", time.Now().Unix(), time.Now().UnixNano()%1000)
+	// 时间戳(14位) + 随机数(6位) = 20位
+	return fmt.Sprintf("%s%06d", time.Now().Format("20060102150405"), rand.Intn(1000000))
 }

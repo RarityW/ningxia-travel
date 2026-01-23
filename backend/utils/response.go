@@ -13,12 +13,12 @@ type Response struct {
 
 // PageResponse 分页响应结构
 type PageResponse struct {
-	Code    int         `json:"code"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data,omitempty"`
-	Page    int         `json:"page,omitempty"`
-	PageSize int        `json:"page_size,omitempty"`
-	Total   int64       `json:"total,omitempty"`
+	Code     int         `json:"code"`
+	Message  string      `json:"message"`
+	Data     interface{} `json:"data,omitempty"`
+	Page     int         `json:"page,omitempty"`
+	PageSize int         `json:"page_size,omitempty"`
+	Total    int64       `json:"total,omitempty"`
 }
 
 // Success 成功响应
@@ -87,12 +87,13 @@ const (
 	CodeParamError        = 400
 	CodeUnauthorized      = 401
 	CodeNotFound          = 404
-	CodeServerError        = 500
+	CodeServerError       = 500
 	CodeUserNotFound      = 1001
 	CodeUserExists        = 1002
 	CodeLoginFailed       = 1003
-	CodeInvalidToken       = 1004
-	CodeProductOutOfStock  = 2001
-	CodeOrderNotFound      = 3001
+	CodeInvalidToken      = 1004
+	CodeProductOutOfStock = 2001
+	CodeOrderNotFound     = 3001
 	CodeCartEmpty         = 3002
+	CodePermissionDenied  = 403
 )

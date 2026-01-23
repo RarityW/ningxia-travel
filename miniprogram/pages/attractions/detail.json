@@ -1,4 +1,6 @@
 {
-  "usingComponents": {},
-  "navigationBarTitleText": "景点详情"
+  "navigationBarTitleText": "景点详情",
+  "usingComponents": {
+    "custom-nav": "/components/custom-nav/index"
+  }
 }

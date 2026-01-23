@@ -1,4 +1,5 @@
 <!-- 文化详情页面 -->
+<custom-nav title="文化详情" back="{{true}}"></custom-nav>
 <view class="container" wx:if="{{culture}}">
   <!-- 顶部轮播图 -->
   <swiper class="banner-swiper" indicator-dots autoplay circular>
