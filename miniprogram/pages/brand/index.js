@@ -98,7 +98,7 @@ Page({
     goToDetail(e) {
         const id = e.currentTarget.dataset.id
         wx.navigateTo({
-            url: `/pages/market/detail?id=${id}`
+            url: `/pages/product-detail/product-detail?id=${id}`
         })
     },
 

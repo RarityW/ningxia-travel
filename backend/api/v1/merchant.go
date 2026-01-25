@@ -77,7 +77,7 @@ func RegisterMerchant(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, "注册成功，请等待审核")
+	utils.Success(c, "注册成功,请等待审核")
 }
 
 // GetMerchantProfile 获取商家信息 (需登录)
@@ -115,16 +115,120 @@ func UpdateMerchantProfile(c *gin.Context) {
 	}
 
 	// 更新字段
-	merchant.Name = req.Name
-	merchant.Phone = req.Phone
-	merchant.Address = req.Address
-	merchant.LicenseImage = req.LicenseImage
-	// 注意：Status 不能由商家自己更新
+	updates := map[string]interface{}{
+		"name":          req.Name,
+		"logo":          req.Logo,
+		"cover_image":   req.CoverImage,
+		"description":   req.Description,
+		"phone":         req.Phone,
+		"address":       req.Address,
+		"license_image": req.LicenseImage,
+	}
 
-	if err := db.DB.Save(&merchant).Error; err != nil {
+	if err := db.DB.Model(&merchant).Updates(updates).Error; err != nil {
 		utils.ServerError(c, "更新失败")
 		return
 	}
 
 	utils.Success(c, merchant)
+}
+
+// ===== 管理员接口 =====
+
+// AdminGetMerchants 获取所有商家列表 (管理员)
+func AdminGetMerchants(c *gin.Context) {
+	var merchants []models.Merchant
+	if err := db.DB.Order("created_at DESC").Find(&merchants).Error; err != nil {
+		utils.ServerError(c, "获取商家列表失败")
+		return
+	}
+	utils.Success(c, merchants)
+}
+
+// AdminCreateMerchant 管理员创建店铺
+func AdminCreateMerchant(c *gin.Context) {
+	var merchant models.Merchant
+	if err := c.ShouldBindJSON(&merchant); err != nil {
+		utils.ParamError(c, "参数错误")
+		return
+	}
+
+	// 默认状态为正常
+	if merchant.Status == 0 {
+		merchant.Status = 1
+	}
+
+	if err := db.DB.Create(&merchant).Error; err != nil {
+		utils.ServerError(c, "创建店铺失败")
+		return
+	}
+
+	utils.Success(c, merchant)
+}
+
+// AdminUpdateMerchant 管理员更新店铺
+func AdminUpdateMerchant(c *gin.Context) {
+	id := c.Param("id")
+
+	var merchant models.Merchant
+	if err := c.ShouldBindJSON(&merchant); err != nil {
+		utils.ParamError(c, "参数错误")
+		return
+	}
+
+	if err := db.DB.Model(&models.Merchant{}).Where("id = ?", id).Updates(&merchant).Error; err != nil {
+		utils.ServerError(c, "更新店铺失败")
+		return
+	}
+
+	utils.Success(c, nil)
+}
+
+// AdminDeleteMerchant 管理员删除店铺
+func AdminDeleteMerchant(c *gin.Context) {
+	id := c.Param("id")
+
+	// 软删除（如果需要）
+	if err := db.DB.Delete(&models.Merchant{}, id).Error; err != nil {
+		utils.ServerError(c, "删除店铺失败")
+		return
+	}
+
+	utils.Success(c, nil)
+}
+
+// ===== 小程序接口 =====
+
+// GetMerchantDetail 获取店铺详情 (小程序端)
+func GetMerchantDetail(c *gin.Context) {
+	id := c.Param("id")
+
+	var merchant models.Merchant
+	if err := db.DB.Where("id = ? AND status = 1", id).First(&merchant).Error; err != nil {
+		utils.NotFound(c)
+		return
+	}
+
+	utils.Success(c, merchant)
+}
+
+// GetMerchantProducts 获取店铺商品列表 (小程序端)
+func GetMerchantProducts(c *gin.Context) {
+	id := c.Param("id")
+	page := c.DefaultQuery("page", "1")
+	pageSize := c.DefaultQuery("page_size", "10")
+
+	var products []models.Product
+	var total int64
+
+	query := db.DB.Model(&models.Product{}).Where("merchant_id = ? AND status = 1", id)
+	query.Count(&total)
+
+	offset := (parseInt(page) - 1) * parseInt(pageSize)
+	if err := query.Offset(offset).Limit(parseInt(pageSize)).Order("created_at DESC").Find(&products).Error; err != nil {
+		utils.ServerError(c, "获取商品列表失败")
+		return
+	}
+
+	utils.PageSuccess(c, products, parseInt(page), parseInt(pageSize), total)
 }

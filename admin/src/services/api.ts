@@ -6,6 +6,7 @@ const API_BASE_URL = 'http://localhost:8080/api/v1';
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
+  withCredentials: true, // 允许发送 Cookie
   headers: {
     'Content-Type': 'application/json',
   },
@@ -74,6 +75,11 @@ export const adminLogin = (data: { username: string; password: string }) => {
   return axios.post(`${API_BASE_URL}/auth/admin/login`, data);
 };
 
+// 获取管理员信息 (验证会话)
+export const getAdminProfile = () => {
+  return api.get('/admin/profile');
+};
+
 // 景点管理API
 export const attractionsAPI = {
   getList: (params?: any) => api.get('/admin/attractions', { params }),
@@ -96,6 +102,14 @@ export const cultureAPI = {
   create: (data: any) => api.post('/admin/culture', data),
   update: (id: number, data: any) => api.put(`/admin/culture/${id}`, data),
   delete: (id: number) => api.delete(`/admin/culture/${id}`),
+};
+
+// 商家管理API
+export const merchantsAPI = {
+  getList: (params?: any) => api.get('/admin/merchants', { params }),
+  create: (data: any) => api.post('/admin/merchants', data),
+  update: (id: number, data: any) => api.put(`/admin/merchants/${id}`, data),
+  delete: (id: number) => api.delete(`/admin/merchants/${id}`),
 };
 
 // 商品管理API

@@ -19,7 +19,7 @@ const Login: React.FC = () => {
 
         // 立即跳转，依赖cookie认证
         console.log('→ Login successful, redirecting...');
-        window.location.href = '/dashboard';
+        window.location.href = '/admin/dashboard';
       } else {
         message.error(response.data.message || '登录失败');
       }
@@ -89,12 +89,6 @@ const Login: React.FC = () => {
             </Button>
           </Form.Item>
         </Form>
-
-        <div style={{ textAlign: 'center', marginTop: 16 }}>
-          <p style={{ color: '#999', fontSize: 12 }}>
-            默认账号：admin / Admin@2024
-          </p>
-        </div>
       </Card>
     </div>
   );

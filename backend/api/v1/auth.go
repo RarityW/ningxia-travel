@@ -245,6 +245,28 @@ func AdminLogin(c *gin.Context) {
 	})
 }
 
+// AdminGetProfile 获取管理员信息 (用于前端验证会话)
+func AdminGetProfile(c *gin.Context) {
+	adminID, exists := c.Get("admin_id")
+	if !exists {
+		utils.Unauthorized(c)
+		return
+	}
+
+	var admin models.Admin
+	if err := db.DB.First(&admin, adminID).Error; err != nil {
+		utils.NotFound(c)
+		return
+	}
+
+	utils.Success(c, gin.H{
+		"admin_id": admin.ID,
+		"username": admin.Username,
+		"name":     admin.Name,
+		"role":     admin.Role,
+	})
+}
+
 // GetUserProfile 获取用户信息
 func GetUserProfile(c *gin.Context) {
 	userID, exists := c.Get("user_id")

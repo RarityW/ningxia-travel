@@ -27,6 +27,7 @@ func main() {
 
 	// 创建 Gin 路由
 	r := gin.Default()
+	r.MaxMultipartMemory = 50 << 20 // 50MB
 
 	// 中间件
 	r.Use(middleware.CORSMiddleware())
@@ -133,6 +134,9 @@ func main() {
 		admin := apiV1.Group("/admin")
 		admin.Use(middleware.AdminAuthMiddleware())
 		{
+			// 管理员信息
+			admin.GET("/profile", v1.AdminGetProfile)
+
 			// 景点管理
 			admin.GET("/attractions", v1.AdminGetAttractions)
 			admin.POST("/attractions", v1.AdminCreateAttraction)
@@ -161,15 +165,28 @@ func main() {
 			admin.GET("/orders", v1.AdminGetOrders)
 			admin.PUT("/orders/:id/status", v1.AdminUpdateOrderStatus)
 
+			// 统计数据
+			admin.GET("/stats/overview", v1.AdminGetStats)
+
 			// 优惠券管理
 			admin.GET("/coupons", v1.AdminGetCoupons)
 			admin.POST("/coupons", v1.AdminCreateCoupon)
 			admin.PUT("/coupons/:id", v1.AdminUpdateCoupon)
 			admin.DELETE("/coupons/:id", v1.AdminDeleteCoupon)
 
+			// 商家管理
+			admin.GET("/merchants", v1.AdminGetMerchants)
+			admin.POST("/merchants", v1.AdminCreateMerchant)
+			admin.PUT("/merchants/:id", v1.AdminUpdateMerchant)
+			admin.DELETE("/merchants/:id", v1.AdminDeleteMerchant)
+
 			// 文件上传
 			admin.POST("/upload", v1.UploadFile)
 		}
+
+		// 小程序端店铺接口（公开）
+		apiV1.GET("/merchants/:id", v1.GetMerchantDetail)
+		apiV1.GET("/merchants/:id/products", v1.GetMerchantProducts)
 	}
 
 	// 启动服务器

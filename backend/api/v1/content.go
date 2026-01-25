@@ -436,6 +436,11 @@ func AdminGetProducts(c *gin.Context) {
 
 	query.Count(&total)
 
+	// Filter by merchant_id if provided (for admins viewing specific shop)
+	if merchantID := c.Query("merchant_id"); merchantID != "" {
+		query = query.Where("merchant_id = ?", merchantID)
+	}
+
 	offset := (parseInt(page) - 1) * parseInt(pageSize)
 	if err := query.Offset(offset).Limit(parseInt(pageSize)).Order("created_at DESC").Find(&products).Error; err != nil {
 		utils.ServerError(c, "获取商品列表失败")
@@ -465,8 +470,12 @@ func AdminCreateProduct(c *gin.Context) {
 		}
 		product.MerchantID = merchant.ID
 	} else {
-		// 平台管理员创建默认为 0 (自营)
-		product.MerchantID = 0
+		// 平台管理员: 如果前端传了 MerchantID 则使用，否则默认为 0 (自营)
+		if product.MerchantID == 0 {
+			// 如果没传，或者传0，那就是自营
+			product.MerchantID = 0
+		}
+		// 如果传了具体ID，就使用该ID，实现"管理员给具体店铺加商品"
 	}
 
 	if err := db.DB.Create(&product).Error; err != nil {
@@ -579,7 +588,7 @@ func AdminGetOrders(c *gin.Context) {
 	modelQuery.Count(&total)
 
 	offset := (parseInt(page) - 1) * parseInt(pageSize)
-	if err := modelQuery.Offset(offset).Limit(parseInt(pageSize)).Order("created_at DESC").Find(&orders).Error; err != nil {
+	if err := modelQuery.Offset(offset).Limit(parseInt(pageSize)).Preload("User").Preload("Items.Product").Order("created_at DESC").Find(&orders).Error; err != nil {
 		utils.ServerError(c, "获取订单列表失败")
 		return
 	}
@@ -676,8 +685,9 @@ func UploadFile(c *gin.Context) {
 	}
 
 	// 验证文件大小
-	if file.Size > 10485760 { // 10MB
-		utils.ParamError(c, "文件大小不能超过10MB")
+	// 验证文件大小
+	if file.Size > 31457280 { // 30MB
+		utils.ParamError(c, "文件大小不能超过30MB")
 		return
 	}
 

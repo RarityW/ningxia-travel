@@ -14,7 +14,9 @@
     "pages/favorites/index",
     "pages/cart/index",
     "pages/shop/index",
-    "pages/brand/index"
+    "pages/brand/index",
+    "pages/product-detail/product-detail",
+    "pages/shop-detail/shop-detail"
   ],
   "window": {
     "navigationStyle": "custom",

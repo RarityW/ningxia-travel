@@ -14,6 +14,7 @@ import {
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { foodAPI } from '../../services/api';
+import ImageUpload from '../../components/ImageUpload';
 
 const { Option } = Select;
 
@@ -203,7 +204,7 @@ const Food: React.FC = () => {
           </Form.Item>
 
           <Form.Item name="cover_image" label="封面图片">
-            <Input placeholder="图片URL" />
+            <ImageUpload />
           </Form.Item>
 
           <Form.Item name="category" label="分类">

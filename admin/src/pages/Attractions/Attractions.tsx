@@ -14,6 +14,7 @@ import {
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { attractionsAPI } from '../../services/api';
+import ImageUpload from '../../components/ImageUpload';
 
 const { Option } = Select;
 
@@ -216,7 +217,7 @@ const Attractions: React.FC = () => {
           </Form.Item>
 
           <Form.Item name="cover_image" label="封面图片">
-            <Input placeholder="图片URL" />
+            <ImageUpload />
           </Form.Item>
 
           <Form.Item name="grade" label="等级">

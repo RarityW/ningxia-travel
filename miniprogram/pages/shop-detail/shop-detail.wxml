@@ -1,0 +1,31 @@
+<view class="container" wx:if="{{merchant}}">
+  <image class="shop-cover" src="{{merchant.cover_image || '/assets/images/default-cover.png'}}" mode="aspectFill"></image>
+  
+  <view class="shop-header">
+    <image class="shop-logo" src="{{merchant.logo || '/assets/images/default-shop.png'}}" mode="aspectFill"></image>
+    <view class="shop-info">
+      <view class="shop-name">{{merchant.name}}</view>
+      <view class="shop-desc">{{merchant.description || '暂无描述'}}</view>
+    </view>
+  </view>
+
+  <view class="shop-meta">
+    <view class="meta-item">📍 {{merchant.address || '暂无地址'}}</view>
+    <view class="meta-item">📞 {{merchant.phone || '暂无电话'}}</view>
+  </view>
+
+  <view class="product-list">
+    <view class="section-title">全部商品</view>
+    <view class="grid">
+      <view class="product-item" wx:for="{{products}}" wx:key="id" bindtap="goToProduct" data-id="{{item.id}}">
+        <image class="p-img" src="{{item.cover_image}}" mode="aspectFill"></image>
+        <view class="p-info">
+          <view class="p-name">{{item.name}}</view>
+          <view class="p-price">¥{{item.price}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="loading-more" wx:if="{{loading}}">加载中...</view>
+    <view class="no-more" wx:if="{{!loading && !hasMore}}">没有更多了</view>
+  </view>
+</view>

@@ -1,0 +1,39 @@
+<view class="container" wx:if="{{product}}">
+  <image class="cover-image" src="{{product.cover_image}}" mode="aspectFill"></image>
+  
+  <view class="info-card">
+    <view class="price-row">
+      <text class="price">¥{{product.price}}</text>
+      <text class="stock">库存: {{product.stock}}</text>
+    </view>
+    <view class="title">{{product.name}}</view>
+    
+    <view class="merchant-card" bindtap="goToShop" wx:if="{{product.merchant}}">
+      <image class="merchant-logo" src="{{product.merchant.logo || '/assets/images/default-shop.png'}}" mode="aspectFill"></image>
+      <view class="merchant-info">
+        <view class="merchant-name">{{product.merchant.name}}</view>
+        <view class="merchant-tip">进店逛逛 ></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="detail-card">
+    <view class="section-title">商品详情</view>
+    <view class="description">{{product.description || '暂无描述'}}</view>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="icon-btn" bindtap="goToShop">
+      <text class="icon">🏠</text>
+      <text>店铺</text>
+    </view>
+    <view class="icon-btn">
+      <text class="icon">🛒</text>
+      <text>购物车</text>
+    </view>
+    <view class="btn-group">
+      <view class="btn cart-btn" bindtap="addToCart">加入购物车</view>
+      <view class="btn buy-btn" bindtap="buyNow">立即购买</view>
+    </view>
+  </view>
+</view>

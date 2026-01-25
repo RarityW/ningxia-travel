@@ -30,9 +30,9 @@ const menuItems = [
     label: '仪表盘',
   },
   {
-    key: '/attractions',
-    icon: <EnvironmentOutlined />,
-    label: '景点管理',
+    key: '/shops',
+    icon: <ShoppingOutlined />,
+    label: '店铺管理',
   },
   {
     key: '/food',
@@ -40,14 +40,9 @@ const menuItems = [
     label: '美食管理',
   },
   {
-    key: '/culture',
-    icon: <BookOutlined />,
-    label: '文化管理',
-  },
-  {
-    key: '/products',
-    icon: <ShoppingOutlined />,
-    label: '商品管理',
+    key: '/attractions',
+    icon: <EnvironmentOutlined />,
+    label: '景区管理',
   },
   {
     key: '/orders',
@@ -55,9 +50,9 @@ const menuItems = [
     label: '订单管理',
   },
   {
-    key: '/users',
-    icon: <UserOutlined />,
-    label: '用户管理',
+    key: '/frontend-data',
+    icon: <BookOutlined />,
+    label: '前端数据管理',
   },
 ];
 

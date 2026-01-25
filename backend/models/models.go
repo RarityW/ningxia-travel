@@ -93,8 +93,11 @@ type Culture struct {
 // 商家模型
 type Merchant struct {
 	ID           uint      `gorm:"primarykey" json:"id"`
-	AdminID      uint      `json:"admin_id"` // 关联的管理员账号ID
-	Name         string    `json:"name"`     // 店铺名称
+	AdminID      uint      `json:"admin_id"`                     // 关联的管理员账号ID
+	Name         string    `json:"name"`                         // 店铺名称
+	Logo         string    `json:"logo"`                         // 店铺Logo
+	CoverImage   string    `json:"cover_image"`                  // 店铺封面
+	Description  string    `gorm:"type:text" json:"description"` // 店铺描述
 	LicenseImage string    `json:"license_image"`
 	Phone        string    `json:"phone"`
 	Address      string    `json:"address"`
@@ -135,6 +138,7 @@ type Order struct {
 	ShipTime   *time.Time     `json:"ship_time"`
 	Address    string         `gorm:"type:text" json:"address"`
 	Remark     string         `json:"remark"`
+	Items      []OrderItem    `gorm:"foreignKey:OrderID" json:"items"`
 	CreatedAt  time.Time      `json:"created_at"`
 	UpdatedAt  time.Time      `json:"updated_at"`
 	DeletedAt  gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
@@ -142,12 +146,13 @@ type Order struct {
 
 // 订单明细模型
 type OrderItem struct {
-	ID        uint    `gorm:"primarykey" json:"id"`
-	OrderID   uint    `json:"order_id"`
-	Order     *Order  `gorm:"foreignKey:OrderID" json:"order,omitempty"`
-	ProductID uint    `json:"product_id"`
-	Quantity  int     `json:"quantity"`
-	Price     float64 `json:"price"`
+	ID        uint     `gorm:"primarykey" json:"id"`
+	OrderID   uint     `json:"order_id"`
+	Order     *Order   `gorm:"foreignKey:OrderID" json:"order,omitempty"`
+	ProductID uint     `json:"product_id"`
+	Product   *Product `gorm:"foreignKey:ProductID" json:"product"`
+	Quantity  int      `json:"quantity"`
+	Price     float64  `json:"price"`
 }
 
 // 购物车模型
