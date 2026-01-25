@@ -1,0 +1,7 @@
+{
+    "usingComponents": {
+        "custom-nav": "/components/custom-nav/index"
+    },
+    "enablePullDownRefresh": true,
+    "backgroundColor": "#F8F8F8"
+}

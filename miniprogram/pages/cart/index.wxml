@@ -1,5 +1,5 @@
 <!-- 购物车页面 -->
-<custom-nav title="购物车" back="{{true}}"></custom-nav>
+<custom-nav title="购物车" back="{{true}}" bind:onBack="handleBack"></custom-nav>
 <view class="container">
   <block wx:if="{{cartItems.length > 0}}">
     <!-- 购物车列表 -->

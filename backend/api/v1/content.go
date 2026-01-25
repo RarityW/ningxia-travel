@@ -165,23 +165,39 @@ func GetCulture(c *gin.Context) {
 }
 
 // GetProducts 获取商品列表
+// GetProducts 获取商品列表
 func GetProducts(c *gin.Context) {
+	page := c.DefaultQuery("page", "1")
+	pageSize := c.DefaultQuery("page_size", "10")
+	keyword := c.Query("keyword")
+	category := c.DefaultQuery("category", "all")
+
+	var products []models.Product
 	var total int64
 
-	// 先获取总数
-	if err := db.DB.Model(&models.Product{}).Where("status = 1").Count(&total).Error; err != nil {
+	query := db.DB.Model(&models.Product{}).Where("status = 1")
+
+	// 分类筛选
+	if category != "all" && category != "" {
+		query = query.Where("category = ?", category)
+	}
+
+	// 关键字搜索
+	if keyword != "" {
+		query = query.Where("name LIKE ?", "%"+keyword+"%")
+	}
+
+	// 计算总数
+	query.Count(&total)
+
+	// 分页查询
+	offset := (parseInt(page) - 1) * parseInt(pageSize)
+	if err := query.Offset(offset).Limit(parseInt(pageSize)).Order("sales DESC, created_at DESC").Find(&products).Error; err != nil {
 		utils.ServerError(c, "获取商品列表失败")
 		return
 	}
 
-	// 使用 GORM 查询
-	var products []models.Product
-	if err := db.DB.Where("status = 1").Order("sales DESC, created_at DESC").Find(&products).Error; err != nil {
-		utils.ServerError(c, "获取商品列表失败")
-		return
-	}
-
-	utils.PageSuccess(c, products, 1, 10, total)
+	utils.PageSuccess(c, products, parseInt(page), parseInt(pageSize), total)
 }
 
 // GetProduct 获取商品详情
@@ -525,19 +541,45 @@ func AdminGetOrders(c *gin.Context) {
 	pageSize := c.DefaultQuery("page_size", "10")
 	status := c.Query("status")
 
+	// 获取当前登录管理员角色
+	role, _ := c.Get("admin_role")
+	adminID, _ := c.Get("admin_id")
+
 	var orders []models.Order
 	var total int64
 
-	query := db.DB.Model(&models.Order{})
+	modelQuery := db.DB.Model(&models.Order{})
 
-	if status != "" {
-		query = query.Where("status = ?", parseInt(status))
+	// 如果是商家 (Role=3)，只显示包含自己商品的订单
+	// 注意：这里只做简单过滤——只要订单里包含至少一个该商家的商品，商家就能看到整个订单。
+	// 实际生产中可能需要拆单，但为了演示效果和简化逻辑，先这样实现。
+	if role.(int) == 3 {
+		var merchant models.Merchant
+		if err := db.DB.Where("admin_id = ?", adminID).First(&merchant).Error; err != nil {
+			utils.Error(c, utils.CodePermissionDenied, "找不到商家信息")
+			return
+		}
+
+		// 子查询：查找包含该商家商品的 OrderIDs
+		// SELECT DISTINCT order_id FROM order_items
+		// JOIN products ON order_items.product_id = products.id
+		// WHERE products.merchant_id = ?
+		subQuery := db.DB.Table("order_items").
+			Select("DISTINCT order_items.order_id").
+			Joins("JOIN products ON order_items.product_id = products.id").
+			Where("products.merchant_id = ?", merchant.ID)
+
+		modelQuery = modelQuery.Where("id IN (?)", subQuery)
 	}
 
-	query.Count(&total)
+	if status != "" {
+		modelQuery = modelQuery.Where("status = ?", parseInt(status))
+	}
+
+	modelQuery.Count(&total)
 
 	offset := (parseInt(page) - 1) * parseInt(pageSize)
-	if err := query.Offset(offset).Limit(parseInt(pageSize)).Order("created_at DESC").Find(&orders).Error; err != nil {
+	if err := modelQuery.Offset(offset).Limit(parseInt(pageSize)).Order("created_at DESC").Find(&orders).Error; err != nil {
 		utils.ServerError(c, "获取订单列表失败")
 		return
 	}

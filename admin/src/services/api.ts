@@ -37,11 +37,12 @@ api.interceptors.request.use(
 
     // 只有当token是从localStorage读取的（手动设置的）时，才添加Authorization header
     // 如果token是从cookie读取的，不添加header，让后端从cookie读取
-    if (token && !tokenFromCookie) {
+    // 特殊情况：如果是登录页面设置的 "COOKIE_AUTH_PLACEHOLDER"，也认为是通过 Cookie 认证
+    if (token && !tokenFromCookie && token !== 'COOKIE_AUTH_PLACEHOLDER') {
       config.headers.Authorization = `Bearer ${token}`;
       console.log('Adding Authorization header for manual token');
-    } else if (token && tokenFromCookie) {
-      console.log('Using cookie-based authentication, no Authorization header needed');
+    } else {
+      console.log('Using cookie-based authentication (or waiting for login), no Authorization header needed');
     }
 
     return config;

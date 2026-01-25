@@ -2,17 +2,12 @@
 <view class="container">
 
   <!-- Hero区域 -->
-  <view class="hero-section">
+  <view class="hero-section" style="padding-top: {{statusBarHeight}}px;">
     <!-- 顶部导航栏 -->
     <view class="top-nav">
       <view class="nav-left">
         <text class="nav-icon">🏔️</text>
         <text class="nav-title">一码游宁夏</text>
-      </view>
-      <view class="nav-right">
-        <text class="nav-dot">⋯</text>
-        <view class="nav-divider"></view>
-        <text class="nav-radio">●</text>
       </view>
     </view>
 

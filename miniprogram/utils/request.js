@@ -49,7 +49,11 @@ const API = {
   createOrder: (data) => api.post('/user/orders', data),
 
   // 优惠券
-  getCoupons: () => api.get('/user/coupons')
+  getCoupons: () => api.get('/user/coupons'),
+
+  // 位置和天气
+  getLocation: (longitude, latitude) => api.get('/location', { longitude, latitude }),
+  getWeather: (city) => api.get('/weather', { city })
 }
 
 module.exports = API

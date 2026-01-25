@@ -1,5 +1,5 @@
 <!-- 景点列表页面 -->
-  <custom-nav title="商品详情" background="#ffffff" color="#000000" back="{{true}}"></custom-nav>
+<custom-nav title="宁夏景区" background="#ffffff" color="#000000" back="{{true}}"></custom-nav>
 <view class="container">
   <!-- 分类筛选 -->
   <scroll-view class="category-scroll" scroll-x>
@@ -20,30 +20,29 @@
   <view class="attraction-list">
     <view
       wx:for="{{attractions}}"
-      wx:key="_id"
+      wx:key="id"
       class="attraction-item"
       bindtap="goToDetail"
-      data-id="{{item._id}}"
+      data-id="{{item.id}}"
     >
       <image class="attraction-image" src="{{item.coverImage}}" mode="aspectFill"></image>
       <view class="attraction-info">
         <view class="attraction-header">
           <text class="attraction-name">{{item.name}}</text>
-          <view class="grade-tag">{{item.grade}}</view>
+          <view class="grade-tag grade-{{item.grade}}">{{item.grade}}</view>
         </view>
         <view class="attraction-meta">
-          <text class="location">{{item.region}}</text>
+          <text class="location">📍 {{item.region}} · {{item.address}}</text>
+        </view>
+        <view class="attraction-meta">
           <view class="rating">
             <text class="star">★</text>
-            <text class="score">{{item.rating}}</text>
-            <text class="views">({{item.views}}人浏览)</text>
+            <text class="score">{{item.rating || '4.5'}}</text>
+            <text class="views">({{item.views || 0}}人浏览)</text>
           </view>
         </view>
-        <view class="attraction-tags">
-          <text wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag" class="tag">{{tag}}</text>
-        </view>
         <view class="attraction-footer">
-          <text class="price">¥{{item.ticketPrice}}</text>
+          <text class="price">门票 ¥{{item.ticketPrice}}</text>
           <text class="open-time">{{item.openTime}}</text>
         </view>
       </view>
@@ -60,3 +59,4 @@
     <text>暂无景点数据</text>
   </view>
 </view>
+

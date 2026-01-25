@@ -2,7 +2,7 @@ const API = require('../../utils/request')
 
 Page({
   data: {
-    categories: ['全部', '5A', '4A', '自然', '历史', '文化', '沙漠', '草原'],
+    categories: ['全部', '5A', '4A', '3A', '自然风光', '人文景观', '历史遗迹'],
     currentCategory: '全部',
     attractions: [],
     loading: false,

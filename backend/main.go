@@ -2,6 +2,10 @@ package main
 
 import (
 	"log"
+	"net/http"
+
+	"os"
+	"path/filepath"
 
 	v1 "ningxia-wenlv-backend/api/v1"
 	"ningxia-wenlv-backend/config"
@@ -29,7 +33,27 @@ func main() {
 
 	// 静态文件服务
 	r.Static("/uploads", "./static/uploads")
-	r.Static("/admin", "./static/admin")
+
+	// Admin SPA Hosting (Catch-all for /admin to serve index.html for unknown files)
+	r.GET("/admin/*filepath", func(c *gin.Context) {
+		path := c.Param("filepath")
+
+		// 1. Try to serve exact file from ./static/admin/
+		localPath := filepath.Join("./static/admin", path)
+		info, err := os.Stat(localPath)
+		if err == nil && !info.IsDir() {
+			c.File(localPath)
+			return
+		}
+
+		// 2. Fallback to index.html for SPA routing
+		c.File("./static/admin/index.html")
+	})
+
+	// Redirect root to /admin
+	r.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/admin")
+	})
 
 	// API v1 路由
 	apiV1 := r.Group("/api/v1")
@@ -70,6 +94,10 @@ func main() {
 			market.GET("", v1.GetProducts)    // 获取商品列表
 			market.GET("/:id", v1.GetProduct) // 获取商品详情
 		}
+
+		// 位置和天气服务（公开接口，无需登录）
+		apiV1.GET("/location", v1.GetLocation) // 逆地理编码
+		apiV1.GET("/weather", v1.GetWeather)   // 获取天气
 
 		// 商家无需登录即可注册
 		apiV1.POST("/merchant/register", v1.RegisterMerchant)

@@ -20,25 +20,36 @@ Page({
   loadCart() {
     this.setData({ loading: true })
 
-    // 模拟购物车数据，避免后端连接失败
-    const mockCartItems = [
-      { id: '101', name: '宁夏中宁枸杞特级红枸杞 礼盒装', price: 68.00, quantity: 1, image: '/images/product-1.jpg', selected: true },
-      { id: '103', name: '正宗盐池滩羊肉卷 500g', price: 89.00, quantity: 2, image: '/images/product-3.jpg', selected: true }
-    ];
+    // 从后端加载真实购物车数据
+    API.getCart()
+      .then(data => {
+        // 后端返回的数据格式需要转换为前端需要的格式
+        const cartItems = (data.list || []).map(item => ({
+          id: item.id,
+          productId: item.productId,
+          name: item.product?.name || '商品',
+          price: item.product?.price || 0,
+          quantity: item.quantity,
+          coverImage: item.product?.coverImage || '/images/placeholder.jpg',
+          category: item.product?.category || '',
+          selected: true // 默认选中
+        }))
 
-    // 如果全局有计数，稍微模拟一下数量变化（可选）
-    const app = getApp();
-    if (app.globalData.cartTotal > 3) {
-      mockCartItems[0].quantity += (app.globalData.cartTotal - 3);
-    }
-
-    setTimeout(() => {
-      this.setData({
-        cartItems: mockCartItems,
-        loading: false
+        this.setData({
+          cartItems: cartItems,
+          loading: false
+        })
+        this.calculate()
       })
-      this.calculate()
-    }, 500)
+      .catch(err => {
+        console.error('加载购物车失败:', err)
+        // 如果加载失败，显示空购物车
+        this.setData({
+          cartItems: [],
+          loading: false
+        })
+        this.calculate()
+      })
   },
 
   checkAllSelected(cartItems) {
@@ -189,6 +200,19 @@ Page({
       .catch(err => {
         console.error('创建订单失败:', err)
       })
+  },
+
+  // 返回按钮处理
+  handleBack() {
+    wx.navigateBack({
+      delta: 1,
+      fail: () => {
+        // 如果无法返回，跳转到首页
+        wx.switchTab({
+          url: '/pages/index/index'
+        });
+      }
+    });
   },
 
   goToMarket() {

@@ -327,6 +327,13 @@ page {
   color: #999;
 }
 
+.original-price {
+  font-size: 22rpx;
+  color: #999;
+  text-decoration: line-through;
+  margin-left: 8rpx;
+}
+
 /* 底部Tab栏 */
 .bottom-tab-bar {
   height: 110rpx;

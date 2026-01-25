@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/search/index",
     "pages/attractions/list",
     "pages/attractions/detail",
     "pages/food/list",
@@ -12,7 +13,8 @@
     "pages/profile/profile",
     "pages/favorites/index",
     "pages/cart/index",
-    "pages/shop/index"
+    "pages/shop/index",
+    "pages/brand/index"
   ],
   "window": {
     "navigationStyle": "custom",

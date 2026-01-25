@@ -2,7 +2,7 @@ const API = require('../../utils/request')
 
 Page({
   data: {
-    categories: ['全部', '主食', '小吃', '特色菜', '饮品'],
+    categories: ['全部', '清真美食', '特色小吃', '主食', '饮品'],
     currentCategory: '全部',
     foods: [],
     loading: false,

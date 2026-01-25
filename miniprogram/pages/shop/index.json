@@ -3,6 +3,7 @@
     "enablePullDownRefresh": true,
     "navigationBarBackgroundColor": "#FDF8F3",
     "navigationBarTextStyle": "black",
+    "navigationStyle": "custom",
     "usingComponents": {
         "custom-nav": "/components/custom-nav/index"
     }

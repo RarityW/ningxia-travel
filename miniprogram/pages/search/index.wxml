@@ -1,0 +1,82 @@
+<!-- pages/search/index.wxml -->
+<custom-nav title="搜索" back="{{true}}" background="#fff" color="#000" />
+
+<view class="container" style="padding-top: {{navHeight}}px">
+  
+  <!-- 搜索栏 -->
+  <view class="search-header">
+    <view class="search-input-box">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" 
+             placeholder="{{placeholder}}" 
+             value="{{keyword}}" 
+             bindinput="onInput"
+             bindconfirm="onSearch"
+             focus="{{true}}"
+             confirm-type="search"/>
+      <view class="clear-icon" bindtap="clearKeyword" wx:if="{{keyword}}">✕</view>
+    </view>
+    <view class="search-btn" bindtap="onSearch">搜索</view>
+  </view>
+
+  <!-- 分类Tabs -->
+  <view class="search-tabs">
+    <view class="tab-item {{currentTab === 'attractions' ? 'active' : ''}}" bindtap="switchTab" data-type="attractions">
+      景区
+    </view>
+    <view class="tab-item {{currentTab === 'products' ? 'active' : ''}}" bindtap="switchTab" data-type="products">
+      商品
+    </view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <scroll-view class="result-scroll" scroll-y bindscrolltolower="onLoadMore">
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{!list.length && !loading && searched}}">
+      <text class="empty-icon">🍃</text>
+      <text class="empty-text">没有找到相关内容</text>
+    </view>
+
+    <!-- 景区列表 -->
+    <block wx:if="{{currentTab === 'attractions'}}">
+      <view class="result-list">
+        <view class="result-card" wx:for="{{list}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}" data-type="attraction">
+          <image class="card-img" src="{{item.cover_image || item.images[0]}}" mode="aspectFill" />
+          <view class="card-content">
+            <text class="card-title">{{item.name}}</text>
+            <view class="card-tags" wx:if="{{item.grade || item.category}}">
+              <text class="tag" wx:if="{{item.grade}}">{{item.grade}}</text>
+              <text class="tag">{{item.category}}</text>
+            </view>
+            <text class="card-address">{{item.region}} {{item.address}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 商品列表 -->
+    <block wx:if="{{currentTab === 'products'}}">
+      <view class="result-list">
+        <view class="result-card product" wx:for="{{list}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}" data-type="product">
+          <image class="card-img" src="{{item.cover_image || item.images[0]}}" mode="aspectFill" />
+          <view class="card-content">
+            <text class="card-title">{{item.name}}</text>
+            <view class="card-tags" wx:if="{{item.category}}">
+              <text class="tag">{{item.category}}</text>
+            </view>
+            <view class="price-row">
+              <text class="price-symbol">¥</text>
+              <text class="price-num">{{item.price}}</text>
+              <text class="sales-num">已售 {{item.sales}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 加载中 -->
+    <view class="loading-more" wx:if="{{loading}}">正在加载...</view>
+    <view class="no-more" wx:if="{{!hasMore && list.length > 0}}">没有更多了</view>
+  </scroll-view>
+</view>

@@ -1,19 +1,43 @@
+const API = require('../../utils/request')
+
 Page({
   data: {
+    statusBarHeight: 44,
     discountType: 5,
     currentTab: 0,
-    scenicList: [
-      { id: 1, name: '沙坡头', enName: '中卫·沙坡头', image: '/images/scenic-shapotou.jpg', price: 80, discountPrice: 40 },
-      { id: 2, name: '镇北堡', enName: '镇北堡西部影城', image: '/images/scenic-zhenbeibu.jpg', price: 100, discountPrice: 50 },
-      { id: 3, name: '贺兰山', enName: '贺兰山岩画', image: '/images/scenic-helan.jpg', price: 60, discountPrice: 30 },
-      { id: 4, name: '水洞沟', enName: '水洞沟遗址', image: '/images/scenic-shuidonggou.jpg', price: 120, discountPrice: 60 }
-    ],
+    scenicList: [],
     qualified: false,
     ticketCode: ''
   },
 
   onLoad() {
-    this.checkQualification()
+    this.getSystemInfo();
+    this.checkQualification();
+    this.loadScenicList();
+  },
+
+  getSystemInfo() {
+    const systemInfo = wx.getSystemInfoSync();
+    this.setData({
+      statusBarHeight: systemInfo.statusBarHeight || 44
+    });
+  },
+
+  async loadScenicList() {
+    try {
+      const res = await API.getAttractions({ page: 1, page_size: 4 })
+      const list = (res.list || []).map(item => ({
+        id: item.id,
+        name: item.name,
+        enName: item.english_name || item.name,
+        image: item.cover_image,
+        price: item.ticket_price || 0,
+        discountPrice: Math.floor((item.ticket_price || 0) * 0.5)
+      }))
+      this.setData({ scenicList: list })
+    } catch (err) {
+      console.error('Fetch scenic list failed', err)
+    }
   },
 
   onShow() {
@@ -53,7 +77,7 @@ Page({
       })
       return
     }
-    
+
     wx.showModal({
       title: '免票人群认证',
       content: '请选择您的免票类型：\n\n• 60周岁以上老年人\n• 身高1.2米以下儿童\n• 医护人员\n• 军人/消防员',

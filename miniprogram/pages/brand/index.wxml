@@ -1,0 +1,76 @@
+<!-- 品牌精选页面 - 宁选好礼分类展示 -->
+<custom-nav title="品牌精选" back="{{true}}" background="#FFFFFF" color="#000000" bind:onBack="handleBack"></custom-nav>
+
+<view class="container">
+  <!-- 分类标签栏 -->
+  <scroll-view class="category-tabs" scroll-x show-scrollbar="{{false}}">
+    <view class="tabs-list">
+      <view 
+        wx:for="{{categories}}" 
+        wx:key="id"
+        class="tab-item {{currentCategory === item.key ? 'active' : ''}}"
+        bindtap="switchCategory"
+        data-key="{{item.key}}"
+      >
+        <text class="tab-icon">{{item.icon}}</text>
+        <text class="tab-name">{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 当前分类标题 -->
+  <view class="section-header">
+    <text class="section-title">{{currentCategoryName}}</text>
+    <text class="section-count">共{{total}}件商品</text>
+  </view>
+
+  <!-- 商品列表 -->
+  <scroll-view 
+    class="product-scroll" 
+    scroll-y 
+    enhanced
+    bindscrolltolower="loadMore"
+  >
+    <view class="product-grid">
+      <view 
+        wx:for="{{products}}" 
+        wx:key="id"
+        class="product-card"
+        bindtap="goToDetail"
+        data-id="{{item.id}}"
+      >
+        <view class="image-wrapper">
+          <image class="product-img" src="{{item.coverImage}}" mode="aspectFill" lazy-load />
+          <view class="product-badge" wx:if="{{item.sales > 50}}">热销</view>
+        </view>
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <view class="product-bottom">
+            <view class="price-box">
+              <text class="currency">¥</text>
+              <text class="price">{{item.price}}</text>
+              <text class="original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+            </view>
+            <text class="sales-text">已售{{item.sales || 0}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="loading" wx:if="{{loading}}">
+      <text>加载中...</text>
+    </view>
+
+    <!-- 没有更多 -->
+    <view class="no-more" wx:if="{{!hasMore && products.length > 0}}">
+      <text>— 已加载全部 —</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty" wx:if="{{!loading && products.length === 0}}">
+      <text class="empty-icon">🎁</text>
+      <text class="empty-text">暂无商品，敬请期待</text>
+    </view>
+  </scroll-view>
+</view>

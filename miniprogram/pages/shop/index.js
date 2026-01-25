@@ -1,18 +1,41 @@
 // pages/shop/index.js
+const API = require('../../utils/request');
+
 Page({
   data: {
     statusBarHeight: 0,
     banners: [
-      '/images/banner-2.jpg', // Placeholder
+      '/images/banner-2.jpg',
       '/images/banner-1.jpg'
     ],
-    currentTab: 0, // 0: 明星产品, 1: 当季直销, 2: 助农扶农
-    products: []
+    currentTab: 0,
+    products: [],
+    selectedCategory: '', // 从首页传来的分类
+    categories: [
+      { key: '宁夏枸杞', name: '宁夏枸杞', icon: '🍒' },
+      { key: '贺兰红酒', name: '贺兰红酒', icon: '🍷' },
+      { key: '盐池滩羊', name: '盐池滩羊', icon: '🐑' },
+      { key: '八宝茶', name: '八宝茶', icon: '🍵' },
+      { key: '非遗文创', name: '非遗文创', icon: '🎨' },
+      { key: '特色美食', name: '特色美食', icon: '🥘' }
+    ]
   },
 
   onLoad(options) {
     this.getSystemInfo();
     this.loadProducts(0);
+
+    // 接收从首页传来的分类参数，自动跳转到品牌精选页
+    if (options.category) {
+      const category = decodeURIComponent(options.category);
+      this.setData({
+        selectedCategory: category
+      });
+      // 延迟跳转，让用户看到宁选好礼页面
+      setTimeout(() => {
+        this.navigateToBrand(category);
+      }, 300);
+    }
   },
 
   getSystemInfo() {
@@ -31,42 +54,67 @@ Page({
     this.loadProducts(index);
   },
 
-  // 加载产品数据 (Mock)
-  loadProducts(tabIndex) {
+  // 加载产品数据
+  async loadProducts(tabIndex) {
     wx.showLoading({ title: '加载中' });
+    this.setData({ loading: true });
 
-    // 基础数据
-    const allProducts = [
-      { id: 101, name: '宁夏中宁枸杞特级红枸杞 礼盒装', image: '/images/product-1.jpg', price: 68.00, sales: 5000 },
-      { id: 102, name: '贺兰山东麓赤霞珠干红葡萄酒', image: '/images/product-2.jpg', price: 198.00, sales: 1200 },
-      { id: 103, name: '正宗盐池滩羊肉卷 500g', image: '/images/product-3.jpg', price: 89.00, sales: 3400 },
-      { id: 104, name: '刘三朵八宝茶礼盒装', image: '/images/product-4.jpg', price: 58.00, sales: 800 },
-      { id: 105, name: '铜仁梵净山夜光系列冰箱贴', image: '/images/product-5.jpg', price: 38.00, sales: 200 },
-      { id: 106, name: '宁夏特产甘草杏 5袋装', image: '/images/product-1.jpg', price: 29.90, sales: 10000 },
-    ];
-
-    // 简单模拟筛选
-    let filtered = [];
-    if (tabIndex === 0) {
-      filtered = allProducts; // 明星产品：全部
-    } else if (tabIndex === 1) {
-      filtered = allProducts.slice(0, 3); // 当季直销：取前3
-    } else {
-      filtered = allProducts.slice(3, 6); // 助农扶农：取后3
-    }
-
-    setTimeout(() => {
-      this.setData({
-        products: filtered
+    try {
+      const res = await API.getProducts({
+        page: 1,
+        page_size: 20
       });
+
+      this.setData({
+        products: res.list || []
+      });
+    } catch (err) {
+      console.error('Fetch products failed:', err);
+      wx.showToast({ title: '加载失败', icon: 'none' });
+    } finally {
       wx.hideLoading();
-    }, 300);
+      this.setData({ loading: false });
+    }
+  },
+
+  // 导航到品牌精选页
+  navigateToBrand(category) {
+    wx.navigateTo({
+      url: `/pages/brand/index?category=${encodeURIComponent(category)}`
+    });
+  },
+
+  // 点击底部"品牌精选"按钮
+  goToBrandPage() {
+    // 跳转到品牌精选页，默认显示第一个分类
+    wx.navigateTo({
+      url: '/pages/brand/index?category=宁夏枸杞'
+    });
+  },
+
+  // 点击购物车按钮
+  goToCart() {
+    wx.navigateTo({
+      url: '/pages/cart/index'
+    });
+  },
+
+  // 点击分类快捷入口（快捷卡片）
+  onCategoryTap(e) {
+    const category = e.currentTarget.dataset.category;
+    this.navigateToBrand(category);
   },
 
   goToDetail(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: `/pages/market/detail?id=${id}` // 暂时复用market详情页
+      url: `/pages/market/detail?id=${id}`
+    });
+  },
+
+  onSearchTap() {
+    wx.navigateTo({
+      url: '/pages/search/index?type=products'
     });
   },
 

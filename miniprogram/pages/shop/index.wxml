@@ -1,13 +1,13 @@
 <!-- pages/shop/index.wxml -->
-<custom-nav title="宁选好礼" back="{{true}}"></custom-nav>
+<custom-nav title="宁选好礼" back="{{true}}" background="#FFFFFF" color="#000000"></custom-nav>
 
-<view class="container" style="padding-top: {{statusBarHeight}}px">
+<view class="container">
   
   <!-- 搜索栏 -->
   <view class="shop-header">
-    <view class="search-bar">
+    <view class="search-bar" bindtap="onSearchTap">
       <text class="search-icon">🔍</text>
-      <input class="search-input" placeholder="宁夏人的甄选好物" placeholder-class="placeholder-text" disabled />
+      <view class="search-input placeholder-text">宁夏人的甄选好物</view>
       <text class="search-voice-icon">🎤</text>
     </view>
   </view>
@@ -87,7 +87,7 @@
         <block wx:for="{{products}}" wx:key="id">
           <view class="product-card" bindtap="goToDetail" data-id="{{item.id}}">
             <view class="image-wrapper">
-              <image class="product-img" src="{{item.image}}" mode="aspectFill" lazy-load />
+              <image class="product-img" src="{{item.coverImage}}" mode="aspectFill" lazy-load />
             </view>
             <view class="product-info">
               <text class="product-name">{{item.name}}</text>
@@ -95,8 +95,9 @@
                 <view class="price-box">
                   <text class="currency">¥</text>
                   <text class="price">{{item.price}}</text>
+                  <text class="original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
                 </view>
-                <text class="sales-text">已售{{item.sales}}</text>
+                <text class="sales-text">已售{{item.sales || 0}}</text>
               </view>
             </view>
           </view>
@@ -114,11 +115,11 @@
       <text class="tab-icon">🎁</text>
       <text class="tab-text">宁选好礼</text>
     </view>
-    <view class="tab-btn">
+    <view class="tab-btn" bindtap="goToBrandPage">
       <text class="tab-icon">🏷️</text>
-      <text class="tab-text">品牌精品</text>
+      <text class="tab-text">品牌精选</text>
     </view>
-    <view class="tab-btn">
+    <view class="tab-btn" bindtap="goToCart">
       <text class="tab-icon">🛒</text>
       <text class="tab-text">购物车</text>
     </view>

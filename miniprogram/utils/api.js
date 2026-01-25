@@ -3,6 +3,21 @@ const config = {
   apiVersion: '/api/v1'
 }
 
+// 通用字段转换：snake_case -> camelCase
+function toCamelCase(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(item => toCamelCase(item))
+  }
+  if (obj !== null && typeof obj === 'object') {
+    return Object.keys(obj).reduce((result, key) => {
+      const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+      result[camelKey] = toCamelCase(obj[key])
+      return result
+    }, {})
+  }
+  return obj
+}
+
 // 封装请求方法
 function request(options) {
   const token = wx.getStorageSync('token')
@@ -22,14 +37,16 @@ function request(options) {
           if (res.data.code === 200) {
             const data = res.data
             if (data.page !== undefined) {
+              // 分页数据，转换list中的每一项
               resolve({
-                list: data.data,
+                list: toCamelCase(data.data || []),
                 page: data.page,
                 pageSize: data.page_size,
                 total: data.total
               })
             } else {
-              resolve(data.data)
+              // 单条数据，直接转换
+              resolve(toCamelCase(data.data))
             }
           } else {
             wx.showToast({
@@ -111,5 +128,7 @@ module.exports = {
   get,
   post,
   put,
-  delete: del
+  delete: del,
+  toCamelCase
 }
+

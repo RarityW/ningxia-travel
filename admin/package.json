@@ -1,6 +1,7 @@
 {
   "name": "admin",
   "version": "0.1.0",
+  "homepage": "/admin",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^6.1.0",

@@ -20,10 +20,10 @@
   <view class="food-list">
     <view
       wx:for="{{foods}}"
-      wx:key="_id"
+      wx:key="id"
       class="food-item"
       bindtap="goToDetail"
-      data-id="{{item._id}}"
+      data-id="{{item.id}}"
     >
       <image class="food-image" src="{{item.coverImage}}" mode="aspectFill"></image>
       <view class="food-info">
@@ -35,14 +35,14 @@
           <text class="region">{{item.region}}</text>
           <view class="rating">
             <text class="star">★</text>
-            <text class="score">{{item.rating}}</text>
-            <text class="views">({{item.views}}人浏览)</text>
+            <text class="score">{{item.rating || '4.5'}}</text>
+            <text class="views">({{item.views || 0}}人浏览)</text>
           </view>
         </view>
         <view class="food-description">{{item.description}}</view>
         <view class="food-footer">
-          <text class="price">¥{{item.price}}</text>
-          <text class="shops">{{item.shops.length}}家店铺</text>
+          <text class="price">人均 ¥{{item.price}}</text>
+          <view class="recommend-tag" wx:if="{{item.recommend}}">推荐</view>
         </view>
       </view>
     </view>
@@ -58,3 +58,4 @@
     <text>暂无美食数据</text>
   </view>
 </view>
+
