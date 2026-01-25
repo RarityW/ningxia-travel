@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Card, message, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { adminLogin } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 const { Title } = Typography;
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth(); // Get login function from context
 
   const onFinish = async (values: { username: string; password: string }) => {
     setLoading(true);
@@ -17,9 +19,27 @@ const Login: React.FC = () => {
       if (response.data.code === 200) {
         message.success('登录成功！');
 
-        // 立即跳转，依赖cookie认证
+        const responseData = response.data;
+        const respData = responseData.data || {};
+
+        // Save token to localStorage as fallback
+        if (respData.token) {
+          localStorage.setItem('admin_token', respData.token);
+          console.log('Token saved to localStorage fallback');
+        } else {
+          console.warn('No token found in login response for fallback');
+        }
+
+        // Update global auth state preventing redirect loop
+        login(respData.token, respData.role || 'admin');
+
+        // 立即跳转
         console.log('→ Login successful, redirecting...');
-        window.location.href = '/admin/dashboard';
+        // Use replace to prevent back button looping
+        setTimeout(() => {
+          // ensure we navigate relative to the basename
+          navigate('/dashboard', { replace: true });
+        }, 100);
       } else {
         message.error(response.data.message || '登录失败');
       }

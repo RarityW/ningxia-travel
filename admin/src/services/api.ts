@@ -6,44 +6,35 @@ const API_BASE_URL = 'http://localhost:8080/api/v1';
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
-  withCredentials: true, // 允许发送 Cookie
+  // withCredentials: true, // 暂时关闭，专注于 Header 认证
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// 请求拦截器 - 添加token
+// 请求拦截器 - 简单粗暴版本
 api.interceptors.request.use(
   (config) => {
-    // 优先使用localStorage中的token
-    let token = localStorage.getItem('admin_token');
-    let tokenFromCookie = false;
+    // 1. 直接读取 LocalStorage
+    const token = localStorage.getItem('admin_token');
 
-    // 如果localStorage中没有，从cookie中读取
-    if (!token) {
-      try {
-        const cookies = document.cookie.split(';');
-        const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('admin_access_token='));
-        if (tokenCookie) {
-          token = tokenCookie.split('=')[1];
-          tokenFromCookie = true;
-          // 同步到localStorage
-          localStorage.setItem('admin_token', token);
-          console.log('Token loaded from cookie, syncing to localStorage');
-        }
-      } catch (error) {
-        console.error('Error reading cookie:', error);
+    // 2. 只有有值，就强制塞进去
+    if (token) {
+      if (!config.headers) {
+        config.headers = {} as any;
       }
-    }
 
-    // 只有当token是从localStorage读取的（手动设置的）时，才添加Authorization header
-    // 如果token是从cookie读取的，不添加header，让后端从cookie读取
-    // 特殊情况：如果是登录页面设置的 "COOKIE_AUTH_PLACEHOLDER"，也认为是通过 Cookie 认证
-    if (token && !tokenFromCookie && token !== 'COOKIE_AUTH_PLACEHOLDER') {
-      config.headers.Authorization = `Bearer ${token}`;
-      console.log('Adding Authorization header for manual token');
+      // Fix for Axios v1.x: config.headers is AxiosHeaders
+      if (typeof (config.headers as any).set === 'function') {
+        (config.headers as any).set('Authorization', `Bearer ${token}`);
+      } else {
+        // Fallback for older versions or plain objects
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      console.log('[API] Added token to header:', token.substring(0, 10) + '...');
     } else {
-      console.log('Using cookie-based authentication (or waiting for login), no Authorization header needed');
+      console.warn('[API] No token found in localStorage');
     }
 
     return config;
@@ -53,16 +44,22 @@ api.interceptors.request.use(
   }
 );
 
-// 响应拦截器 - 处理错误
+// 响应拦截器
 api.interceptors.response.use(
   (response) => {
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      // 清除token，但不自动跳转，让路由守卫处理
-      localStorage.removeItem('admin_token');
-      console.error('401 Unauthorized - Token invalid or expired');
+    if (error.response) {
+      if (error.response.status === 401) {
+        console.error('[API] 401 Unauthorized - redirecting to login');
+        // 只有在确定是认证失败时才清理，避免误杀
+        localStorage.removeItem('admin_token');
+        // 可以选择在这里跳转，或者交给组件层
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+      }
     }
     return Promise.reject(error);
   }
@@ -70,12 +67,16 @@ api.interceptors.response.use(
 
 export default api;
 
+// ================= API 定义 =================
+
 // 管理员登录
 export const adminLogin = (data: { username: string; password: string }) => {
+  // 注意：登录接口不走拦截器也没关系，或者走了也不带 Token (因为还没存)
+  // 这里直接用 axios 原始实例也可以，或者用 api 实例
   return axios.post(`${API_BASE_URL}/auth/admin/login`, data);
 };
 
-// 获取管理员信息 (验证会话)
+// 获取管理员信息 
 export const getAdminProfile = () => {
   return api.get('/admin/profile');
 };

@@ -72,6 +72,7 @@ func AdminAuthMiddleware() gin.HandlerFunc {
 			if cookie, err := c.Cookie("admin_access_token"); err == nil {
 				tokenString = cookie
 			} else {
+				fmt.Println("[AuthDebug] No Authorization header and no cookie found")
 				c.JSON(http.StatusUnauthorized, gin.H{
 					"code":    401,
 					"message": "未提供认证信息",
@@ -83,6 +84,7 @@ func AdminAuthMiddleware() gin.HandlerFunc {
 		if tokenString == "" {
 			parts := strings.SplitN(authHeader, " ", 2)
 			if !(len(parts) == 2 && parts[0] == "Bearer") {
+				fmt.Printf("[AuthDebug] Invalid format for auth header: %s\n", authHeader)
 				c.JSON(http.StatusUnauthorized, gin.H{
 					"code":    401,
 					"message": "认证格式错误",
@@ -95,6 +97,7 @@ func AdminAuthMiddleware() gin.HandlerFunc {
 
 		claims, err := utils.ParseToken(tokenString)
 		if err != nil {
+			fmt.Printf("[AuthDebug] Token parsing failed: %v, Token: %s...\n", err, tokenString[:10])
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code":    401,
 				"message": "无效的令牌",
@@ -104,6 +107,7 @@ func AdminAuthMiddleware() gin.HandlerFunc {
 		}
 
 		if claims.RegisteredClaims.Subject != "admin" {
+			fmt.Printf("[AuthDebug] Invalid subject: %s\n", claims.RegisteredClaims.Subject)
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code":    401,
 				"message": "管理员令牌不正确",
@@ -115,6 +119,7 @@ func AdminAuthMiddleware() gin.HandlerFunc {
 		// 校验管理员是否存在且状态有效
 		var admin models.Admin
 		if err := db.DB.First(&admin, claims.UserID).Error; err != nil {
+			fmt.Printf("[AuthDebug] Admin not found for ID: %d\n", claims.UserID)
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code":    401,
 				"message": "管理员不存在",
@@ -123,6 +128,7 @@ func AdminAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 		if admin.Status != 1 {
+			fmt.Printf("[AuthDebug] Admin disabled: %d\n", admin.ID)
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code":    401,
 				"message": "管理员已被禁用",

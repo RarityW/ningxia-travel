@@ -224,7 +224,8 @@ func AdminLogin(c *gin.Context) {
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   false,
-		MaxAge:   3600,
+		MaxAge:   86400, // 24 hours
+		SameSite: http.SameSiteLaxMode,
 	}
 	refreshCookie := &http.Cookie{
 		Name:     "admin_refresh_token",
@@ -233,11 +234,13 @@ func AdminLogin(c *gin.Context) {
 		HttpOnly: true,
 		Secure:   false,
 		MaxAge:   7 * 24 * 3600,
+		SameSite: http.SameSiteLaxMode,
 	}
 	http.SetCookie(c.Writer, accessCookie)
 	http.SetCookie(c.Writer, refreshCookie)
 
 	utils.Success(c, gin.H{
+		"token":    accessToken,
 		"admin_id": admin.ID,
 		"username": admin.Username,
 		"name":     admin.Name,

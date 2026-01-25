@@ -7,6 +7,12 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+// 开发环境下自动跳转到 /login
+if (window.location.pathname === '/' && !window.location.hash) {
+  window.location.replace('/login');
+}
+
 root.render(
   <React.StrictMode>
     <App />

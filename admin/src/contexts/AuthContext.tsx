@@ -21,7 +21,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsAuthenticated(true);
         } catch (error) {
             setIsAuthenticated(false);
-            localStorage.removeItem('admin_token');
+            setIsAuthenticated(false);
+            // localStorage.removeItem('admin_token'); // Don't wipe token immediately on error to prevent flaky logouts
         } finally {
             setLoading(false);
         }

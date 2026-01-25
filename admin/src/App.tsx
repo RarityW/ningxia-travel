@@ -24,7 +24,7 @@ const App: React.FC = () => {
   return (
     <ConfigProvider locale={zhCN}>
       <AuthProvider>
-        <Router basename="/admin">
+        <Router>
           <Routes>
             {/* 登录页 */}
             <Route path="/login" element={<Login />} />
