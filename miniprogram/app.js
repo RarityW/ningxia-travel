@@ -70,7 +70,7 @@ App({
   globalData: {
     token: null,
     userInfo: null,
-    baseURL: 'http://localhost:8080',
+    baseUrl: 'http://localhost:8080/api/v1',
     cartTotal: 0
   }
 });

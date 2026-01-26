@@ -12,12 +12,11 @@ Page({
     products: [],
     selectedCategory: '', // 从首页传来的分类
     categories: [
-      { key: '宁夏枸杞', name: '宁夏枸杞', icon: '🍒' },
-      { key: '贺兰红酒', name: '贺兰红酒', icon: '🍷' },
-      { key: '盐池滩羊', name: '盐池滩羊', icon: '🐑' },
-      { key: '八宝茶', name: '八宝茶', icon: '🍵' },
-      { key: '非遗文创', name: '非遗文创', icon: '🎨' },
-      { key: '特色美食', name: '特色美食', icon: '🥘' }
+      { key: '特色饮品', name: '特色饮品', icon: '🥤' },
+      { key: '特色食品', name: '特色食品', icon: '🥘' },
+      { key: '旅游纪念品', name: '旅游纪念品', icon: '🎁' },
+      { key: '特色工艺品(非遗)', name: '非遗工艺', icon: '🎨' },
+      { key: '文创类', name: '文创产品', icon: '📚' }
     ]
   },
 
@@ -59,19 +58,22 @@ Page({
     wx.showLoading({ title: '加载中' });
     this.setData({ loading: true });
 
+    // Get category key from categories array
+    // If tabIndex is out of bounds or "all", handle accordingly. 
+    // Here we map tabIndex directly to categories array.
+    const categoryKey = this.data.categories[tabIndex] ? this.data.categories[tabIndex].key : '';
+
     try {
       const res = await API.getProducts({
         page: 1,
-        page_size: 20
+        page_size: 20,
+        category: categoryKey
       });
 
       this.setData({
         products: res.list || []
       });
     } catch (err) {
-      console.error('Fetch products failed:', err);
-      wx.showToast({ title: '加载失败', icon: 'none' });
-    } finally {
       wx.hideLoading();
       this.setData({ loading: false });
     }
@@ -108,7 +110,7 @@ Page({
   goToDetail(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: `/pages/market/detail?id=${id}`
+      url: `/pages/product-detail/product-detail?id=${id}`
     });
   },
 

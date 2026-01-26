@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { message } from 'antd';
 
 const API_BASE_URL = 'http://localhost:8080/api/v1';
 
@@ -51,15 +52,35 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
-      if (error.response.status === 401) {
-        console.error('[API] 401 Unauthorized - redirecting to login');
-        // 只有在确定是认证失败时才清理，避免误杀
-        localStorage.removeItem('admin_token');
-        // 可以选择在这里跳转，或者交给组件层
-        if (window.location.pathname !== '/login') {
-          window.location.href = '/login';
+      const { status, data } = error.response;
+
+      if (status === 401) {
+        // 防止重复提示
+        if (!window.location.pathname.includes('/login')) {
+          message.error('登录已过期，请重新登录');
         }
+        console.error('[API] 401 Unauthorized - redirecting to login');
+        localStorage.removeItem('admin_token');
+
+        if (window.location.pathname !== '/login') {
+          // 给一点时间让提示显示
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 1000);
+        }
+      } else if (status === 403) {
+        message.error('没有权限执行此操作');
+      } else if (status >= 500) {
+        message.error('服务器出错了，请稍后再试');
+      } else {
+        // 其他错误，如果有返回错误信息则显示，否则显示默认文案
+        message.error(data?.error || data?.message || '请求失败');
       }
+    } else if (error.request) {
+      // 网络错误（无响应）
+      message.error('网络连接异常，请检查网络');
+    } else {
+      message.error('请求配置发生错误');
     }
     return Promise.reject(error);
   }

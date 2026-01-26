@@ -1,4 +1,8 @@
 {
     "navigationBarTitleText": "商品详情",
-    "usingComponents": {}
+    "enablePullDownRefresh": true,
+    "backgroundTextStyle": "dark",
+    "usingComponents": {
+        "custom-nav": "../../components/custom-nav/index"
+    }
 }

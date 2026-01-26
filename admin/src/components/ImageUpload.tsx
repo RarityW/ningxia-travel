@@ -16,9 +16,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange, maxSize = 30
         name: 'file',
         multiple: false,
         action: 'http://localhost:8080/api/v1/admin/upload', // Match backend provided in api.ts
-        withCredentials: true,
         headers: {
-            // Authorization header removed as we use HttpOnly cookies for admin auth
+            Authorization: `Bearer ${localStorage.getItem('admin_token') || ''}`,
         },
         onChange(info) {
             const { status } = info.file;

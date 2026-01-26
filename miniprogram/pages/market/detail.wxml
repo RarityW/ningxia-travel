@@ -1,11 +1,11 @@
-<!-- 宁夏旅游门票优惠 - 景点详情页 -->
-<view class="container" wx:if="{{scenic}}">
+<!-- 商品详情页 - 对接后端API -->
+<view class="container" wx:if="{{product}}">
   <!-- 导航栏 -->
   <custom-nav title="商品详情" background="#ffffff" color="#000000"></custom-nav>
 
   <!-- 1. 商品图轮播 (1:1比例) -->
   <swiper class="product-swiper" indicator-dots indicator-color="rgba(0,0,0,0.3)" indicator-active-color="#000000" autoplay circular>
-    <swiper-item wx:for="{{scenic.images.length > 0 ? scenic.images : [scenic.image]}}" wx:key="*this">
+    <swiper-item wx:for="{{product.images}}" wx:key="*this">
       <image class="product-image" src="{{item}}" mode="aspectFill" />
     </swiper-item>
   </swiper>
@@ -14,34 +14,23 @@
   <view class="product-header">
     <view class="price-row">
       <text class="currency">¥</text>
-      <text class="price">{{scenic.discountPrice}}</text>
-      <text class="original-price" wx:if="{{scenic.price > scenic.discountPrice}}">¥{{scenic.price}}</text>
+      <text class="price">{{product.price}}</text>
+      <text class="original-price" wx:if="{{product.original_price > product.price}}">¥{{product.original_price}}</text>
     </view>
     
     <view class="title-row">
-      <text class="product-title">{{scenic.name}}</text>
+      <text class="product-title">{{product.name}}</text>
     </view>
 
-    <!-- 优惠券Banner -->
-    <view class="coupon-banner" wx:if="{{scenic.coupons && scenic.coupons.length > 0}}">
-      <view class="coupon-left">
-        <text class="coupon-label">优惠券</text>
-        <text class="coupon-text" wx:for="{{scenic.coupons}}" wx:key="index">{{item.title}}</text>
-      </view>
-      <view class="coupon-right">
-        <text>去领券 ›</text>
-      </view>
+    <!-- 库存显示 -->
+    <view class="stock-row" wx:if="{{product.stock !== undefined}}">
+      <text class="stock-text">库存: {{product.stock}} 件</text>
     </view>
   </view>
 
-  <!-- 3. 规格选择 -->
-  <view class="spec-cell" wx:if="{{scenic.specs}}">
-    <text class="cell-label">选择</text>
-    <text class="cell-value">{{scenic.specs[0]}}</text>
-    <text class="cell-arrow">›</text>
-  </view>
 
-  <!-- 4. 权益/服务 (原有) -->
+
+  <!-- 4. 权益/服务 -->
   <view class="service-cell">
     <view class="service-item">
       <text class="check-icon">✓</text>
@@ -55,15 +44,14 @@
       <text class="check-icon">✓</text>
       <text>7天无理由退货</text>
     </view>
-    <text class="cell-arrow">›</text>
   </view>
 
   <!-- 5. 详情内容 -->
   <view class="detail-content">
     <view class="section-title">—— 商品详情 ——</view>
-    <text class="intro-text">{{scenic.description}}</text>
-    <!-- 模拟详情图 -->
-    <block wx:for="{{scenic.images}}" wx:key="*this">
+    <text class="intro-text">{{product.description || '暂无描述'}}</text>
+    <!-- 详情图 -->
+    <block wx:for="{{product.detail_images}}" wx:key="*this">
       <image class="detail-image" src="{{item}}" mode="widthFix" />
     </block>
   </view>
@@ -71,7 +59,8 @@
   <!-- 底部操作栏 -->
   <view class="bottom-bar">
     <view class="icon-btn" bindtap="goToShop">
-      <text class="icon">🏠</text>
+      <image class="shop-icon-img" src="{{product.merchant.logo || '/images/function-meishi.svg'}}" mode="aspectFill" wx:if="{{product.merchant && product.merchant.logo}}"></image>
+      <text class="icon" wx:else>🏠</text>
       <text class="text">店铺</text>
     </view>
     <view class="icon-btn" bindtap="goToCart">
@@ -82,7 +71,7 @@
       <view class="action-btn add-cart" bindtap="addToCart">
         <text>加入购物车</text>
       </view>
-      <view class="action-btn buy-now" bindtap="buyTicket">
+      <view class="action-btn buy-now" bindtap="buyNow">
         <text>立即购买</text>
       </view>
     </view>
@@ -90,7 +79,14 @@
 </view>
 
 <!-- 加载状态 -->
-<view class="loading" wx:if="{{!scenic}}">
+<view class="loading" wx:if="{{loading}}">
   <view class="spinner"></view>
   <text>加载中...</text>
+</view>
+
+<!-- 加载失败/商品不存在 -->
+<view class="empty-state" wx:if="{{!loading && !product}}">
+  <text class="empty-icon">😢</text>
+  <text class="empty-text">商品不存在或已下架</text>
+  <view class="back-btn" bindtap="goBack">返回上一页</view>
 </view>

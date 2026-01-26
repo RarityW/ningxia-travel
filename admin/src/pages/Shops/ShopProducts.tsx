@@ -4,6 +4,7 @@ import { Table, Button, Space, message, Popconfirm, Tag, Card, Modal, Form, Inpu
 import { LeftOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { productsAPI } from '../../services/api';
 import ImageUpload from '../../components/ImageUpload';
+import MultiImageUpload from '../../components/MultiImageUpload';
 
 interface Product {
     id: number;
@@ -16,6 +17,7 @@ interface Product {
     description?: string;
     category?: string;
     images?: string; // JSON string
+    detail_images?: string; // JSON string
 }
 
 const ShopProducts: React.FC = () => {
@@ -55,7 +57,24 @@ const ShopProducts: React.FC = () => {
 
     const handleEdit = (product: Product) => {
         setEditingProduct(product);
-        form.setFieldsValue(product);
+        const formValues: any = { ...product };
+        try {
+            if (formValues.images) {
+                formValues.images = JSON.parse(formValues.images);
+            } else {
+                formValues.images = [];
+            }
+            if (formValues.detail_images) {
+                formValues.detail_images = JSON.parse(formValues.detail_images);
+            } else {
+                formValues.detail_images = [];
+            }
+        } catch (e) {
+            console.error("JSON parse error", e);
+            formValues.images = [];
+            formValues.detail_images = [];
+        }
+        form.setFieldsValue(formValues);
         setModalVisible(true);
     };
 
@@ -86,6 +105,14 @@ const ShopProducts: React.FC = () => {
             if (id) {
                 // Ensure merchant_id is set
                 values.merchant_id = parseInt(id);
+            }
+
+            // Convert arrays back to JSON strings
+            if (Array.isArray(values.images)) {
+                values.images = JSON.stringify(values.images);
+            }
+            if (Array.isArray(values.detail_images)) {
+                values.detail_images = JSON.stringify(values.detail_images);
             }
 
             if (editingProduct) {
@@ -195,12 +222,29 @@ const ShopProducts: React.FC = () => {
                         <ImageUpload maxSize={30} />
                     </Form.Item>
 
+                    <Form.Item
+                        name="images"
+                        label="轮播图 (多张)"
+                        getValueFromEvent={(e) => e}
+                    >
+                        <MultiImageUpload maxCount={9} />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="detail_images"
+                        label="详情长图 (多张, 用于详情页下方展示)"
+                        getValueFromEvent={(e) => e}
+                    >
+                        <MultiImageUpload maxCount={20} />
+                    </Form.Item>
+
                     <Form.Item name="category" label="分类">
                         <Select>
-                            <Select.Option value="特色美食">特色美食</Select.Option>
-                            <Select.Option value="文创产品">文创产品</Select.Option>
+                            <Select.Option value="特色饮品">特色饮品</Select.Option>
+                            <Select.Option value="特色食品">特色食品</Select.Option>
                             <Select.Option value="旅游纪念品">旅游纪念品</Select.Option>
-                            <Select.Option value="其他">其他</Select.Option>
+                            <Select.Option value="特色工艺品(非遗)">特色工艺品(非遗)</Select.Option>
+                            <Select.Option value="文创类">文创类</Select.Option>
                         </Select>
                     </Form.Item>
 
@@ -214,8 +258,8 @@ const ShopProducts: React.FC = () => {
                         </Form.Item>
                     </Space>
 
-                    <Form.Item name="description" label="商品描述">
-                        <Input.TextArea rows={4} placeholder="请输入商品详情描述" />
+                    <Form.Item name="description" label="商品描述 (简短)">
+                        <Input.TextArea rows={4} placeholder="请输入商品简短描述" />
                     </Form.Item>
                 </Form>
             </Modal>

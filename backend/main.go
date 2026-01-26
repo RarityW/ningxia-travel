@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"log/slog"
 	"net/http"
 
 	"os"
@@ -19,10 +20,14 @@ func main() {
 	// 加载配置
 	config.LoadConfig()
 
+	// 设置全局 Logger
+	setupLogger()
+
 	// 连接数据库
 	err := db.Connect()
 	if err != nil {
-		log.Fatal("Database connection failed:", err)
+		slog.Error("Database connection failed", "error", err)
+		os.Exit(1)
 	}
 
 	// 创建 Gin 路由
@@ -30,6 +35,7 @@ func main() {
 	r.MaxMultipartMemory = 50 << 20 // 50MB
 
 	// 中间件
+	r.Use(middleware.RequestLogger()) // 添加日志中间件
 	r.Use(middleware.CORSMiddleware())
 
 	// 静态文件服务
@@ -195,4 +201,19 @@ func main() {
 	if err := r.Run(":" + port); err != nil {
 		log.Fatal("Failed to start server:", err)
 	}
+}
+
+func setupLogger() {
+	var handler slog.Handler
+	if config.GlobalConfig.ServerMode == "release" {
+		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelInfo,
+		})
+	} else {
+		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		})
+	}
+	logger := slog.New(handler)
+	slog.SetDefault(logger)
 }

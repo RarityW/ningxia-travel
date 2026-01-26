@@ -1,39 +1,66 @@
 <view class="container" wx:if="{{product}}">
-  <image class="cover-image" src="{{product.cover_image}}" mode="aspectFill"></image>
+  <!-- 1. 顶部轮播图 -->
+  <swiper class="product-swiper" indicator-dots indicator-color="rgba(0,0,0,0.3)" indicator-active-color="#000000" autoplay circular>
+    <block wx:if="{{product.images && product.images.length > 0}}">
+      <swiper-item wx:for="{{product.images}}" wx:key="*this">
+        <image class="product-image" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-current="{{item}}" data-urls="{{product.images}}" />
+      </swiper-item>
+    </block>
+    <block wx:else>
+      <swiper-item>
+        <image class="product-image" src="{{product.coverImage}}" mode="aspectFill" />
+      </swiper-item>
+    </block>
+  </swiper>
   
   <view class="info-card">
     <view class="price-row">
       <text class="price">¥{{product.price}}</text>
-      <text class="stock">库存: {{product.stock}}</text>
+      <text class="stock">库存: {{product.stock || '充足'}}</text>
     </view>
     <view class="title">{{product.name}}</view>
     
-    <view class="merchant-card" bindtap="goToShop" wx:if="{{product.merchant}}">
-      <image class="merchant-logo" src="{{product.merchant.logo || '/assets/images/default-shop.png'}}" mode="aspectFill"></image>
-      <view class="merchant-info">
-        <view class="merchant-name">{{product.merchant.name}}</view>
-        <view class="merchant-tip">进店逛逛 ></view>
-      </view>
-    </view>
+
   </view>
 
+  <!-- 2. 商品详情图区域 -->
   <view class="detail-card">
     <view class="section-title">商品详情</view>
-    <view class="description">{{product.description || '暂无描述'}}</view>
+    <view class="description" wx:if="{{product.description}}">{{product.description}}</view>
+    
+    <view class="detail-images-container">
+       <block wx:for="{{product.detailImages}}" wx:key="*this">
+          <image class="detail-image" src="{{item}}" mode="widthFix" lazy-load bindtap="previewDetailImage" data-current="{{item}}" data-urls="{{product.detailImages}}"/>
+       </block>
+    </view>
   </view>
 
   <view class="bottom-bar">
-    <view class="icon-btn" bindtap="goToShop">
-      <text class="icon">🏠</text>
-      <text>店铺</text>
+    <view class="icon-btn" bindtap="goBack">
+       <text class="icon">🔙</text>
+       <text>返回</text>
     </view>
-    <view class="icon-btn">
-      <text class="icon">🛒</text>
-      <text>购物车</text>
+    <view class="icon-btn" bindtap="goToShop">
+      <image class="shop-icon-img" src="{{product.merchant.logo}}" mode="aspectFill" wx:if="{{product.merchant && product.merchant.logo}}"></image>
+      <text class="icon" wx:else>🏠</text>
+      <text>店铺</text>
     </view>
     <view class="btn-group">
       <view class="btn cart-btn" bindtap="addToCart">加入购物车</view>
       <view class="btn buy-btn" bindtap="buyNow">立即购买</view>
     </view>
   </view>
+</view>
+
+<!-- 加载状态 -->
+<view class="loading-state" wx:if="{{loading}}">
+  <view class="loading-spinner"></view>
+  <text class="loading-text">加载中...</text>
+</view>
+
+<!-- 错误状态 -->
+<view class="error-state" wx:if="{{!loading && !product}}">
+  <text class="error-icon">😢</text>
+  <text class="error-text">商品不存在或已下架</text>
+  <view class="back-btn" bindtap="goBack">返回</view>
 </view>

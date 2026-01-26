@@ -31,17 +31,17 @@
 
       <!-- 快捷入口卡片 -->
       <view class="quick-entry-row">
-        <view class="quick-card" bindtap="switchTab" data-index="1">
+        <view class="quick-card" bindtap="switchTab" data-index="0">
           <view class="quick-text">
-            <text class="quick-title">必买特产</text>
-            <text class="quick-sub">宁夏特色 > </text>
+            <text class="quick-title">特色饮品</text>
+            <text class="quick-sub">枸杞红酒 > </text>
           </view>
           <image class="quick-icon" src="/images/function-meishi.svg" />
         </view>
-        <view class="quick-card" bindtap="switchTab" data-index="5">
+        <view class="quick-card" bindtap="switchTab" data-index="4">
           <view class="quick-text">
-            <text class="quick-title">伴手礼优选</text>
-            <text class="quick-sub">文创新品 > </text>
+            <text class="quick-title">非遗文创</text>
+            <text class="quick-sub">名家手作 > </text>
           </view>
           <image class="quick-icon" src="/images/function-wenchuang.svg" />
         </view>
@@ -71,11 +71,13 @@
       </view>
 
       <!-- 分类Tabs -->
-      <view class="tab-header">
-        <view class="tab-item {{currentTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-index="0">明星产品</view>
-        <view class="tab-item {{currentTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-index="1">当季直销</view>
-        <view class="tab-item {{currentTab === 2 ? 'active' : ''}}" bindtap="switchTab" data-index="2">助农扶农</view>
-      </view>
+      <scroll-view class="tab-header" scroll-x enable-flex>
+        <block wx:for="{{categories}}" wx:key="key">
+          <view class="tab-item {{currentTab === index ? 'active' : ''}}" bindtap="switchTab" data-index="{{index}}">
+            {{item.name}}
+          </view>
+        </block>
+      </scroll-view>
 
       <!-- 特色产品Banner -->
       <view class="feature-product-banner">

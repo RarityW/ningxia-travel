@@ -1,31 +1,113 @@
-<view class="container" wx:if="{{merchant}}">
-  <image class="shop-cover" src="{{merchant.cover_image || '/assets/images/default-cover.png'}}" mode="aspectFill"></image>
-  
-  <view class="shop-header">
-    <image class="shop-logo" src="{{merchant.logo || '/assets/images/default-shop.png'}}" mode="aspectFill"></image>
-    <view class="shop-info">
-      <view class="shop-name">{{merchant.name}}</view>
-      <view class="shop-desc">{{merchant.description || '暂无描述'}}</view>
+<view class="shop-page">
+  <!-- 顶部封面区域 -->
+  <view class="cover-section">
+    <image class="cover-bg" src="{{merchant.cover_image || '/images/banner-1.jpg'}}" mode="aspectFill"></image>
+    <view class="cover-overlay"></view>
+    
+    <!-- 店铺信息卡片 -->
+    <view class="shop-card">
+      <image class="shop-avatar" src="{{merchant.logo || '/images/default-shop.png'}}" mode="aspectFill"></image>
+      <view class="shop-main-info">
+        <view class="shop-name-row">
+          <text class="shop-name">{{merchant.name || '店铺名称'}}</text>
+          <view class="verified-badge" wx:if="{{merchant.verified}}">
+            <text class="badge-icon">✓</text>
+            <text>官方认证</text>
+          </view>
+        </view>
+        <view class="shop-stats">
+          <view class="stat-item">
+            <text class="stat-value">{{merchant.product_count || 0}}</text>
+            <text class="stat-label">商品</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value">{{merchant.sales || 0}}</text>
+            <text class="stat-label">销量</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value">{{merchant.rating || '5.0'}}</text>
+            <text class="stat-label">评分</text>
+          </view>
+        </view>
+      </view>
+      <view class="follow-btn {{isFollowed ? 'followed' : ''}}" bindtap="toggleFollow">
+        <text>{{isFollowed ? '已关注' : '+ 关注'}}</text>
+      </view>
     </view>
   </view>
 
-  <view class="shop-meta">
-    <view class="meta-item">📍 {{merchant.address || '暂无地址'}}</view>
-    <view class="meta-item">📞 {{merchant.phone || '暂无电话'}}</view>
+  <!-- 店铺介绍 -->
+  <view class="intro-section" wx:if="{{merchant.description}}">
+    <view class="section-header">
+      <text class="section-icon">📝</text>
+      <text class="section-title">店铺介绍</text>
+    </view>
+    <view class="intro-content">{{merchant.description}}</view>
   </view>
 
-  <view class="product-list">
-    <view class="section-title">全部商品</view>
-    <view class="grid">
-      <view class="product-item" wx:for="{{products}}" wx:key="id" bindtap="goToProduct" data-id="{{item.id}}">
-        <image class="p-img" src="{{item.cover_image}}" mode="aspectFill"></image>
-        <view class="p-info">
-          <view class="p-name">{{item.name}}</view>
-          <view class="p-price">¥{{item.price}}</view>
+  <!-- 联系信息 -->
+  <view class="contact-section">
+    <view class="contact-item" wx:if="{{merchant.address}}" bindtap="copyAddress">
+      <text class="contact-icon">📍</text>
+      <text class="contact-text">{{merchant.address}}</text>
+      <text class="contact-action">复制</text>
+    </view>
+    <view class="contact-item" wx:if="{{merchant.phone}}" bindtap="callPhone">
+      <text class="contact-icon">📞</text>
+      <text class="contact-text">{{merchant.phone}}</text>
+      <text class="contact-action">拨打</text>
+    </view>
+  </view>
+
+  <!-- 商品区域 -->
+  <view class="products-section">
+    <!-- Tab 切换 -->
+    <view class="product-tabs">
+      <view class="tab-item {{currentTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-index="0">
+        <text>全部商品</text>
+        <view class="tab-indicator" wx:if="{{currentTab === 0}}"></view>
+      </view>
+      <view class="tab-item {{currentTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-index="1">
+        <text>热销推荐</text>
+        <view class="tab-indicator" wx:if="{{currentTab === 1}}"></view>
+      </view>
+    </view>
+
+    <!-- 商品网格 -->
+    <view class="product-grid">
+      <view class="product-card" wx:for="{{products}}" wx:key="id" bindtap="goToProduct" data-id="{{item.id}}">
+        <view class="product-img-wrapper">
+          <image class="product-img" src="{{item.cover_image}}" mode="aspectFill"></image>
+          <view class="hot-tag" wx:if="{{item.is_hot}}">热卖</view>
+        </view>
+        <view class="product-info">
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-price-row">
+            <text class="product-price">¥{{item.price}}</text>
+            <text class="product-original" wx:if="{{item.original_price > item.price}}">¥{{item.original_price}}</text>
+          </view>
+          <view class="product-sales">已售 {{item.sales || 0}} 件</view>
         </view>
       </view>
     </view>
-    <view class="loading-more" wx:if="{{loading}}">加载中...</view>
-    <view class="no-more" wx:if="{{!loading && !hasMore}}">没有更多了</view>
+
+    <!-- 加载状态 -->
+    <view class="loading-box" wx:if="{{loading}}">
+      <view class="loading-spinner"></view>
+      <text>加载中...</text>
+    </view>
+    
+    <!-- 无更多数据 -->
+    <view class="no-more" wx:if="{{!loading && !hasMore && products.length > 0}}">
+      <text>—— 已经到底啦 ——</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{!loading && products.length === 0}}">
+      <text class="empty-icon">🛒</text>
+      <text class="empty-text">店铺暂无商品</text>
+    </view>
   </view>
 </view>

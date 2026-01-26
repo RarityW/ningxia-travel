@@ -217,6 +217,14 @@ page {
   margin-bottom: 4rpx;
 }
 
+.shop-icon-img {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  margin-bottom: 4rpx;
+  border: 1rpx solid #eee;
+}
+
 .action-btn-group {
   flex: 1;
   display: flex;

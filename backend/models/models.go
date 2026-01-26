@@ -113,7 +113,8 @@ type Product struct {
 	Name           string         `gorm:"not null" json:"name"`
 	CoverImage     string         `json:"cover_image"`
 	Images         string         `gorm:"type:text" json:"images"`
-	Category       string         `json:"category"` // 明星产品/特色食品/文创周边
+	DetailImages   string         `gorm:"type:text" json:"detail_images"` // 详情图 JSON 数组
+	Category       string         `json:"category"`                       // 特色饮品/特色食品/旅游纪念品/特色工艺品(非遗)/文创类
 	Price          float64        `json:"price"`
 	OriginalPrice  float64        `json:"original_price"`
 	Description    string         `gorm:"type:text" json:"description"`
