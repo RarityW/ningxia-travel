@@ -162,6 +162,7 @@ type Cart struct {
 	UserID    uint      `json:"user_id"`
 	User      *User     `gorm:"foreignKey:UserID" json:"user,omitempty"`
 	ProductID uint      `json:"product_id"`
+	Product   *Product  `gorm:"foreignKey:ProductID" json:"product,omitempty"`
 	Quantity  int       `json:"quantity"`
 	SpecID    uint      `json:"spec_id"`
 	CreatedAt time.Time `json:"created_at"`

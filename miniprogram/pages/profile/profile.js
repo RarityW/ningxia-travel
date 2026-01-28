@@ -180,7 +180,7 @@ Page({
 
   goToOrders() {
     if (!this.checkLogin()) return
-    wx.showToast({ title: '订单功能开发中', icon: 'none' })
+    wx.navigateTo({ url: '/pages/order/list/index' })
   },
 
   goToCoupons() {

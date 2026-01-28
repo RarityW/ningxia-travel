@@ -1,4 +1,8 @@
 <view class="container" wx:if="{{product}}">
+  <!-- Top Left Return Button -->
+  <view class="floating-back-btn" bindtap="goBack" style="top: {{statusBarHeight + 10}}px;">
+    <text class="back-icon">❮</text>
+  </view>
   <!-- 1. 顶部轮播图 -->
   <swiper class="product-swiper" indicator-dots indicator-color="rgba(0,0,0,0.3)" indicator-active-color="#000000" autoplay circular>
     <block wx:if="{{product.images && product.images.length > 0}}">
@@ -36,14 +40,10 @@
   </view>
 
   <view class="bottom-bar">
-    <view class="icon-btn" bindtap="goBack">
-       <text class="icon">🔙</text>
-       <text>返回</text>
-    </view>
     <view class="icon-btn" bindtap="goToShop">
-      <image class="shop-icon-img" src="{{product.merchant.logo}}" mode="aspectFill" wx:if="{{product.merchant && product.merchant.logo}}"></image>
-      <text class="icon" wx:else>🏠</text>
-      <text>店铺</text>
+       <image class="shop-icon-img" src="{{product.merchant.logo}}" mode="aspectFill" wx:if="{{product.merchant && product.merchant.logo}}"></image>
+       <text class="icon" wx:else>🏠</text>
+       <text>店铺</text>
     </view>
     <view class="btn-group">
       <view class="btn cart-btn" bindtap="addToCart">加入购物车</view>

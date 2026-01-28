@@ -99,7 +99,7 @@ const Orders: React.FC = () => {
       title: '用户昵称',
       dataIndex: 'user',
       key: 'user_name',
-      render: (user: any) => user?.nick_name || '未知'
+      render: (user: any) => user?.nickname || '未知'
     },
     {
       title: '商品摘要',

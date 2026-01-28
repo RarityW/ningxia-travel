@@ -24,7 +24,10 @@ Page({
     API.getCart()
       .then(data => {
         // 后端返回的数据格式需要转换为前端需要的格式
-        const cartItems = (data.list || []).map(item => ({
+        // 处理 data直接为数组的情况 (后端 GetCart 返回 []models.Cart)
+        const list = Array.isArray(data) ? data : (data.list || []);
+
+        const cartItems = list.map(item => ({
           id: item.id,
           productId: item.productId,
           name: item.product?.name || '商品',
@@ -51,6 +54,11 @@ Page({
         this.calculate()
       })
   },
+
+  // ... (checkAllSelected, countSelected, calculate, etc. unchanged) Since replacment is bounded, I don't need to repeat them if not in range. But I need to be careful with range.
+  // Wait, I can't skip lines in the middle of a replace_file_content.
+  // I will just replace loadCart and goToMarket separately or use multi_replace.
+  // I'll use multi_replace for clarity.
 
   checkAllSelected(cartItems) {
     return cartItems.length > 0 && cartItems.every(item => item.selected)
@@ -216,8 +224,8 @@ Page({
   },
 
   goToMarket() {
-    wx.switchTab({
-      url: '/pages/market/index'
+    wx.navigateTo({
+      url: '/pages/shop/index'
     })
   },
 

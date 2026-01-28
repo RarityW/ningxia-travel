@@ -74,6 +74,8 @@ Page({
         products: res.list || []
       });
     } catch (err) {
+      console.error('加载商品失败', err);
+    } finally {
       wx.hideLoading();
       this.setData({ loading: false });
     }

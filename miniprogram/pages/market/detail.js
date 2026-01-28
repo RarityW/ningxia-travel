@@ -4,10 +4,14 @@ Page({
   data: {
     product: null,
     id: '',
-    loading: true
+    loading: true,
+    statusBarHeight: 20
   },
 
   onLoad(options) {
+    const { statusBarHeight } = wx.getSystemInfoSync();
+    this.setData({ statusBarHeight });
+
     const id = options.id
     if (id) {
       this.setData({ id })
@@ -179,22 +183,50 @@ Page({
       confirmColor: '#FF4400',
       success: (res) => {
         if (res.confirm) {
-          // 创建订单
+          wx.showLoading({ title: '处理中...' })
+
+          // 1. First add to cart
           wx.request({
-            url: `${app.globalData.baseUrl}/user/orders`,
+            url: `${app.globalData.baseUrl}/user/cart`,
             method: 'POST',
             header: { 'Authorization': `Bearer ${token}` },
             data: {
-              items: [{ product_id: product.id, quantity: 1 }]
+              product_id: product.id,
+              quantity: 1
             },
-            success: (orderRes) => {
-              if (orderRes.data.code === 200) {
-                wx.showToast({ title: '下单成功', icon: 'success' })
+            success: (cartRes) => {
+              if (cartRes.data.code === 200) {
+                // 2. Then create order
+                wx.request({
+                  url: `${app.globalData.baseUrl}/user/orders`,
+                  method: 'POST',
+                  header: { 'Authorization': `Bearer ${token}` },
+                  data: {
+                    address: "默认模拟地址", // Mock address to satisfy backend requirement
+                    remark: "立即购买"
+                  },
+                  success: (orderRes) => {
+                    wx.hideLoading()
+                    if (orderRes.data.code === 200) {
+                      wx.showToast({ title: '下单成功', icon: 'success' })
+                      // Refresh product to show updated stock
+                      this.loadProduct(product.id)
+                    } else {
+                      wx.showToast({ title: orderRes.data.message || '下单失败', icon: 'none' })
+                    }
+                  },
+                  fail: () => {
+                    wx.hideLoading()
+                    wx.showToast({ title: '网络错误', icon: 'none' })
+                  }
+                })
               } else {
-                wx.showToast({ title: orderRes.data.message || '下单失败', icon: 'none' })
+                wx.hideLoading()
+                wx.showToast({ title: '加入订单失败', icon: 'none' })
               }
             },
             fail: () => {
+              wx.hideLoading()
               wx.showToast({ title: '网络错误', icon: 'none' })
             }
           })

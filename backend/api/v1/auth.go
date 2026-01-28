@@ -113,7 +113,7 @@ func UserRegister(c *gin.Context) {
 		Password: string(hashedPassword),
 		NickName: req.NickName,
 		IsActive: true,
-		// OpenID 为空，因为是手机号注册
+		OpenID:   "phone_" + req.Phone, // 防止唯一索引冲突
 	}
 
 	if err := db.DB.Create(&user).Error; err != nil {
@@ -379,7 +379,7 @@ func GetCart(c *gin.Context) {
 	}
 
 	var carts []models.Cart
-	if err := db.DB.Where("user_id = ?", userID).Find(&carts).Error; err != nil {
+	if err := db.DB.Preload("Product").Where("user_id = ?", userID).Find(&carts).Error; err != nil {
 		utils.ServerError(c, "获取购物车失败")
 		return
 	}

@@ -7,7 +7,7 @@
   <view class="auth-container" wx:if="{{!hasLogin}}">
     <!-- 顶部欢迎语 -->
     <view class="auth-header">
-      <image class="auth-logo" src="https://via.placeholder.com/160x160/F5EDE4/B8860B?text=宁夏" mode="aspectFit" />
+      <image class="auth-logo" src="/images/function-wenchuang.svg" mode="aspectFit" />
       <text class="auth-title">欢迎来到宁夏文旅</text>
       <text class="auth-subtitle">登录后享受更多权益 (Mode: {{authMode}})</text>
     </view>

@@ -287,3 +287,25 @@ page {
   padding-top: 200rpx;
   color: #999;
 }
+
+/* Floating Back Button */
+.floating-back-btn {
+  position: fixed;
+  left: 30rpx;
+  width: 64rpx;
+  height: 64rpx;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.back-icon {
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
+  padding-right: 4rpx;
+}

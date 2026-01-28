@@ -1,5 +1,9 @@
 <!-- 商品详情页 - 对接后端API -->
 <view class="container" wx:if="{{product}}">
+  <!-- Top Left Return Button -->
+  <view class="floating-back-btn" bindtap="goBack" style="top: {{statusBarHeight + 10}}px;">
+    <text class="back-icon">❮</text>
+  </view>
   <!-- 导航栏 -->
   <custom-nav title="商品详情" background="#ffffff" color="#000000"></custom-nav>
 
