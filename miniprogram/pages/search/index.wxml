@@ -14,15 +14,18 @@
              bindconfirm="onSearch"
              focus="{{true}}"
              confirm-type="search"/>
-      <view class="clear-icon" bindtap="clearKeyword" wx:if="{{keyword}}">✕</view>
+      <view class="clear-icon" bindtap="clearKeyword" wx:if="{{keyword}}">×</view>
     </view>
     <view class="search-btn" bindtap="onSearch">搜索</view>
   </view>
 
   <!-- 分类Tabs -->
   <view class="search-tabs">
+    <view class="tab-item {{currentTab === 'all' ? 'active' : ''}}" bindtap="switchTab" data-type="all">
+      综合
+    </view>
     <view class="tab-item {{currentTab === 'attractions' ? 'active' : ''}}" bindtap="switchTab" data-type="attractions">
-      景区
+      景点
     </view>
     <view class="tab-item {{currentTab === 'products' ? 'active' : ''}}" bindtap="switchTab" data-type="products">
       商品
@@ -33,12 +36,77 @@
   <scroll-view class="result-scroll" scroll-y bindscrolltolower="onLoadMore">
     
     <!-- 空状态 -->
-    <view class="empty-state" wx:if="{{!list.length && !loading && searched}}">
+    <view class="empty-state" wx:if="{{(!list.length && !allData.attractions.length && !allData.products.length && currentTab !== 'all') && !loading && searched}}">
+      <text class="empty-icon">🍃</text>
+      <text class="empty-text">没有找到相关内容</text>
+    </view>
+    <!-- 综合页空状态 -->
+     <view class="empty-state" wx:if="{{currentTab === 'all' && !allData.attractions.length && !allData.products.length && !allData.food.length && !allData.culture.length && !loading && searched}}">
       <text class="empty-icon">🍃</text>
       <text class="empty-text">没有找到相关内容</text>
     </view>
 
-    <!-- 景区列表 -->
+
+    <!-- 综合列表 (全部) -->
+    <block wx:if="{{currentTab === 'all'}}">
+      <!-- 景点 -->
+      <view class="section-group" wx:if="{{allData.attractions.length}}">
+        <view class="group-header">
+          <text class="group-title">相关景点</text>
+          <view class="more-link" bindtap="switchTab" data-type="attractions">查看更多 ></view>
+        </view>
+        <view class="result-list">
+          <view class="result-card" wx:for="{{allData.attractions}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}" data-type="attraction">
+            <image class="card-img" src="{{item.cover_image || item.images[0]}}" mode="aspectFill" />
+            <view class="card-content">
+              <text class="card-title">{{item.name}}</text>
+              <view class="card-tags" wx:if="{{item.grade || item.category}}">
+                <text class="tag" wx:if="{{item.grade}}">{{item.grade}}</text>
+                <text class="tag">{{item.category}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 商品 -->
+      <view class="section-group" wx:if="{{allData.products.length}}">
+        <view class="group-header">
+          <text class="group-title">相关商品</text>
+          <view class="more-link" bindtap="switchTab" data-type="products">查看更多 ></view>
+        </view>
+        <view class="result-list">
+          <view class="result-card product" wx:for="{{allData.products}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}" data-type="product">
+            <image class="card-img" src="{{item.cover_image || item.images[0]}}" mode="aspectFill" />
+            <view class="card-content">
+              <text class="card-title">{{item.name}}</text>
+              <view class="price-row">
+                <text class="price-symbol">¥</text>
+                <text class="price-num">{{item.price}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 美食 (可选展示) -->
+       <view class="section-group" wx:if="{{allData.food.length}}">
+        <view class="group-header">
+          <text class="group-title">相关美食</text>
+        </view>
+         <view class="result-list">
+          <view class="result-card" wx:for="{{allData.food}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}" data-type="food">
+             <image class="card-img" src="{{item.cover_image || item.images[0]}}" mode="aspectFill" />
+             <view class="card-content">
+              <text class="card-title">{{item.name}}</text>
+             </view>
+          </view>
+         </view>
+       </view>
+       
+    </block>
+
+    <!-- 景点列表 (单Tab) -->
     <block wx:if="{{currentTab === 'attractions'}}">
       <view class="result-list">
         <view class="result-card" wx:for="{{list}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}" data-type="attraction">
@@ -55,7 +123,7 @@
       </view>
     </block>
 
-    <!-- 商品列表 -->
+    <!-- 商品列表 (单Tab) -->
     <block wx:if="{{currentTab === 'products'}}">
       <view class="result-list">
         <view class="result-card product" wx:for="{{list}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}" data-type="product">
@@ -78,5 +146,7 @@
     <!-- 加载中 -->
     <view class="loading-more" wx:if="{{loading}}">正在加载...</view>
     <view class="no-more" wx:if="{{!hasMore && list.length > 0}}">没有更多了</view>
+    <!-- 综合页没有更多不用显示，或者显示“到底了” -->
+    <view class="no-more" wx:if="{{currentTab === 'all' && searched && !loading && (allData.attractions.length || allData.products.length)}}">—— 以上为精选结果 ——</view>
   </scroll-view>
 </view>

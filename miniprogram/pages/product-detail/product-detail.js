@@ -158,36 +158,20 @@ Page({
                         quantity: 1
                     }).then(() => {
                         // 2. Then create order
-                        // Note: Using wx.request directly here as API module might not have createOrder yet
-                        const api = require('../../utils/api')
-                        const baseUrl = api.config ? (api.config.baseURL + api.config.apiVersion) : 'http://localhost:8080/api/v1'
-
-                        wx.request({
-                            url: `${baseUrl}/user/orders`,
-                            method: 'POST',
-                            header: { 'Authorization': `Bearer ${token}` },
-                            data: {
-                                address: "默认模拟地址", // Mock address
-                                remark: "立即购买"
-                            },
-                            success: (orderRes) => {
-                                wx.hideLoading()
-                                if (orderRes.data.code === 200) {
-                                    wx.showToast({ title: '下单成功', icon: 'success' })
-                                    // Refresh product info
-                                    this.loadProduct(product.id)
-                                } else {
-                                    wx.showToast({ title: orderRes.data.message || '下单失败', icon: 'none' })
-                                }
-                            },
-                            fail: () => {
-                                wx.hideLoading()
-                                wx.showToast({ title: '网络错误', icon: 'none' })
-                            }
+                        return API.createOrder({
+                            address: "默认模拟地址", // Mock address
+                            remark: "立即购买"
                         })
-                    }).catch(() => {
+                    }).then(orderRes => {
                         wx.hideLoading()
-                        wx.showToast({ title: '加入订单失败', icon: 'none' })
+                        wx.showToast({ title: '下单成功', icon: 'success' })
+                        // Refresh product info
+                        this.loadProduct(product.id)
+                    }).catch(err => {
+                        wx.hideLoading()
+                        console.error('Buy Now failed:', err)
+                        const msg = (err.data && err.data.message) || '下单失败'
+                        wx.showToast({ title: msg, icon: 'none' })
                     })
                 }
             }

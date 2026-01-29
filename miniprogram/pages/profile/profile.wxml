@@ -117,7 +117,7 @@
 
     <!-- 服务列表 -->
     <view class="menu-list">
-      <view class="menu-item">
+      <view class="menu-item" bindtap="contactSupport">
         <view class="menu-left">
           <text class="menu-icon">📞</text>
           <text class="menu-text">联系客服</text>

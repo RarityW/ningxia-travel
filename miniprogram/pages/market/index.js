@@ -133,7 +133,7 @@ Page({
   onScenicTap(e) {
     const { id } = e.currentTarget.dataset
     wx.navigateTo({
-      url: `/pages/market/detail?id=${id}`
+      url: `/pages/attractions/detail?id=${id}`
     })
   },
 

@@ -55,7 +55,7 @@ Page({
     const params = {
       page: this.data.page,
       page_size: this.data.pageSize,
-      category: this.data.currentCategory
+      category: this.data.currentCategory === '全部' ? 'all' : this.data.currentCategory
     }
 
     API.getCultures(params)

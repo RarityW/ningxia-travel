@@ -1,14 +1,19 @@
-// pages/search/index.js
 const API = require('../../utils/request')
 
 Page({
     data: {
         navHeight: 0,
         keyword: '',
-        currentTab: 'attractions', // attractions or products
-        placeholder: '搜索景点...',
+        currentTab: 'all', // all, attractions, products
+        placeholder: '搜索...',
 
-        list: [],
+        list: [], // For single tab pagination
+        allData: { // For combined view
+            attractions: [],
+            products: [],
+            food: [],
+            culture: []
+        },
         page: 1,
         hasMore: true,
         loading: false,
@@ -22,7 +27,7 @@ Page({
         if (options.type) {
             this.setData({
                 currentTab: options.type,
-                placeholder: options.type === 'products' ? '搜索宁夏好物...' : '搜索景点...'
+                placeholder: this.getPlaceholder(options.type)
             })
         }
 
@@ -30,6 +35,14 @@ Page({
         if (options.keyword) {
             this.setData({ keyword: options.keyword })
             this.onSearch()
+        }
+    },
+
+    getPlaceholder(type) {
+        switch (type) {
+            case 'products': return '搜索宁夏好物...';
+            case 'attractions': return '搜索景点...';
+            default: return '搜索景点、美食、特产...';
         }
     },
 
@@ -47,7 +60,12 @@ Page({
 
     // 清空
     clearKeyword() {
-        this.setData({ keyword: '', list: [], searched: false })
+        this.setData({
+            keyword: '',
+            list: [],
+            allData: { attractions: [], products: [], food: [], culture: [] },
+            searched: false
+        })
     },
 
     // 切换Tab
@@ -57,11 +75,13 @@ Page({
 
         this.setData({
             currentTab: type,
-            placeholder: type === 'products' ? '搜索宁夏好物...' : '搜索景点...',
+            placeholder: this.getPlaceholder(type),
             list: [],
+            allData: { attractions: [], products: [], food: [], culture: [] },
             page: 1,
             hasMore: true,
-            searched: false
+            searched: false,
+            loading: false
         })
 
         // 如果有关键字，自动搜索
@@ -76,6 +96,7 @@ Page({
 
         this.setData({
             list: [],
+            allData: { attractions: [], products: [], food: [], culture: [] },
             page: 1,
             hasMore: true,
             loading: true,
@@ -87,6 +108,7 @@ Page({
 
     // 加载更多
     async onLoadMore() {
+        if (this.data.currentTab === 'all') return // Combined view has no pagination
         if (!this.data.hasMore || this.data.loading) return
         this.setData({ loading: true })
         await this.loadData()
@@ -96,30 +118,37 @@ Page({
     async loadData() {
         try {
             const { currentTab, keyword, page } = this.data
-            let res
 
-            if (currentTab === 'attractions') {
-                res = await API.getAttractions({
-                    page,
-                    page_size: 10,
-                    keyword
+            if (currentTab === 'all') {
+                const res = await API.search(keyword)
+                this.setData({
+                    allData: res || { attractions: [], products: [], food: [], culture: [] },
+                    loading: false
                 })
             } else {
-                res = await API.getProducts({
-                    page,
-                    page_size: 10,
-                    keyword // 注：后端API需确认是否支持keyword，若不支持需修改后端
+                let res
+                if (currentTab === 'attractions') {
+                    res = await API.getAttractions({
+                        page,
+                        page_size: 10,
+                        keyword
+                    })
+                } else {
+                    res = await API.getProducts({
+                        page,
+                        page_size: 10,
+                        keyword
+                    })
+                }
+
+                const newData = res.list || []
+                this.setData({
+                    list: this.data.list.concat(newData),
+                    page: page + 1,
+                    hasMore: newData.length === 10,
+                    loading: false
                 })
             }
-
-            const newData = res.list || []
-
-            this.setData({
-                list: this.data.list.concat(newData),
-                page: page + 1,
-                hasMore: newData.length === 10,
-                loading: false
-            })
 
         } catch (err) {
             console.error('Search failed:', err)
@@ -131,10 +160,23 @@ Page({
     // 跳转详情
     goToDetail(e) {
         const { id, type } = e.currentTarget.dataset
-        const url = type === 'attraction'
-            ? `/pages/attractions/detail?id=${id}`
-            : `/pages/market/detail?id=${id}`
+        let url = ''
 
-        wx.navigateTo({ url })
+        switch (type) {
+            case 'attraction':
+                url = `/pages/attractions/detail?id=${id}`
+                break
+            case 'product':
+                url = `/pages/product-detail/product-detail?id=${id}` // Note: Check correct path for product detail
+                break
+            case 'food':
+                url = `/pages/food/detail?id=${id}`
+                break
+            case 'culture':
+                url = `/pages/culture/detail?id=${id}`
+                break
+        }
+
+        if (url) wx.navigateTo({ url })
     }
 })

@@ -200,3 +200,45 @@ page {
   font-size: 24rpx;
   color: #999;
 }
+
+/* 综合搜索分组样式 */
+.section-group {
+  margin-bottom: 10rpx; 
+}
+
+.section-group .result-list {
+  padding-top: 0;
+  padding-bottom: 10rpx;
+}
+
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 30rpx;
+}
+
+.group-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  position: relative;
+  padding-left: 16rpx;
+}
+
+.group-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6rpx;
+  height: 28rpx;
+  background: #B8860B;
+  border-radius: 4rpx;
+}
+
+.more-link {
+  font-size: 24rpx;
+  color: #999;
+}

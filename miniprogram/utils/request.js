@@ -47,13 +47,21 @@ const API = {
   getOrders: (params) => api.get('/user/orders', params),
   getOrder: (id) => api.get(`/user/orders/${id}`),
   createOrder: (data) => api.post('/user/orders', data),
+  payOrder: (id) => api.post(`/user/orders/${id}/pay`),
 
   // 优惠券
   getCoupons: () => api.get('/user/coupons'),
 
+  // 搜索
+  search: (q) => api.get('/search', { q }),
+
   // 位置和天气
   getLocation: (longitude, latitude) => api.get('/location', { longitude, latitude }),
-  getWeather: (city) => api.get('/weather', { city })
+  getWeather: (city) => api.get('/weather', { city }),
+
+  // 商家
+  getMerchantDetail: (id) => api.get(`/merchants/${id}`),
+  getMerchantProducts: (id, params) => api.get(`/merchants/${id}/products`, params)
 }
 
 module.exports = API

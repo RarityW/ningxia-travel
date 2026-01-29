@@ -200,6 +200,19 @@ Page({
     })
   },
 
+  contactSupport() {
+    wx.showActionSheet({
+      itemList: ['拨打客服热线', '在线客服'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          wx.makePhoneCall({ phoneNumber: '12345678' })
+        } else {
+          wx.showToast({ title: '在线客服功能开发中', icon: 'none' })
+        }
+      }
+    })
+  },
+
   // Ensure user is logged in before protected actions
   checkLogin() {
     const app = getApp()

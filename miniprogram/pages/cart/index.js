@@ -6,15 +6,32 @@ Page({
     allSelected: false,
     selectedCount: 0,
     totalPrice: 0,
+    finalPrice: 0, // 优惠后价格
+    isNewUser: false, // 是否新用户
     loading: true
   },
 
   onLoad() {
+    this.checkUserStatus()
     this.loadCart()
   },
 
   onShow() {
+    this.checkUserStatus()
     this.loadCart()
+  },
+
+  // 检查用户状态
+  checkUserStatus() {
+    API.getUserProfile().then(res => {
+      // res 是直接返回的对象 (utils/request.js 中处理过)
+      if (res && res.isNewUser) {
+        this.setData({ isNewUser: true })
+        this.calculate()
+      }
+    }).catch(err => {
+      console.log('Get profile failed', err)
+    })
   },
 
   loadCart() {
@@ -69,13 +86,21 @@ Page({
   },
 
   calculate() {
-    const { cartItems } = this.data
+    const { cartItems, isNewUser } = this.data
     const selectedItems = cartItems.filter(item => item.selected)
+    const total = selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+
+    // 新用户9折
+    let final = total
+    if (isNewUser) {
+      final = total * 0.9
+    }
 
     this.setData({
       allSelected: this.checkAllSelected(cartItems),
       selectedCount: this.countSelected(cartItems),
-      totalPrice: selectedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)
+      totalPrice: total.toFixed(2),
+      finalPrice: final.toFixed(2)
     })
   },
 
@@ -177,9 +202,16 @@ Page({
       return
     }
 
+    const { totalPrice, finalPrice, isNewUser } = this.data
+    let content = `共${selectedItems.length}件商品，金额¥${totalPrice}`
+    if (isNewUser) {
+      content += `\n(新用户优惠已抵扣 ¥${(totalPrice - finalPrice).toFixed(2)})`
+      content += `\n实付金额：¥${finalPrice}`
+    }
+
     wx.showModal({
       title: '确认下单',
-      content: `共${selectedItems.length}件商品，金额¥${this.data.totalPrice}`,
+      content: content,
       success: (res) => {
         if (res.confirm) {
           this.createOrder()
@@ -207,6 +239,8 @@ Page({
       })
       .catch(err => {
         console.error('创建订单失败:', err)
+        const msg = err.message || '下单失败'
+        wx.showToast({ title: msg, icon: 'none' })
       })
   },
 

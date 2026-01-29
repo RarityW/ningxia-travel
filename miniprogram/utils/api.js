@@ -40,9 +40,9 @@ function request(options) {
               // 分页数据，转换list中的每一项
               resolve({
                 list: toCamelCase(data.data || []),
-                page: data.page,
-                pageSize: data.page_size,
-                total: data.total
+                page: data.page || 1,
+                pageSize: data.page_size || 10,
+                total: data.total || 0
               })
             } else {
               // 单条数据，直接转换

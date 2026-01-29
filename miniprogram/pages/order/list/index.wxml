@@ -40,7 +40,7 @@
 
           <view class="order-footer">
             <text class="total-price">合计: ¥{{item.total_price}}</text>
-            <view class="action-btn" wx:if="{{item.status === 0}}">立即支付</view>
+            <view class="action-btn" wx:if="{{item.status === 0}}" bindtap="payOrder" data-id="{{item.id}}">立即支付</view>
             <view class="action-btn outline" wx:if="{{item.status === 2}}">确认收货</view>
           </view>
         </view>

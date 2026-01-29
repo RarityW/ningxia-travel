@@ -105,6 +105,7 @@ func main() {
 		// 位置和天气服务（公开接口，无需登录）
 		apiV1.GET("/location", v1.GetLocation) // 逆地理编码
 		apiV1.GET("/weather", v1.GetWeather)   // 获取天气
+		apiV1.GET("/search", v1.Search)        // 全局搜索
 
 		// 商家无需登录即可注册
 		apiV1.POST("/merchant/register", v1.RegisterMerchant)
@@ -133,6 +134,7 @@ func main() {
 			user.GET("/orders", v1.GetOrders)                // 获取订单列表
 			user.POST("/orders", v1.CreateOrder)             // 创建订单
 			user.GET("/orders/:id", v1.GetOrder)             // 获取订单详情
+			user.POST("/orders/:id/pay", v1.PayOrder)        // 支付订单 (模拟)
 			user.GET("/coupons", v1.GetCoupons)              // 获取优惠券列表
 		}
 

@@ -16,9 +16,9 @@ type PageResponse struct {
 	Code     int         `json:"code"`
 	Message  string      `json:"message"`
 	Data     interface{} `json:"data,omitempty"`
-	Page     int         `json:"page,omitempty"`
-	PageSize int         `json:"page_size,omitempty"`
-	Total    int64       `json:"total,omitempty"`
+	Page     int         `json:"page"`
+	PageSize int         `json:"page_size"`
+	Total    int64       `json:"total"`
 }
 
 // Success 成功响应

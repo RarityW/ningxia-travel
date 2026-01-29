@@ -284,7 +284,159 @@ func GetUserProfile(c *gin.Context) {
 		return
 	}
 
-	utils.Success(c, user)
+	// 判断是否为新用户 (7天内注册)
+	isNewUser := false
+	if time.Since(user.CreatedAt).Hours() < 24*7 {
+		isNewUser = true
+	}
+
+	// 构造返回数据，不直接返回 user struct，而是返回一个 map 以包含额外字段
+	utils.Success(c, gin.H{
+		"id":          user.ID,
+		"openid":      user.OpenID,
+		"nickname":    user.NickName,
+		"avatar":      user.Avatar,
+		"gender":      user.Gender,
+		"phone":       user.Phone,
+		"is_active":   user.IsActive,
+		"created_at":  user.CreatedAt,
+		"is_new_user": isNewUser, // 新增字段
+	})
+}
+
+// ... existing UpdateProfile ...
+/* ... skipped ... */
+// CreateOrder 创建订单
+func CreateOrder(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		utils.Unauthorized(c)
+		return
+	}
+
+	type OrderRequest struct {
+		Address string `json:"address" binding:"required"`
+		Remark  string `json:"remark"`
+	}
+
+	var req OrderRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ParamError(c, "参数错误")
+		return
+	}
+
+	// 开启事务
+	err := db.DB.Transaction(func(tx *gorm.DB) error {
+		// 1. 获取购物车商品
+		var carts []models.Cart
+		if err := tx.Where("user_id = ?", userID).Find(&carts).Error; err != nil {
+			return err
+		}
+
+		if len(carts) == 0 {
+			return fmt.Errorf("cart is empty")
+		}
+
+		var totalPrice float64
+		var orderItems []models.OrderItem
+
+		// 2. 遍历购物车，检查库存并扣减，计算总价
+		for _, cart := range carts {
+			var product models.Product
+			// 加锁查询商品信息
+			if err := tx.First(&product, cart.ProductID).Error; err != nil {
+				return fmt.Errorf("product not found: %d", cart.ProductID)
+			}
+
+			// 扣减库存 (乐观锁：确保 stock >= quantity)
+			result := tx.Model(&models.Product{}).
+				Where("id = ? AND stock >= ?", cart.ProductID, cart.Quantity).
+				Update("stock", gorm.Expr("stock - ?", cart.Quantity))
+
+			if result.Error != nil {
+				return result.Error
+			}
+			if result.RowsAffected == 0 {
+				return fmt.Errorf("insufficient stock for product: %s", product.Name)
+			}
+
+			// 累加总价
+			totalPrice += product.Price * float64(cart.Quantity)
+
+			// 准备订单明细
+			orderItems = append(orderItems, models.OrderItem{
+				ProductID: cart.ProductID,
+				Quantity:  cart.Quantity,
+				Price:     product.Price,
+			})
+		}
+
+		// --- 新用户优惠逻辑 ---
+		var user models.User
+		if err := tx.First(&user, userID).Error; err == nil {
+			// 如果注册时间在 7 天内，打 9 折
+			if time.Since(user.CreatedAt).Hours() < 24*7 {
+				totalPrice = totalPrice * 0.9
+				// 可以在 Remark 或其他字段记录优惠信息，这里暂且简单处理
+				req.Remark = fmt.Sprintf("%s [新用户9折优惠]", req.Remark)
+			}
+		}
+		// -----------------------
+
+		// 生成订单号
+		orderNo := generateOrderNo()
+
+		// 3. 创建订单
+		order := models.Order{
+			OrderNo:    orderNo,
+			UserID:     userID.(uint),
+			TotalPrice: totalPrice,
+			Status:     0, // 待支付
+			Address:    req.Address,
+			Remark:     req.Remark,
+		}
+
+		if err := tx.Create(&order).Error; err != nil {
+			return err
+		}
+
+		// 4. 创建订单明细
+		for i := range orderItems {
+			orderItems[i].OrderID = order.ID
+			if err := tx.Create(&orderItems[i]).Error; err != nil {
+				return err
+			}
+		}
+
+		// 5. 清空购物车
+		if err := tx.Where("user_id = ?", userID).Delete(&models.Cart{}).Error; err != nil {
+			return err
+		}
+
+		c.Set("created_order_no", orderNo)
+		c.Set("created_order_id", order.ID)
+
+		return nil
+	})
+
+	if err != nil {
+		if err.Error() == "cart is empty" {
+			utils.Error(c, utils.CodeCartEmpty, "购物车为空")
+		} else if msg := err.Error(); len(msg) > 18 && msg[:18] == "insufficient stock" {
+			utils.Error(c, utils.CodeProductOutOfStock, err.Error())
+		} else {
+			utils.ServerError(c, "创建订单失败: "+err.Error())
+		}
+		return
+	}
+
+	orderNo, _ := c.Get("created_order_no")
+	orderID, _ := c.Get("created_order_id")
+
+	utils.Success(c, gin.H{
+		"order_no": orderNo,
+		"order_id": orderID,
+	})
 }
 
 // UpdateProfile 更新用户信息
@@ -515,129 +667,6 @@ func GetOrders(c *gin.Context) {
 }
 
 // CreateOrder 创建订单
-func CreateOrder(c *gin.Context) {
-	userID, exists := c.Get("user_id")
-	if !exists {
-		utils.Unauthorized(c)
-		return
-	}
-
-	type OrderRequest struct {
-		Address string `json:"address" binding:"required"`
-		Remark  string `json:"remark"`
-	}
-
-	var req OrderRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.ParamError(c, "参数错误")
-		return
-	}
-
-	// 开启事务
-	err := db.DB.Transaction(func(tx *gorm.DB) error {
-		// 1. 获取购物车商品
-		var carts []models.Cart
-		if err := tx.Where("user_id = ?", userID).Find(&carts).Error; err != nil {
-			return err
-		}
-
-		if len(carts) == 0 {
-			return fmt.Errorf("cart is empty")
-		}
-
-		var totalPrice float64
-		var orderItems []models.OrderItem
-
-		// 2. 遍历购物车，检查库存并扣减，计算总价
-		for _, cart := range carts {
-			var product models.Product
-			// 加锁查询商品信息，虽然下面用了乐观锁扣减，但这能先拿到价格
-			if err := tx.First(&product, cart.ProductID).Error; err != nil {
-				return fmt.Errorf("product not found: %d", cart.ProductID)
-			}
-
-			// 扣减库存 (乐观锁：确保 stcok >= quantity)
-			// gorm.Expr("stock - ?", cart.Quantity)
-			result := tx.Model(&models.Product{}).
-				Where("id = ? AND stock >= ?", cart.ProductID, cart.Quantity).
-				Update("stock", gorm.Expr("stock - ?", cart.Quantity))
-
-			if result.Error != nil {
-				return result.Error
-			}
-			if result.RowsAffected == 0 {
-				return fmt.Errorf("insufficient stock for product: %s", product.Name)
-			}
-
-			// 累加总价
-			totalPrice += product.Price * float64(cart.Quantity)
-
-			// 准备订单明细
-			orderItems = append(orderItems, models.OrderItem{
-				ProductID: cart.ProductID,
-				Quantity:  cart.Quantity,
-				Price:     product.Price,
-			})
-		}
-
-		// 生成订单号
-		orderNo := generateOrderNo()
-
-		// 3. 创建订单
-		order := models.Order{
-			OrderNo:    orderNo,
-			UserID:     userID.(uint),
-			TotalPrice: totalPrice,
-			Status:     0, // 待支付
-			Address:    req.Address,
-			Remark:     req.Remark,
-		}
-
-		if err := tx.Create(&order).Error; err != nil {
-			return err
-		}
-
-		// 4. 创建订单明细 (关联 OrderID)
-		for i := range orderItems {
-			orderItems[i].OrderID = order.ID
-			if err := tx.Create(&orderItems[i]).Error; err != nil {
-				return err
-			}
-		}
-
-		// 5. 清空购物车
-		if err := tx.Where("user_id = ?", userID).Delete(&models.Cart{}).Error; err != nil {
-			return err
-		}
-
-		// 成功，将 order 传出去以便返回
-		// 这里通过闭包外的变量传递 orderNo 也可以，但 order 对象是在内部创建的
-		// 我们可以简单的重新赋值给外面的变量，或者只返回 orderNo
-		c.Set("created_order_no", orderNo)
-		c.Set("created_order_id", order.ID)
-
-		return nil
-	})
-
-	if err != nil {
-		if err.Error() == "cart is empty" {
-			utils.Error(c, utils.CodeCartEmpty, "购物车为空")
-		} else if msg := err.Error(); len(msg) > 18 && msg[:18] == "insufficient stock" {
-			utils.Error(c, utils.CodeProductOutOfStock, err.Error()) // 返回具体库存不足信息
-		} else {
-			utils.ServerError(c, "创建订单失败: "+err.Error())
-		}
-		return
-	}
-
-	orderNo, _ := c.Get("created_order_no")
-	orderID, _ := c.Get("created_order_id")
-
-	utils.Success(c, gin.H{
-		"order_no": orderNo,
-		"order_id": orderID,
-	})
-}
 
 // GetOrder 获取订单详情
 func GetOrder(c *gin.Context) {
@@ -656,6 +685,40 @@ func GetOrder(c *gin.Context) {
 	}
 
 	utils.Success(c, order)
+}
+
+// PayOrder 支付订单 (模拟)
+func PayOrder(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		utils.Unauthorized(c)
+		return
+	}
+
+	id := c.Param("id")
+
+	var order models.Order
+	if err := db.DB.Where("id = ? AND user_id = ?", id, userID).First(&order).Error; err != nil {
+		utils.Error(c, utils.CodeOrderNotFound, "订单不存在")
+		return
+	}
+
+	if order.Status != 0 {
+		utils.Error(c, utils.CodeParamError, "订单状态不正确")
+		return
+	}
+
+	// 更新状态为已支付
+	now := time.Now()
+	if err := db.DB.Model(&order).Updates(map[string]interface{}{
+		"status":   1,
+		"pay_time": &now,
+	}).Error; err != nil {
+		utils.ServerError(c, "支付失败")
+		return
+	}
+
+	utils.Success(c, nil)
 }
 
 // GetCoupons 获取优惠券列表

@@ -57,5 +57,28 @@ Page({
             4: '已取消'
         }
         return map[status] || '未知状态'
+    },
+
+    payOrder(e) {
+        const id = e.currentTarget.dataset.id
+        wx.showModal({
+            title: '确认支付',
+            content: '确认支付该订单吗？(模拟支付)',
+            success: (res) => {
+                if (res.confirm) {
+                    wx.showLoading({ title: '支付中...' })
+                    API.payOrder(id).then(() => {
+                        wx.hideLoading()
+                        wx.showToast({ title: '支付成功', icon: 'success' })
+                        // 重新加载列表
+                        this.loadOrders()
+                    }).catch(err => {
+                        wx.hideLoading()
+                        console.error('Pay failed', err)
+                        wx.showToast({ title: '支付失败', icon: 'none' })
+                    })
+                }
+            }
+        })
     }
 })
