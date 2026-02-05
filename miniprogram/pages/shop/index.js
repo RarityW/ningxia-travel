@@ -23,19 +23,41 @@ Page({
   onLoad(options) {
     this.getSystemInfo();
     this.loadProducts(0);
+    this.loadShopBanners(); // 加载宁选好礼页Banner
 
-    // 接收从首页传来的分类参数，自动跳转到品牌精选页
+    // 接收从首页传来的分类参数,自动跳转到品牌精选页
     if (options.category) {
       const category = decodeURIComponent(options.category);
       this.setData({
         selectedCategory: category
       });
-      // 延迟跳转，让用户看到宁选好礼页面
+      // 延迟跳转,让用户看到宁选好礼页面
       setTimeout(() => {
         this.navigateToBrand(category);
       }, 300);
     }
   },
+
+  async loadShopBanners() {
+    try {
+      const res = await API.getAssets('shop_banner');
+      if (res.list && res.list.length > 0) {
+        // 拼接完整图片URL
+        const baseUrl = 'http://127.0.0.1:8080';
+        const bannersWithFullUrl = res.list.map(item => ({
+          ...item,
+          imageUrl: item.image_url.startsWith('http') ? item.image_url : baseUrl + item.image_url
+        }));
+        this.setData({
+          banners: bannersWithFullUrl
+        });
+      }
+    } catch (err) {
+      console.error('Load shop banners failed', err);
+      // 保持默认banner
+    }
+  },
+
 
   getSystemInfo() {
     const systemInfo = wx.getSystemInfoSync();

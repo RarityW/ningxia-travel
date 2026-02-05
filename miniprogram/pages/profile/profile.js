@@ -200,6 +200,20 @@ Page({
     })
   },
 
+  // 跳转编辑资料
+  goToEditProfile() {
+    wx.navigateTo({
+      url: '/pages/profile/edit/edit'
+    })
+  },
+
+  // 跳转浏览历史
+  goToHistory() {
+    wx.navigateTo({
+      url: '/pages/profile/history/history'
+    })
+  },
+
   contactSupport() {
     wx.showActionSheet({
       itemList: ['拨打客服热线', '在线客服'],

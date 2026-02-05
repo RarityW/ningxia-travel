@@ -1,0 +1,23 @@
+<custom-nav title="浏览历史" back="{{true}}"></custom-nav>
+
+<view class="container" style="padding-top: {{statusBarHeight}}px">
+  <view class="history-list" wx:if="{{historyList.length > 0}}">
+    <block wx:for="{{historyList}}" wx:key="id">
+      <view class="history-item" bindtap="goToDetail" data-id="{{item.targetId}}" data-type="{{item.targetType}}">
+        <image class="cover" src="{{item.image || '/assets/images/placeholder.png'}}" mode="aspectFill"></image>
+        <view class="info">
+          <view class="title">{{item.title}}</view>
+          <view class="meta">
+            <text class="date">{{item.timeFormatted}}</text>
+            <text class="price" wx:if="{{item.price > 0}}">¥{{item.price}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <text class="emoji">🕰️</text>
+    <text class="text">暂无浏览记录</text>
+  </view>
+</view>

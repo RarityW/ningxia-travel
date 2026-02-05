@@ -26,7 +26,7 @@ Page({
             .then(res => {
                 const list = Array.isArray(res) ? res : (res.list || [])
                 // Sort by created_at desc if not already
-                list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
                 this.setData({
                     orders: list,

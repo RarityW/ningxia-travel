@@ -17,15 +17,34 @@
     <view class="scroll-content">
       <!-- Banner区域 -->
       <view class="banner-section">
-        <image class="banner-img" src="{{banners[0]}}" mode="aspectFill" />
-        <view class="banner-text-overlay">
-          <text class="banner-title">塞上江南 甄选好礼</text>
-          <view class="banner-tags">
-            <text class="banner-tag">中宁枸杞</text>
-            <text class="banner-tag">贺兰红酒</text>
-            <text class="banner-tag">盐池滩羊</text>
+        <swiper class="banner-swiper" indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#FFFFFF" autoplay circular wx:if="{{banners.length > 0}}">
+          <block wx:for="{{banners}}" wx:key="id">
+            <swiper-item>
+              <image class="banner-img" src="{{item.imageUrl || item}}" mode="aspectFill" />
+              <view class="banner-text-overlay">
+                <text class="banner-title">塞上江南 甄选好礼</text>
+                <view class="banner-tags">
+                  <text class="banner-tag">中宁枸杞</text>
+                  <text class="banner-tag">贺兰红酒</text>
+                  <text class="banner-tag">盐池滩羊</text>
+                </view>
+                <text class="banner-subtitle">—— 官方自营 源头直供 品质保证 ——</text>
+              </view>
+            </swiper-item>
+          </block>
+        </swiper>
+        <!-- Fallback for no banners -->
+        <view wx:else class="banner-fallback">
+          <image class="banner-img" src="/images/banner-2.jpg" mode="aspectFill" />
+          <view class="banner-text-overlay">
+            <text class="banner-title">塞上江南 甄选好礼</text>
+            <view class="banner-tags">
+              <text class="banner-tag">中宁枸杞</text>
+              <text class="banner-tag">贺兰红酒</text>
+              <text class="banner-tag">盐池滩羊</text>
+            </view>
+            <text class="banner-subtitle">—— 官方自营 源头直供 品质保证 ——</text>
           </view>
-          <text class="banner-subtitle">—— 官方自营 源头直供 品质保证 ——</text>
         </view>
       </view>
 

@@ -19,14 +19,14 @@
       <block wx:for="{{orders}}" wx:key="id">
         <view class="order-card">
           <view class="order-header">
-            <text class="order-no">订单号: {{item.order_no}}</text>
+            <text class="order-no">订单号: {{item.orderNo}}</text>
             <text class="order-status status-{{item.status}}">{{item.status === 0 ? '待支付' : (item.status === 1 ? '已支付' : (item.status === 2 ? '已发货' : (item.status === 3 ? '已完成' : '已取消')))}}</text>
           </view>
           
           <view class="order-items">
             <block wx:for="{{item.items}}" wx:for-item="pItem" wx:key="id">
               <view class="product-item">
-                <image class="product-img" src="{{pItem.product.cover_image || '/images/placeholder.jpg'}}" mode="aspectFill" />
+                <image class="product-img" src="{{pItem.product.coverImage || '/images/placeholder.jpg'}}" mode="aspectFill" />
                 <view class="product-info">
                   <text class="product-name">{{pItem.product.name}}</text>
                   <view class="product-meta">
@@ -39,7 +39,7 @@
           </view>
 
           <view class="order-footer">
-            <text class="total-price">合计: ¥{{item.total_price}}</text>
+            <text class="total-price">合计: ¥{{item.totalPrice}}</text>
             <view class="action-btn" wx:if="{{item.status === 0}}" bindtap="payOrder" data-id="{{item.id}}">立即支付</view>
             <view class="action-btn outline" wx:if="{{item.status === 2}}">确认收货</view>
           </view>

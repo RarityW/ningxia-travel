@@ -1,4 +1,5 @@
 const app = getApp()
+const API = require('../../utils/request')
 
 Page({
   data: {
@@ -38,6 +39,15 @@ Page({
               product.images = []
             }
           }
+
+          // FIX: Prepend Base URL to images
+          const baseUrl = 'http://127.0.0.1:8080';
+          if (product.cover_image && !product.cover_image.startsWith('http')) {
+            product.cover_image = baseUrl + product.cover_image;
+          }
+          if (product.images && Array.isArray(product.images)) {
+            product.images = product.images.map(img => img.startsWith('http') ? img : baseUrl + img);
+          }
           // Fallback to cover_image if images is empty
           if (!product.images || product.images.length === 0) {
             product.images = product.cover_image ? [product.cover_image] : []
@@ -62,6 +72,15 @@ Page({
           if (product.merchant_id) {
             this.loadMerchant(product.merchant_id)
           }
+
+          // 记录浏览历史
+          API.addHistory({
+            target_id: product.id,
+            target_type: 'product',
+            title: product.name,
+            image: product.cover_image || (product.images && product.images.length > 0 ? product.images[0] : ''),
+            price: product.price || 0
+          })
         } else {
           wx.showToast({ title: '商品不存在', icon: 'none' })
         }

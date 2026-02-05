@@ -1,0 +1,25 @@
+<custom-nav title="编辑资料" back="{{true}}"></custom-nav>
+
+<view class="container" style="padding-top: {{statusBarHeight}}px">
+  <view class="form-group">
+    <view class="form-item avatar-item">
+      <text class="label">头像</text>
+      <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <image class="avatar" src="{{userInfo.avatar || 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwBHJrRn51rTpBeqAd2hJO95pHlQd6F8X41hZ1nF7f3k8k4n3n3n3n3n3n3n3n3n3/0'}}" mode="aspectFill"></image>
+        <view class="camera-icon">📷</view>
+      </button>
+    </view>
+    
+    <view class="form-item">
+      <text class="label">昵称</text>
+      <input class="input" type="nickname" placeholder="请输入昵称" value="{{userInfo.nickName}}" bindchange="onNicknameChange" bindinput="onNicknameInput" />
+    </view>
+
+    <view class="form-item">
+      <text class="label">手机号</text>
+      <input class="input disabled" value="{{userInfo.phone}}" disabled />
+    </view>
+  </view>
+
+  <button class="save-btn" bindtap="saveProfile" loading="{{saving}}">保存修改</button>
+</view>

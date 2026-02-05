@@ -137,7 +137,37 @@ page {
   color: #9CA3AF;
 }
 
-/* 【5】Banner区域 */
+/* 【2】首页 Banner 轮播图 */
+.banner-swiper {
+  width: 100%;
+  height: 400rpx;
+  border-radius: 0;
+}
+
+.banner-slide {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-slogan {
+  position: absolute;
+  bottom: 40rpx;
+  left: 32rpx;
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.5);
+  max-width: 80%;
+}
+
+/* 【5】Banner区域 - 景区门票优惠 */
 .banner-section {
   margin: 0 32rpx 24rpx;
 }
@@ -298,6 +328,13 @@ page {
 
 .function-icon {
   font-size: 48rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.function-icon-img {
+  width: 56rpx;
+  height: 56rpx;
   position: relative;
   z-index: 1;
 }

@@ -28,9 +28,30 @@ Page({
 
     API.getCulture(id)
       .then(data => {
+        const baseUrl = 'http://127.0.0.1:8080';
+        if (data.coverImage && !data.coverImage.startsWith('http')) {
+          data.coverImage = baseUrl + data.coverImage;
+        }
+        if (data.images && Array.isArray(data.images)) {
+          data.images = data.images.map(img => img.startsWith('http') ? img : baseUrl + img);
+        } else if (data.images && typeof data.images === 'string') {
+          try {
+            const imgs = JSON.parse(data.images);
+            data.images = imgs.map(img => img.startsWith('http') ? img : baseUrl + img);
+          } catch (e) { }
+        }
         this.setData({ culture: data })
         wx.setNavigationBarTitle({
           title: data.name
+        })
+
+        // 记录浏览历史
+        API.addHistory({
+          target_id: data.id,
+          target_type: 'culture',
+          title: data.name,
+          image: data.coverImage || (data.images && data.images.length > 0 ? data.images[0] : ''),
+          price: 0
         })
       })
       .catch(err => {

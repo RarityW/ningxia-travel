@@ -16,6 +16,10 @@ const API = {
   // 更新用户信息
   updateProfile: (data) => api.put('/user/profile', data),
 
+  // 浏览历史
+  getHistory: () => api.get('/user/history'),
+  addHistory: (data) => api.post('/user/history', data),
+
   // 景点
   getAttractions: (params) => api.get('/attractions', params),
   getAttraction: (id) => api.get(`/attractions/${id}`),

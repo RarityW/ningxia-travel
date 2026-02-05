@@ -23,21 +23,17 @@
     </view>
   </view>
 
-  <!-- 【2】首页 Banner 区 -->
-  <view class="banner-section">
-    <swiper class="banner-swiper" indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#FFFFFF" autoplay circular>
-      <block wx:for="{{banners}}" wx:key="id">
-        <swiper-item>
-          <view class="banner-slide">
-            <image class="banner-image" src="{{item.imageUrl}}" mode="aspectFill" />
-            <view class="banner-content">
-              <text class="banner-slogan">{{item.title}}</text>
-            </view>
-          </view>
-        </swiper-item>
-      </block>
-    </swiper>
-  </view>
+  <!-- 【2】首页 Banner 轮播图（全宽，无边距） -->
+  <swiper class="banner-swiper" indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#FFFFFF" autoplay circular>
+    <block wx:for="{{banners}}" wx:key="id">
+      <swiper-item>
+        <view class="banner-slide">
+          <image class="banner-image" src="{{item.imageUrl}}" mode="aspectFill" />
+          <text class="banner-slogan">旅游来宁夏 给心放个假</text>
+        </view>
+      </swiper-item>
+    </block>
+  </swiper>
 
   <!-- 【3】功能入口宫格（10个功能） -->
   <view class="function-section">
@@ -45,35 +41,35 @@
       <!-- 第一行 -->
       <view class="function-item" bindtap="onFunctionTap" data-page="attractions">
         <view class="function-icon-bg bg-orange">
-          <text class="function-icon">🎫</text>
+          <image class="function-icon-img" src="/images/icons/ticket.svg" mode="aspectFit" />
         </view>
         <text class="function-name">景区门票</text>
       </view>
 
       <view class="function-item" bindtap="onFunctionTap" data-page="hotels">
         <view class="function-icon-bg bg-blue">
-          <text class="function-icon">🏨</text>
+          <image class="function-icon-img" src="/images/icons/hotel.svg" mode="aspectFit" />
         </view>
         <text class="function-name">酒店民宿</text>
       </view>
 
       <view class="function-item" bindtap="onFunctionTap" data-page="routes">
         <view class="function-icon-bg bg-green">
-          <text class="function-icon">🗺️</text>
+          <image class="function-icon-img" src="/images/icons/route.svg" mode="aspectFit" />
         </view>
         <text class="function-name">线路定制</text>
       </view>
 
       <view class="function-item" bindtap="onFunctionTap" data-page="products">
         <view class="function-icon-bg bg-purple">
-          <text class="function-icon">🎁</text>
+          <image class="function-icon-img" src="/images/icons/products.svg" mode="aspectFit" />
         </view>
         <text class="function-name">宁夏特产</text>
       </view>
 
       <view class="function-item" bindtap="onFunctionTap" data-page="food">
         <view class="function-icon-bg bg-red">
-          <text class="function-icon">🍽️</text>
+          <image class="function-icon-img" src="/images/icons/food.svg" mode="aspectFit" />
         </view>
         <text class="function-name">地道美食</text>
       </view>
@@ -81,35 +77,35 @@
       <!-- 第二行 -->
       <view class="function-item" bindtap="onFunctionTap" data-page="shows">
         <view class="function-icon-bg bg-pink">
-          <text class="function-icon">🎭</text>
+          <image class="function-icon-img" src="/images/icons/shows.svg" mode="aspectFit" />
         </view>
         <text class="function-name">演艺活动</text>
       </view>
 
       <view class="function-item" bindtap="onFunctionTap" data-page="tours">
         <view class="function-icon-bg bg-cyan">
-          <text class="function-icon">👥</text>
+          <image class="function-icon-img" src="/images/icons/tour.svg" mode="aspectFit" />
         </view>
         <text class="function-name">跟团游</text>
       </view>
 
       <view class="function-item" bindtap="onFunctionTap" data-page="bus">
         <view class="function-icon-bg bg-yellow">
-          <text class="function-icon">🚌</text>
+          <image class="function-icon-img" src="/images/icons/bus.svg" mode="aspectFit" />
         </view>
         <text class="function-name">直通车</text>
       </view>
 
       <view class="function-item" bindtap="onFunctionTap" data-page="service">
         <view class="function-icon-bg bg-indigo">
-          <text class="function-icon">💬</text>
+          <image class="function-icon-img" src="/images/icons/service.svg" mode="aspectFit" />
         </view>
         <text class="function-name">出行服务</text>
       </view>
 
       <view class="function-item" bindtap="onFunctionTap" data-page="daytrip">
         <view class="function-icon-bg bg-emerald">
-          <text class="function-icon">📅</text>
+          <image class="function-icon-img" src="/images/icons/daytrip.svg" mode="aspectFit" />
         </view>
         <text class="function-name">一日游</text>
       </view>

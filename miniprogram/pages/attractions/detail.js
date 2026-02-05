@@ -28,9 +28,31 @@ Page({
 
     API.getAttraction(id)
       .then(data => {
+        const baseUrl = 'http://127.0.0.1:8080';
+        // 处理图片URL
+        if (data.imageUrl && !data.imageUrl.startsWith('http')) {
+          data.imageUrl = baseUrl + data.imageUrl;
+        }
+        if (data.coverImage && !data.coverImage.startsWith('http')) {
+          data.coverImage = baseUrl + data.coverImage;
+        }
+        // 处理轮播图数组 if present
+        if (data.images && Array.isArray(data.images)) {
+          data.images = data.images.map(img => img.startsWith('http') ? img : baseUrl + img);
+        }
+
         this.setData({ attraction: data })
         wx.setNavigationBarTitle({
           title: data.name
+        })
+
+        // 记录浏览历史
+        API.addHistory({
+          target_id: data.id,
+          target_type: 'attraction',
+          title: data.name,
+          image: data.coverImage || (data.images && data.images.length > 0 ? data.images[0] : ''),
+          price: data.ticket_price || 0
         })
       })
       .catch(err => {

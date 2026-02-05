@@ -12,6 +12,7 @@ import (
 	"ningxia-wenlv-backend/config"
 	"ningxia-wenlv-backend/db"
 	"ningxia-wenlv-backend/middleware"
+	"ningxia-wenlv-backend/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,6 +30,8 @@ func main() {
 		slog.Error("Database connection failed", "error", err)
 		os.Exit(1)
 	}
+	// 自动迁移新模型
+	db.DB.AutoMigrate(&models.BrowsingHistory{})
 
 	// 创建 Gin 路由
 	r := gin.Default()
@@ -124,6 +127,8 @@ func main() {
 		{
 			user.GET("/profile", v1.GetUserProfile)          // 获取用户信息
 			user.PUT("/profile", v1.UpdateProfile)           // 更新用户信息
+			user.GET("/history", v1.GetBrowsingHistory)      // 获取浏览历史 (New)
+			user.POST("/history", v1.AddBrowsingHistory)     // 记录浏览历史 (New)
 			user.GET("/favorites", v1.GetFavorites)          // 获取收藏列表
 			user.POST("/favorites", v1.AddFavorite)          // 添加收藏
 			user.DELETE("/favorites/:id", v1.DeleteFavorite) // 删除收藏

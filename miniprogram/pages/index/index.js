@@ -91,8 +91,15 @@ Page({
       }
 
       const res = await API.getAttractions(params);
+      const baseUrl = 'http://127.0.0.1:8080';
+      const listWithFullUrl = (res.list || []).map(item => ({
+        ...item,
+        imageUrl: item.image_url && !item.image_url.startsWith('http') ? baseUrl + item.image_url : item.image_url,
+        image_url: item.image_url && !item.image_url.startsWith('http') ? baseUrl + item.image_url : item.image_url
+      }));
+
       this.setData({
-        hotAttractions: res.list || []
+        hotAttractions: listWithFullUrl
       });
     } catch (err) {
       console.error('Load hot attractions failed', err);

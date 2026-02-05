@@ -140,7 +140,6 @@ const FrontendData: React.FC = () => {
     // Columns for Assets Data
     const assetColumns = [
         { title: 'ID', dataIndex: 'id', width: 60 },
-        { title: '标题', dataIndex: 'title' },
         { title: '类型', dataIndex: 'type', render: (t: string) => <Tag color="geekblue">{t}</Tag> },
         {
             title: '图片',
@@ -205,14 +204,11 @@ const FrontendData: React.FC = () => {
                 width={600}
             >
                 <Form form={form} layout="vertical">
-                    <Form.Item name="title" label="标题" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
                     <Form.Item name="type" label="类型" initialValue="home_banner" rules={[{ required: true }]}>
                         <Select>
-                            <Select.Option value="home_banner">首页Banner</Select.Option>
-                            <Select.Option value="home_icon">首页图标</Select.Option>
-                            <Select.Option value="market_banner">优惠页Banner</Select.Option>
+                            <Select.Option value="home_banner">首页大图</Select.Option>
+                            <Select.Option value="market_banner">优惠页大图</Select.Option>
+                            <Select.Option value="shop_banner">宁选好礼页大图</Select.Option>
                         </Select>
                     </Form.Item>
 

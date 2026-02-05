@@ -55,15 +55,16 @@
   <block wx:else>
     <!-- 用户信息头部 -->
     <view class="header-section">
-      <view class="user-info">
+      <view class="user-info" bindtap="goToEditProfile">
         <view class="avatar-wrapper">
           <image class="avatar" src="{{userInfo.avatar || 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwBHJrRn51rTpBeqAd2hJO95pHlQd6F8X41hZ1nF7f3k8k4n3n3n3n3n3n3n3n3n3/0'}}" mode="aspectFill" />
+          <view class="edit-hint">📷</view>
         </view>
         <view class="user-detail">
-          <text class="nickname">{{userInfo.nickName || userInfo.nickname || '用户'}}</text>
+          <text class="nickname">{{userInfo.nickName || userInfo.nickname || '用户'}} <text class="edit-icon">✎</text></text>
           <text class="user-desc">发现宁夏之美</text>
         </view>
-        <view class="logout-btn-small" bindtap="logout">退出</view>
+        <view class="logout-btn-small" catchtap="logout">退出</view>
       </view>
     </view>
 
@@ -85,6 +86,13 @@
 
     <!-- 功能列表 -->
     <view class="menu-list">
+      <view class="menu-item" bindtap="goToHistory">
+        <view class="menu-left">
+          <text class="menu-icon">👣</text>
+          <text class="menu-text">我的足迹</text>
+        </view>
+        <text class="menu-arrow">›</text>
+      </view>
       <view class="menu-item" bindtap="goToFavorites">
         <view class="menu-left">
           <text class="menu-icon">❤️</text>

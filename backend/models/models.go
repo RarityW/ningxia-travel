@@ -212,3 +212,15 @@ type FrontendAsset struct {
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
 }
+
+// 浏览历史模型
+type BrowsingHistory struct {
+	ID         uint      `gorm:"primarykey" json:"id"`
+	UserID     uint      `gorm:"index;not null" json:"user_id"`
+	TargetID   uint      `gorm:"not null" json:"target_id"`                    // 关联的目标ID
+	TargetType string    `gorm:"type:varchar(50);not null" json:"target_type"` // attraction, food, culture, product
+	Title      string    `json:"title"`                                        // 冗余存储标题，方便展示
+	Image      string    `json:"image"`                                        // 冗余存储封面图，方便展示
+	Price      float64   `json:"price"`                                        // 冗余存储价格
+	CreatedAt  time.Time `gorm:"index" json:"created_at"`                      // 索引用于清理过期数据
+}

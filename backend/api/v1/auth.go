@@ -439,7 +439,7 @@ func CreateOrder(c *gin.Context) {
 	})
 }
 
-// UpdateProfile 更新用户信息
+// UpdateProfile 更新用户信息 (Enhanced)
 func UpdateProfile(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -450,6 +450,7 @@ func UpdateProfile(c *gin.Context) {
 	type UpdateRequest struct {
 		NickName string `json:"nickname"`
 		Phone    string `json:"phone"`
+		Avatar   string `json:"avatar"` // Added avatar
 	}
 
 	var req UpdateRequest
@@ -465,6 +466,14 @@ func UpdateProfile(c *gin.Context) {
 	if req.Phone != "" {
 		updates["phone"] = req.Phone
 	}
+	if req.Avatar != "" {
+		updates["avatar"] = req.Avatar
+	}
+
+	if len(updates) == 0 {
+		utils.Success(c, nil)
+		return
+	}
 
 	if err := db.DB.Model(&models.User{}).Where("id = ?", userID).Updates(updates).Error; err != nil {
 		utils.ServerError(c, "更新失败")
@@ -472,6 +481,72 @@ func UpdateProfile(c *gin.Context) {
 	}
 
 	utils.Success(c, nil)
+}
+
+// AddBrowsingHistory 添加浏览记录
+func AddBrowsingHistory(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		utils.Unauthorized(c)
+		return
+	}
+
+	type HistoryRequest struct {
+		TargetID   uint    `json:"target_id" binding:"required"`
+		TargetType string  `json:"target_type" binding:"required"`
+		Title      string  `json:"title"`
+		Image      string  `json:"image"`
+		Price      float64 `json:"price"`
+	}
+
+	var req HistoryRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.ParamError(c, "参数错误")
+		return
+	}
+
+	// 1. 删除同一用户对同一目标的旧记录 (保持最新)
+	db.DB.Where("user_id = ? AND target_id = ? AND target_type = ?", userID, req.TargetID, req.TargetType).Delete(&models.BrowsingHistory{})
+
+	// 2. 创建新记录
+	history := models.BrowsingHistory{
+		UserID:     userID.(uint),
+		TargetID:   req.TargetID,
+		TargetType: req.TargetType,
+		Title:      req.Title,
+		Image:      req.Image,
+		Price:      req.Price,
+		CreatedAt:  time.Now(),
+	}
+
+	if err := db.DB.Create(&history).Error; err != nil {
+		utils.ServerError(c, "记录失败")
+		return
+	}
+
+	utils.Success(c, nil)
+}
+
+// GetBrowsingHistory 获取浏览记录
+func GetBrowsingHistory(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		utils.Unauthorized(c)
+		return
+	}
+
+	var history []models.BrowsingHistory
+	// 获取最近7天的数据，按时间倒序
+	sevenDaysAgo := time.Now().AddDate(0, 0, -7)
+
+	if err := db.DB.Where("user_id = ? AND created_at >= ?", userID, sevenDaysAgo).
+		Order("created_at desc").
+		Find(&history).Error; err != nil {
+		utils.ServerError(c, "获取历史失败")
+		return
+	}
+
+	utils.Success(c, history)
 }
 
 // AddFavorite 添加收藏
@@ -658,7 +733,7 @@ func GetOrders(c *gin.Context) {
 	db.DB.Model(&models.Order{}).Where("user_id = ?", userID).Count(&total)
 
 	offset := (parseInt(page) - 1) * parseInt(pageSize)
-	if err := db.DB.Where("user_id = ?", userID).Offset(offset).Limit(parseInt(pageSize)).Find(&orders).Error; err != nil {
+	if err := db.DB.Preload("Items.Product").Where("user_id = ?", userID).Offset(offset).Limit(parseInt(pageSize)).Order("created_at desc").Find(&orders).Error; err != nil {
 		utils.ServerError(c, "获取订单列表失败")
 		return
 	}
@@ -679,7 +754,7 @@ func GetOrder(c *gin.Context) {
 	id := c.Param("id")
 
 	var order models.Order
-	if err := db.DB.Where("id = ? AND user_id = ?", id, userID).First(&order).Error; err != nil {
+	if err := db.DB.Preload("Items.Product").Where("id = ? AND user_id = ?", id, userID).First(&order).Error; err != nil {
 		utils.Error(c, utils.CodeOrderNotFound, "订单不存在")
 		return
 	}
