@@ -44,6 +44,11 @@ function request(options) {
                 pageSize: data.page_size || 10,
                 total: data.total || 0
               })
+            } else if (data.list !== undefined) {
+              // 列表数据（如素材），转换list中的每一项
+              resolve({
+                list: toCamelCase(data.list || [])
+              })
             } else {
               // 单条数据，直接转换
               resolve(toCamelCase(data.data))

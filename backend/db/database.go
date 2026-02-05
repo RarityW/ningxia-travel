@@ -41,6 +41,7 @@ func Connect() error {
 		&models.Coupon{},
 		&models.Admin{},
 		&models.Merchant{},
+		&models.FrontendAsset{},
 	)
 
 	if err != nil {

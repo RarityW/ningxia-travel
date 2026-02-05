@@ -17,9 +17,19 @@ Page({
       { id: 6, name: '特色美食', icon: '🥘', color: 'rgba(255, 192, 203, 0.1)' }
     ],
 
-    hotProducts: [],
+    hotAttractions: [],
     products: [],
-    filteredProducts: []
+    filteredProducts: [],
+
+    // 当季热玩分类
+    hotTabs: ['推荐', '自然风光', '人文景观', '历史遗迹'],
+    currentHotTab: 0,
+
+    // 首页Banner
+    banners: [
+      { id: 1, image_url: '/images/banner-1.jpg', title: '旅游来宁夏 给心放个假' },
+      { id: 2, image_url: '/images/banner-2.jpg', title: '大漠黄河 西夏古韵' }
+    ]
   },
 
   goToShop(e) {
@@ -44,18 +54,62 @@ Page({
     this.getSystemInfo();
     this.getLocationAndWeather();
     this.loadProducts();
-    this.loadHotProducts();
+    this.loadProducts();
+    this.loadHotAttractions();
+    this.loadBanners();
   },
 
-  async loadHotProducts() {
+  async loadBanners() {
     try {
-      const res = await API.getProducts({ page: 1, page_size: 6 });
+      const res = await API.getAssets('home_banner');
+      if (res.list && res.list.length > 0) {
+        // 拼接完整图片URL
+        const baseUrl = 'http://127.0.0.1:8080';
+        const bannersWithFullUrl = res.list.map(item => ({
+          ...item,
+          imageUrl: item.imageUrl.startsWith('http') ? item.imageUrl : baseUrl + item.imageUrl
+        }));
+        this.setData({
+          banners: bannersWithFullUrl
+        });
+      }
+    } catch (err) {
+      console.error('Load banners failed', err);
+    }
+  },
+
+  async loadHotAttractions(category = '全部') {
+    try {
+      const params = {
+        page: 1,
+        page_size: 6
+      };
+
+      // 添加分类参数（如果是'推荐'则不传category或传all，虽然API可能需要映射）
+      if (category !== '推荐' && category !== '全部') {
+        params.category = category;
+      }
+
+      const res = await API.getAttractions(params);
       this.setData({
-        hotProducts: res.list || []
+        hotAttractions: res.list || []
       });
     } catch (err) {
-      console.error('Load hot products failed', err);
+      console.error('Load hot attractions failed', err);
     }
+  },
+
+  onHotTabChange(e) {
+    const index = e.currentTarget.dataset.index;
+    const category = this.data.hotTabs[index];
+
+    if (index === this.data.currentHotTab) return;
+
+    this.setData({
+      currentHotTab: index
+    });
+
+    this.loadHotAttractions(category);
   },
 
   async loadProducts() {
@@ -119,6 +173,19 @@ Page({
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({
       url: `/pages/product-detail/product-detail?id=${id}`
+    });
+  },
+
+  goToAttractionDetail(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: `/pages/attractions/detail?id=${id}`
+    });
+  },
+
+  goToDiscount() {
+    wx.switchTab({
+      url: '/pages/market/index'
     });
   },
 

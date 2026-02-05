@@ -198,3 +198,17 @@ type Admin struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
+
+// 前端素材模型
+type FrontendAsset struct {
+	ID        uint           `gorm:"primarykey" json:"id"`
+	Title     string         `gorm:"not null" json:"title"`
+	Type      string         `gorm:"index;not null" json:"type"` // home_banner, home_icon, etc.
+	ImageUrl  string         `json:"image_url"`
+	LinkUrl   string         `json:"link_url"` // 跳转链接
+	SortOrder int            `gorm:"default:0" json:"sort_order"`
+	Status    int            `gorm:"default:1" json:"status"` // 1:启用 0:禁用
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
+}

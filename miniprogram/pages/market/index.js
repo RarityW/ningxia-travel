@@ -7,13 +7,32 @@ Page({
     currentTab: 0,
     scenicList: [],
     qualified: false,
-    ticketCode: ''
+    ticketCode: '',
+    bannerUrl: '/images/banner-1.jpg' // 默认Banner
   },
 
   onLoad() {
     this.getSystemInfo();
     this.checkQualification();
+    this.checkQualification();
     this.loadScenicList();
+    this.loadBanner();
+  },
+
+  async loadBanner() {
+    try {
+      const res = await API.getAssets('market_banner');
+      if (res.list && res.list.length > 0) {
+        // 拼接完整图片URL
+        const baseUrl = 'http://127.0.0.1:8080';
+        const imageUrl = res.list[0].imageUrl;
+        this.setData({
+          bannerUrl: imageUrl.startsWith('http') ? imageUrl : baseUrl + imageUrl
+        });
+      }
+    } catch (err) {
+      console.error('Load market banner failed', err);
+    }
   },
 
   getSystemInfo() {

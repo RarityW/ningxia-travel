@@ -479,16 +479,25 @@ page {
 }
 
 .category-tabs {
+  flex: 1;
   white-space: nowrap;
+  margin-left: 24rpx;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tab-item {
   display: inline-block;
-  font-size: 26rpx;
-  color: #6b7280;
-  margin-left: 32rpx;
+  font-size: 28rpx;
+  color: #9ca3af;
+  margin-right: 32rpx;
   padding: 8rpx 0;
   position: relative;
+  transition: all 0.3s;
+}
+
+.tab-item:last-child {
+  margin-right: 0;
 }
 
 .tab-item.active {
@@ -586,46 +595,6 @@ page {
   color: #9ca3af;
 }
 
-/* 【7】榜单区域 */
-.ranking-section {
-  margin: 0 32rpx 24rpx;
-}
 
-.ranking-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16rpx;
-}
-
-.ranking-card {
-  padding: 24rpx 16rpx;
-  border-radius: 16rpx;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.08);
-}
-
-.ranking-text {
-  font-size: 24rpx;
-  font-weight: bold;
-  color: #FFFFFF;
-}
-
-/* 榜单卡片背景色 - 统一主色系 */
-.bg-blue {
-  background: var(--gradient-gold);
-  color: #ffffff;
-}
-
-.bg-green {
-  background: var(--gradient-olive);
-  color: #ffffff;
-}
-
-.bg-purple {
-  background: var(--gradient-terracotta);
-  color: #ffffff;
-}
 
 

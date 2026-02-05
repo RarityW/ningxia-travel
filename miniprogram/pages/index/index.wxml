@@ -26,22 +26,16 @@
   <!-- 【2】首页 Banner 区 -->
   <view class="banner-section">
     <swiper class="banner-swiper" indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#FFFFFF" autoplay circular>
-      <swiper-item>
-        <view class="banner-slide">
-          <image class="banner-image" src="/images/banner-1.jpg" mode="aspectFill" />
-          <view class="banner-content">
-            <text class="banner-slogan">旅游来宁夏 给心放个假</text>
+      <block wx:for="{{banners}}" wx:key="id">
+        <swiper-item>
+          <view class="banner-slide">
+            <image class="banner-image" src="{{item.imageUrl}}" mode="aspectFill" />
+            <view class="banner-content">
+              <text class="banner-slogan">{{item.title}}</text>
+            </view>
           </view>
-        </view>
-      </swiper-item>
-      <swiper-item>
-        <view class="banner-slide">
-          <image class="banner-image" src="/images/banner-2.jpg" mode="aspectFill" />
-          <view class="banner-content">
-            <text class="banner-slogan">大漠黄河 西夏古韵</text>
-          </view>
-        </view>
-      </swiper-item>
+        </swiper-item>
+      </block>
     </swiper>
   </view>
 
@@ -167,7 +161,7 @@
 
   <!-- 【5】Banner区域 - 景区门票优惠 -->
   <view class="banner-section">
-    <view class="banner-card">
+    <view class="banner-card" bindtap="goToDiscount">
       <view class="banner-header">
         <view class="banner-content">
           <text class="banner-title">宁夏景区门票\n优惠总入口</text>
@@ -210,32 +204,32 @@
       <view class="header-left">
         <text class="section-title">当季热玩</text>
         <view class="new-badge">
-          <text class="new-text">NEW</text>
+          <text class="new-text">HOT</text>
         </view>
       </view>
 
       <scroll-view class="category-tabs" scroll-x="true" show-scrollbar="false">
-        <text class="tab-item active">热门精选</text>
-        <text class="tab-item">大漠度假</text>
-        <text class="tab-item">温泉养生</text>
-        <text class="tab-item">五折景区</text>
-        <text class="tab-item">全部</text>
+        <block wx:for="{{hotTabs}}" wx:key="*this">
+          <view class="tab-item {{currentHotTab === index ? 'active' : ''}}" bindtap="onHotTabChange" data-index="{{index}}">
+            {{item}}
+          </view>
+        </block>
       </scroll-view>
     </view>
 
     <scroll-view class="products-scroll" scroll-x="true" show-scrollbar="false">
       <view class="products-container">
-        <block wx:for="{{hotProducts}}" wx:key="id">
-          <view class="product-card-large" bindtap="goToProductDetail" data-id="{{item.id}}">
+        <block wx:for="{{hotAttractions}}" wx:key="id">
+          <view class="product-card-large" bindtap="goToAttractionDetail" data-id="{{item.id}}">
             <image class="product-image-large" src="{{item.coverImage}}" mode="aspectFill" />
             <view class="product-badge">
-              <text class="badge-text">{{item.category || '热门'}}</text>
+              <text class="badge-text">{{item.grade || '热门'}}</text>
             </view>
             <view class="product-info-large">
               <text class="product-title">{{item.name}}</text>
               <view class="product-price-large">
                 <text class="price-symbol">¥</text>
-                <text class="price-amount">{{item.price}}</text>
+                <text class="price-amount">{{item.ticketPrice}}</text>
                 <text class="price-unit">起</text>
               </view>
             </view>
@@ -247,19 +241,7 @@
   </view>
 
   <!-- 【7】榜单卡片 -->
-  <view class="ranking-section">
-    <view class="ranking-grid">
-      <view class="ranking-card bg-blue">
-        <text class="ranking-text">美食榜 →</text>
-      </view>
-      <view class="ranking-card bg-green">
-        <text class="ranking-text">景区榜 →</text>
-      </view>
-      <view class="ranking-card bg-purple">
-        <text class="ranking-text">住宿榜 →</text>
-      </view>
-    </view>
-  </view>
+
 
 
 

@@ -61,7 +61,10 @@ const API = {
 
   // 商家
   getMerchantDetail: (id) => api.get(`/merchants/${id}`),
-  getMerchantProducts: (id, params) => api.get(`/merchants/${id}/products`, params)
+  getMerchantProducts: (id, params) => api.get(`/merchants/${id}/products`, params),
+
+  // 前端素材
+  getAssets: (type) => api.get('/assets', { type })
 }
 
 module.exports = API

@@ -21,7 +21,7 @@
 
     <!-- 特色图片 -->
     <view class="hero-image-container">
-      <image class="hero-image" src="/images/banner-1.jpg" mode="aspectFill" />
+      <image class="hero-image" src="{{bannerUrl}}" mode="aspectFill" />
       <view class="image-overlay"></view>
       <view class="image-badge">
         <text class="badge-text">贺兰山 · 沙坡头 · 水洞沟 · 西部影城</text>

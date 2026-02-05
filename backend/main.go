@@ -190,7 +190,16 @@ func main() {
 
 			// 文件上传
 			admin.POST("/upload", v1.UploadFile)
+
+			// 素材管理
+			admin.GET("/assets", v1.AdminGetAssets)
+			admin.POST("/assets", v1.AdminCreateAsset)
+			admin.PUT("/assets/:id", v1.AdminUpdateAsset)
+			admin.DELETE("/assets/:id", v1.AdminDeleteAsset)
 		}
+
+		// 公共素材接口
+		apiV1.GET("/assets", v1.GetAssets)
 
 		// 小程序端店铺接口（公开）
 		apiV1.GET("/merchants/:id", v1.GetMerchantDetail)

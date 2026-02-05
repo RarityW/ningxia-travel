@@ -158,3 +158,11 @@ export const statsAPI = {
   getOverview: () => api.get('/admin/stats/overview'),
   getCharts: () => api.get('/admin/stats/charts'),
 };
+
+// 素材管理API
+export const assetsAPI = {
+  getList: (params?: any) => api.get('/admin/assets', { params }),
+  create: (data: any) => api.post('/admin/assets', data),
+  update: (id: number, data: any) => api.put(`/admin/assets/${id}`, data),
+  delete: (id: number) => api.delete(`/admin/assets/${id}`),
+};
